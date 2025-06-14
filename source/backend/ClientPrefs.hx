@@ -26,10 +26,10 @@ import states.TitleState;
 	public var hideHud:Bool = false;
 	public var noteOffset:Int = 0;
 	public var arrowRGB:Array<Array<FlxColor>> = [
-		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
-		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
-		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
-		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]];
+		[0xFFFFF27F, 0xFFFFB947, 0xFFEA2111],
+		[0xFFFF686A, 0xFFA91343, 0xFF5CF7F3],
+		[0xFF4BF57B, 0xFF325662, 0xFFBD5AE8],
+		[0xFF5C68E2, 0xFF1B2364, 0xFFFFDB76]];
 	public var arrowRGBPixel:Array<Array<FlxColor>> = [
 		[0xFFE276FF, 0xFFFFF9FF, 0xFF60008D],
 		[0xFF3DCAFF, 0xFFF4FFFF, 0xFF003060],
@@ -40,7 +40,6 @@ import states.TitleState;
 	public var timeBarType:String = 'Time Left';
 	public var scoreZoom:Bool = true;
 	public var noReset:Bool = false;
-	public var healthBarAlpha:Float = 1;
 	public var hitsoundVolume:Float = 0;
 	public var pauseMusic:String = 'Tea Time';
 	public var checkForUpdates:Bool = true;
@@ -212,6 +211,8 @@ class ClientPrefs {
 			FlxG.sound.volume = FlxG.save.data.volume;
 		if (FlxG.save.data.mute != null)
 			FlxG.sound.muted = FlxG.save.data.mute;
+		if (FlxG.save.data.fullscreen != null)
+			FlxG.fullscreen = FlxG.save.data.fullscreen;
 
 		#if DISCORD_ALLOWED DiscordClient.check(); #end
 
@@ -234,6 +235,9 @@ class ClientPrefs {
 			}
 			reloadVolumeKeys();
 		}
+
+		if (FlxG.save.data.weekCompleted != null)
+			states.StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 	}
 
 	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic = null, ?customDefaultValue:Bool = false):Dynamic

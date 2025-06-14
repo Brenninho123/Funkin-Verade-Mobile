@@ -284,17 +284,19 @@ class Note extends FlxSprite
 			hitsoundDisabled = true;
 			if(ClientPrefs.data.downScroll) flipY = true;
 
-			offsetX += width / 2;
+			// offsetX += width / 2;
 			copyAngle = false;
 
 			animation.play(colArray[noteData % colArray.length] + 'holdend');
 
 			updateHitbox();
-
-			offsetX -= width / 2;
+			offsetX = width;
 
 			if (PlayState.isPixelStage)
+			{
+				offsetX /= 2;
 				offsetX += 30;
+			}
 
 			if (prevNote.isSustainNote)
 			{
@@ -430,19 +432,24 @@ class Note extends FlxSprite
 		return skin;
 	}
 
-	function loadNoteAnims() {
-		if (colArray[noteData] == null)
-			return;
+	function loadNoteAnims()
+	{
+		if (colArray[noteData] == null) return;
+		var scale:Float;
 
 		if (isSustainNote)
 		{
-			attemptToAddAnimationByPrefix('purpleholdend', 'pruple end hold', 24, true); // this fixes some retarded typo from the original note .FLA
-			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end', 24, true);
-			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece', 24, true);
+			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end', 24);
+			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece', 24);
+			scale = 0.7;
 		}
-		else animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0');
+		else
+		{
+			animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0', 24);
+			scale = 0.6;
+		}
 
-		setGraphicSize(Std.int(width * 0.7));
+		this.scale.set(scale, scale);
 		updateHitbox();
 	}
 

@@ -1,27 +1,29 @@
 package states;
 
-import flixel.FlxSubState;
-
 import flixel.effects.FlxFlicker;
-import lime.app.Application;
+import flixel.util.typeLimit.NextState.InitialState;
 
-class FlashingState extends MusicBeatState
+class FlashingState extends flixel.FlxState
 {
-	public static var leftState:Bool = false;
+	var blockInput:Bool = false;
+	var curSelected:Int = 1;
 
-	var isYes:Bool = true;
+	final initialState:InitialState;
 	var texts:FlxTypedSpriteGroup<FlxText>;
-	var bg:FlxSprite;
+
+	@:allow(Main)
+	function new(initialState:InitialState)
+	{
+		this.initialState = initialState;
+		super();	
+	}
 
 	override function create()
 	{
+		FlxG.mouse.visible = false;
 		super.create();
 
-		bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		add(bg);
-
 		texts = new FlxTypedSpriteGroup<FlxText>();
-		texts.alpha = 0.0;
 		add(texts);
 
 		var warnText:FlxText = new FlxText(0, 0, FlxG.width,
@@ -29,64 +31,70 @@ class FlashingState extends MusicBeatState
 			This Mod contains some flashing lights!\n
 			Do you wish to disable them?");
 		warnText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
-		warnText.screenCenter(Y);
+		warnText.screenCenter();
+		warnText.active = false;
 		texts.add(warnText);
 
-		final keys = ["Yes", "No"];
-		for (i in 0...keys.length) {
-			final button = new FlxText(0, 0, FlxG.width, keys[i]);
+		final keys:Array<String> = ["Yes", "No"];
+		for (i in 0...keys.length)
+		{
+			var button = new FlxText(0, (warnText.y + warnText.height) + 24, 0, keys[i]);
 			button.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
-			button.y = (warnText.y + warnText.height) + 24;
-			button.x += (128 * i) - 80;
+			button.screenCenter(X).x -= button.width;
+			button.x += button.width * i;
+			button.active = false;
 			texts.add(button);
 		}
 
-		FlxTween.tween(texts, {alpha: 1.0}, 0.5, {
-			onComplete: (_) -> updateItems()
-		});
+		changeSelection(0);
 	}
 
 	override function update(elapsed:Float)
 	{
-		if(leftState) {
+		if (blockInput)
+		{
 			super.update(elapsed);
 			return;
 		}
-		var back:Bool = controls.BACK;
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P) {
-			FlxG.sound.play(Paths.sound("scrollMenu"), 0.7);
-			isYes = !isYes;
-			updateItems();
+		
+		final left_p:Bool = Controls.instance.UI_LEFT_P;
+		if (left_p || Controls.instance.UI_RIGHT_P)
+		{
+			FlxG.sound.play(Paths.sound("scrollMenu"));
+			changeSelection(1 * (left_p ? -1 : 1));
 		}
-		if (controls.ACCEPT || back) {
-			leftState = true;
-			FlxTransitionableState.skipNextTransIn = true;
-			FlxTransitionableState.skipNextTransOut = true;
-			if(!back) {
-				ClientPrefs.data.flashing = !isYes;
-				ClientPrefs.saveSettings();
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-				final button = texts.members[isYes ? 1 : 2];
-				FlxFlicker.flicker(button, 1, 0.1, false, true, function(flk:FlxFlicker) {
-					new FlxTimer().start(0.5, function (tmr:FlxTimer) {
-						FlxTween.tween(texts, {alpha: 0}, 0.2, {
-							onComplete: (_) -> MusicBeatState.switchState(new TitleState())
-						});
-					});
-				});
-			} else {
-				FlxG.sound.play(Paths.sound('cancelMenu'));
-				FlxTween.tween(texts, {alpha: 0}, 1, {
-					onComplete: (_) -> MusicBeatState.switchState(new TitleState())
-				});
-			}
+
+		if (Controls.instance.ACCEPT)
+		{
+			blockInput = true;
+			FlxG.sound.play(Paths.sound('confirmMenu'));
+
+			choseOption();
 		}
+
 		super.update(elapsed);
 	}
 
-	function updateItems() {
-		// it's clunky but it works.
-		texts.members[1].alpha = isYes ? 1.0 : 0.6;
-		texts.members[2].alpha = isYes ? 0.6 : 1.0;
+	function changeSelection(change:Int)
+	{
+		texts.members[curSelected].alpha = 0.6;
+
+		curSelected = FlxMath.wrap(curSelected + change, 1, texts.length - 1);
+		texts.members[curSelected].alpha = 1;
+	}
+
+	function choseOption()
+	{
+		ClientPrefs.data.flashing = curSelected != 1;
+		ClientPrefs.saveSettings();
+
+		FlxFlicker.flicker(texts.members[curSelected], 1, 0.1, true, false, (_) -> 
+			FlxTimer.wait(0.5, () -> __getOut(0.2)));
+	}
+
+	inline function __getOut(hidingSpeed:Float)
+	{
+		FlxTween.tween(texts, {alpha: 0}, hidingSpeed, {onComplete: (_) -> 
+			FlxG.switchState(initialState.toNextState())});
 	}
 }

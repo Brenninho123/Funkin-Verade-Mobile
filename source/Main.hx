@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.typeLimit.NextState.InitialState;
 #if android
 import android.content.Context;
 #end
@@ -49,18 +50,7 @@ import backend.Highscore;
 // // // // // // // // //
 class Main extends Sprite
 {
-	public static final game = {
-		width: 1280, // WINDOW width
-		height: 720, // WINDOW height
-		initialState: TitleState, // initial game state
-		framerate: 60, // default framerate
-		skipSplash: true, // if the default flixel splash screen should be skipped
-		startFullscreen: false // if the game should start at fullscreen mode
-	};
-
 	public static var fpsVar:FPSCounter;
-
-	// You can pretty much ignore everything from here on - your code should go in your states.
 
 	public static function main():Void
 	{
@@ -70,29 +60,21 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
-
-		#if (cpp && windows)
-		backend.Native.fixScaling();
-		#end
-
 		// Credits to MAJigsaw77 (he's the og author for this code)
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
 		#elseif ios
 		Sys.setCwd(lime.system.System.applicationStorageDirectory);
 		#end
-		#if VIDEOS_ALLOWED
-		hxvlc.util.Handle.init(#if (hxvlc >= "1.8.0")  ['--no-lua'] #end);
-		#end
-
-		#if LUA_ALLOWED
-		Mods.pushGlobalMods();
-		#end
-		Mods.loadTopMod();
+		#if (cpp && windows) backend.Native.fixScaling(); #end
 
 		FlxG.save.bind('funkin', CoolUtil.getSavePath());
 		Highscore.load();
+		Controls.instance = new Controls();
+		ClientPrefs.loadDefaultKeys();
 
+		#if CRASH_HANDLER Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash); #end
+		#if LUA_ALLOWED Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(psychlua.CallbackHandler.call)); #end
 		#if HSCRIPT_ALLOWED
 		Iris.warn = function(x, ?pos:haxe.PosInfos) {
 			Iris.logLevel(WARN, x, pos);
@@ -149,64 +131,66 @@ class Main extends Sprite
 				PlayState.instance.addTextToDebug('FATAL: $msgInfo', 0xFFBB0000);
 		}
 		#end
-
-		#if LUA_ALLOWED Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(psychlua.CallbackHandler.call)); #end
-		Controls.instance = new Controls();
-		ClientPrefs.loadDefaultKeys();
+		#if VIDEOS_ALLOWED hxvlc.util.Handle.init(#if (hxvlc >= "1.8.0")  ['--no-lua'] #end); #end
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
-		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
-		#if !mobile
-		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
+		#if FREEPLAY
+		var initialState:InitialState = states.FreeplayState;
+		#elseif CHARTING
+		var initialState:InitialState = states.editors.ChartingState;
+		#else
+		var initialState:InitialState = FlxG.save.data.flashing != null ? states.TitleState : () -> new states.FlashingState(states.TitleState);
+		FlxTransitionableState.skipNextTransIn = true;
+		#end
+		addChild(new FlxGame(0, 0, initialState, 60, 60, true, FlxG.save.data.fullscreen));
+
+		fpsVar = new FPSCounter(10, 3);
 		addChild(fpsVar);
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
-		if(fpsVar != null) {
-			fpsVar.visible = ClientPrefs.data.showFPS;
-		}
-		#end
+		fpsVar.visible = ClientPrefs.data.showFPS;
+		
+		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
+		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour
 
 		#if (linux || mac) // fix the app icon not showing up on the Linux Panel / Mac Dock
 		var icon = Image.fromFile("icon.png");
 		Lib.current.stage.window.setIcon(icon);
 		#end
 
-		#if html5
-		FlxG.autoPause = false;
-		FlxG.mouse.visible = false;
-		#end
+		ClientPrefs.loadPrefs();
+		Language.reloadPhrases();
+		#if DISCORD_ALLOWED DiscordClient.prepare(); #end
 
 		FlxG.fixedTimestep = false;
 		FlxG.game.focusLostFramerate = 60;
-		FlxG.keys.preventDefaultKeys = [TAB];
-		
-		#if CRASH_HANDLER
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
+		FlxG.keys.preventDefaultKeys = [TAB #if android, FlxG.android.BACK #end];
+		FlxG.cameras.bgColor = FlxColor.BLACK;
 
-		#if DISCORD_ALLOWED
-		DiscordClient.prepare();
-		#end
-
-		// shader coords fix
-		FlxG.signals.gameResized.add(function (w, h) {
-		     if (FlxG.cameras != null) {
-			   for (cam in FlxG.cameras.list) {
-				if (cam != null && cam.filters != null)
-					resetSpriteCache(cam.flashSprite);
-			   }
-			}
-
-			if (FlxG.game != null)
-			resetSpriteCache(FlxG.game);
-		});
+		FlxTransitionableState.defaultTransIn = new flixel.addons.transition.TransitionData(FADE, FlxColor.BLACK, 0.5, FlxPoint.weak(0, -1));
+		FlxTransitionableState.defaultTransOut = new flixel.addons.transition.TransitionData(FADE, FlxColor.BLACK, 0.5, FlxPoint.weak(0, 1));
 	}
 
-	static function resetSpriteCache(sprite:Sprite):Void {
-		@:privateAccess {
-		        sprite.__cacheBitmap = null;
-			sprite.__cacheBitmapData = null;
+	function resizeFix()
+	{
+		if (FlxG.cameras != null)
+		{
+			for (cam in FlxG.cameras.list)
+			{
+				if (cam == null || cam.filters == null) continue;
+				resetSpriteCache(cam.flashSprite);
+			}
 		}
+
+		if (FlxG.game == null) return;
+		resetSpriteCache(FlxG.game);
+	}
+
+	@:privateAccess
+	inline function resetSpriteCache(sprite:Sprite)
+	{
+		sprite.__cacheBitmap = null;
+		sprite.__cacheBitmapData = null;
 	}
 
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!

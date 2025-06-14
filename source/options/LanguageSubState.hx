@@ -13,7 +13,7 @@ class LanguageSubState extends MusicBeatSubstate
 	{
 		super();
 
-		var bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		var bg = new FlxSprite().loadGraphic(Paths.image('menuBG'));
 		bg.color = 0xFFea71fd;
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.screenCenter();
@@ -113,7 +113,7 @@ class LanguageSubState extends MusicBeatSubstate
 			{
 				FlxTransitionableState.skipNextTransIn = true;
 				FlxTransitionableState.skipNextTransOut = true;
-				MusicBeatState.resetState();
+				FlxG.resetState();
 			}
 			else close();
 			FlxG.sound.play(Paths.sound('cancelMenu'));

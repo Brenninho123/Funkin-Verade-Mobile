@@ -1,0 +1,137 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "lime test cpp -debug",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "test",
+			"label": "Test Debug Build",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			}
+		},
+		{
+			"type": "shell",
+			"command": "lime test cpp -32 -Dx86 -debug",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "test",
+			"label": "Test Debug Build (x86)",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			}
+		},
+		{
+			"type": "shell",
+			"command": "lime test cpp",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "test",
+			"label": "Test Release Build",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			}
+		},
+		{
+			"type": "shell",
+			"command": "lime test cpp -32 -Dx86",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "test",
+			"label": "Test Release Build (x86)",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			}
+		},
+		{
+			"type": "shell",
+			"command": "lime build cpp -debug",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "Build Debug",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			},
+			"detail": "Compiles a new debug build without testing it."
+		},
+		{
+			"type": "shell",
+			"command": "lime build cpp -32 -Dx86 -debug",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "Build Debug (x86)",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			},
+			"detail": "Compiles a new debug build in x86 without testing it."
+		},
+		{
+			"type": "shell",
+			"command": "lime build cpp",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "Build Release",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			},
+			"detail": "Compiles a new build without testing it."
+		},
+		{
+			"type": "shell",
+			"command": "lime build cpp -32 -Dx86",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "Build Release (x86)",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			},
+			"detail": "Compiles a new build in x86 without testing it."
+		}
+	]
+}

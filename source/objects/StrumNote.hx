@@ -68,20 +68,13 @@ class StrumNote extends FlxSprite
 		var lastAnim:String = null;
 		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		if(PlayState.isPixelStage)
+		if (PlayState.isPixelStage)
 		{
-			loadGraphic(Paths.image('pixelUI/' + texture));
-			width = width / 4;
-			height = height / 5;
-			loadGraphic(Paths.image('pixelUI/' + texture), true, Math.floor(width), Math.floor(height));
-
+			var graph:flixel.graphics.FlxGraphic = Paths.image('pixelUI/$texture');
+			loadGraphic(graph, true, Math.round(graph.width / 4), Math.round(graph.height / 5));
+			scale.set(PlayState.daPixelZoom, PlayState.daPixelZoom); updateHitbox();
 			antialiasing = false;
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 
-			animation.add('green', [6]);
-			animation.add('red', [7]);
-			animation.add('blue', [5]);
-			animation.add('purple', [4]);
 			switch (Math.abs(noteData) % 4)
 			{
 				case 0:
@@ -105,46 +98,38 @@ class StrumNote extends FlxSprite
 		else
 		{
 			frames = Paths.getSparrowAtlas(texture);
-			animation.addByPrefix('green', 'arrowUP');
-			animation.addByPrefix('blue', 'arrowDOWN');
-			animation.addByPrefix('purple', 'arrowLEFT');
-			animation.addByPrefix('red', 'arrowRIGHT');
-
+			scale.set(0.6, 0.6); updateHitbox();
 			antialiasing = ClientPrefs.data.antialiasing;
-			setGraphicSize(Std.int(width * 0.7));
 
 			switch (Math.abs(noteData) % 4)
 			{
 				case 0:
-					animation.addByPrefix('static', 'arrowLEFT');
+					animation.addByPrefix('static', 'arrowLEFT', 24);
 					animation.addByPrefix('pressed', 'left press', 24, false);
 					animation.addByPrefix('confirm', 'left confirm', 24, false);
 				case 1:
-					animation.addByPrefix('static', 'arrowDOWN');
+					animation.addByPrefix('static', 'arrowDOWN', 24);
 					animation.addByPrefix('pressed', 'down press', 24, false);
 					animation.addByPrefix('confirm', 'down confirm', 24, false);
 				case 2:
-					animation.addByPrefix('static', 'arrowUP');
+					animation.addByPrefix('static', 'arrowUP', 24);
 					animation.addByPrefix('pressed', 'up press', 24, false);
 					animation.addByPrefix('confirm', 'up confirm', 24, false);
 				case 3:
-					animation.addByPrefix('static', 'arrowRIGHT');
+					animation.addByPrefix('static', 'arrowRIGHT', 24);
 					animation.addByPrefix('pressed', 'right press', 24, false);
 					animation.addByPrefix('confirm', 'right confirm', 24, false);
 			}
+			animation.onFinish.add((a) -> if (useRGBShader && a == "confirm")
+				rgbShader.enabled = !rgbShader.enabled);
 		}
-		updateHitbox();
 
-		if(lastAnim != null)
-		{
-			playAnim(lastAnim, true);
-		}
+		if (lastAnim != null) playAnim(lastAnim, true);
 	}
 
-	public function playerPosition()
+	public inline function playerPosition()
 	{
-		x += Note.swagWidth * noteData;
-		x += 50;
+		x += (Note.swagWidth * noteData) + 50;
 		x += ((FlxG.width / 2) * player);
 	}
 
@@ -159,13 +144,15 @@ class StrumNote extends FlxSprite
 		super.update(elapsed);
 	}
 
-	public function playAnim(anim:String, ?force:Bool = false) {
+	public function playAnim(anim:String, ?force:Bool = false)
+	{
 		animation.play(anim, force);
-		if(animation.curAnim != null)
+		if (animation.curAnim != null)
 		{
 			centerOffsets();
 			centerOrigin();
 		}
-		if(useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
+
+		rgbShader.enabled = useRGBShader && animation.curAnim?.name != 'static';
 	}
 }

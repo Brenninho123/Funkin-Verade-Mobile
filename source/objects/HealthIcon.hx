@@ -4,7 +4,8 @@ class HealthIcon extends FlxSprite
 {
 	public var sprTracker:FlxSprite;
 	private var isPlayer:Bool = false;
-	private var char:String = '';
+	public var char(default, null):String = '';
+	public var autoAdjustOffset:Bool = true;
 
 	public function new(char:String = 'face', isPlayer:Bool = false, ?allowGPU:Bool = true)
 	{
@@ -17,48 +18,48 @@ class HealthIcon extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if (sprTracker == null) return;
 
-		if (sprTracker != null)
-			setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
+		setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
 	}
 
 	private var iconOffsets:Array<Float> = [0, 0];
-	public function changeIcon(char:String, ?allowGPU:Bool = true) {
-		if(this.char != char) {
-			var name:String = 'icons/' + char;
-			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
-			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
-			
-			var graphic = Paths.image(name, allowGPU);
-			var iSize:Float = Math.round(graphic.width / graphic.height);
-			loadGraphic(graphic, true, Math.floor(graphic.width / iSize), Math.floor(graphic.height));
-			iconOffsets[0] = (width - 150) / iSize;
-			iconOffsets[1] = (height - 150) / iSize;
-			updateHitbox();
+	public function changeIcon(char:String, ?allowGPU:Bool = true)
+	{
+		if (char == this.char || char == this.char.replace("-pixel", "")) return;
+		final lastAnimFrame:Int = animation.curAnim?.curFrame;
 
-			animation.add(char, [for(i in 0...frames.frames.length) i], 0, false, isPlayer);
-			animation.play(char);
-			this.char = char;
+		var name:String = 'icons/$char';
+		if (
+			!Paths.fileExists('images/$name.png', IMAGE) 
+			&& !Paths.fileExists('images/${name += '-pixel'}.png', IMAGE)
+		)
+			name = 'icons/face';
+		
+		var graphic = Paths.image(name, allowGPU);
+		var grid:Float = Math.round(graphic.width / graphic.height);
+		loadGraphic(graphic, true, Math.floor(graphic.width / grid));
+		iconOffsets[0] = (width - 150) / grid;
+		iconOffsets[1] = (height - 150) / grid;
+		updateHitbox();
 
-			if(char.endsWith('-pixel'))
-				antialiasing = false;
-			else
-				antialiasing = ClientPrefs.data.antialiasing;
-		}
+		animation.add(char, [for (i in 0...frames.frames.length) i], 0, false, isPlayer);
+		animation.play(char, true, false, lastAnimFrame);
+		this.char = name.substr(6);
+
+		if (!ClientPrefs.data.antialiasing) return;
+		antialiasing = !this.char.endsWith("-pixel");
 	}
 
-	public var autoAdjustOffset:Bool = true;
 	override function updateHitbox()
 	{
-		super.updateHitbox();
-		if(autoAdjustOffset)
+		if (!autoAdjustOffset)
 		{
-			offset.x = iconOffsets[0];
-			offset.y = iconOffsets[1];
+			super.updateHitbox();
+			return;
 		}
-	}
 
-	public function getCharacter():String {
-		return char;
+		super.updateHitbox();
+		offset.set(iconOffsets[0], iconOffsets[1]);
 	}
 }

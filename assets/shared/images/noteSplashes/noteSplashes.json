@@ -1,119 +1,64 @@
 {
 	"animations": {
-		"blue2": {
-			"prefix": "note splash blue 2",
-			"fps": [
-				22,
-				26
-			],
+		"splashU": {
+			"prefix": "note impact 1",
 			"offsets": [
-				-52,
-				-48
+				-76,
+				75
 			],
 			"indices": [],
-			"name": "blue2",
-			"noteData": 5
-		},
-		"purple": {
-			"prefix": "note splash purple 1",
 			"fps": [
-				22,
-				26
+				24,
+				24
 			],
-			"offsets": [
-				-58,
-				-55
-			],
-			"indices": [],
-			"name": "purple",
-			"noteData": 0
-		},
-		"red": {
-			"prefix": "note splash red 1",
-			"fps": [
-				22,
-				26
-			],
-			"offsets": [
-				-58,
-				-55
-			],
-			"indices": [],
-			"name": "red",
-			"noteData": 3
-		},
-		"red2": {
-			"prefix": "note splash red 2",
-			"fps": [
-				22,
-				26
-			],
-			"offsets": [
-				-52,
-				-48
-			],
-			"indices": [],
-			"name": "red2",
-			"noteData": 7
-		},
-		"blue": {
-			"prefix": "note splash blue 1",
-			"fps": [
-				22,
-				26
-			],
-			"offsets": [
-				-58,
-				-55
-			],
-			"indices": [],
-			"name": "blue",
-			"noteData": 1
-		},
-		"purple2": {
-			"prefix": "note splash purple 2",
-			"fps": [
-				22,
-				26
-			],
-			"offsets": [
-				-52,
-				-48
-			],
-			"indices": [],
-			"name": "purple2",
-			"noteData": 4
-		},
-		"green": {
-			"prefix": "note splash green 1",
-			"fps": [
-				22,
-				26
-			],
-			"offsets": [
-				-58,
-				-55
-			],
-			"indices": [],
-			"name": "green",
+			"name": "splashU",
 			"noteData": 2
 		},
-		"green2": {
-			"prefix": "note splash green 2",
-			"fps": [
-				22,
-				26
-			],
+		"splashR": {
+			"prefix": "note impact 1",
 			"offsets": [
-				-52,
-				-48
+				-83,
+				75
 			],
 			"indices": [],
-			"name": "green2",
-			"noteData": 6
+			"fps": [
+				24,
+				24
+			],
+			"name": "splashR",
+			"noteData": 3
+		},
+		"splashL": {
+			"prefix": "note impact 1",
+			"offsets": [
+				-67,
+				75
+			],
+			"indices": [],
+			"fps": [
+				24,
+				24
+			],
+			"name": "splashL",
+			"noteData": 0
+		},
+		"splashD": {
+			"prefix": "note impact 1",
+			"offsets": [
+				-83,
+				75
+			],
+			"indices": [],
+			"fps": [
+				24,
+				24
+			],
+			"name": "splashD",
+			"noteData": 1
 		}
 	},
 	"allowRGB": true,
 	"allowPixel": true,
+	"rgb": null,
 	"scale": 1
 }

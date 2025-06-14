@@ -40,12 +40,11 @@ class AchievementsMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
-		menuBG.antialiasing = ClientPrefs.data.antialiasing;
-		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
-		menuBG.updateHitbox();
+		var menuBG:FlxSprite = new FlxSprite(0, 0, Paths.image('menuBG'));
+		menuBG.color = 0xFF9271FD;
+		menuBG.scale.set(1.1, 1.1); menuBG.updateHitbox();
 		menuBG.screenCenter();
-		menuBG.scrollFactor.set();
+		menuBG.antialiasing = ClientPrefs.data.antialiasing;
 		add(menuBG);
 
 		grpOptions = new FlxSpriteGroup();
@@ -205,7 +204,7 @@ class AchievementsMenuState extends MusicBeatState
 
 		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
+			FlxG.switchState(new MainMenuState());
 			goingBack = true;
 		}
 		super.update(elapsed);

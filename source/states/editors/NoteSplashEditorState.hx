@@ -45,7 +45,7 @@ class NoteSplashEditorState extends MusicBeatState
         DiscordClient.changePresence('Note Splash Editor');
         #end
 
-        var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+        var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
         bg.scrollFactor.set();
         bg.color = 0xFF505050;
         add(bg);      
@@ -591,7 +591,7 @@ class NoteSplashEditorState extends MusicBeatState
         if (!blockInput)
         {
             if (controls.BACK)
-                MusicBeatState.switchState(new MasterEditorMenu());
+                FlxG.switchState(new MasterEditorMenu());
             if (FlxG.keys.justPressed.F1)
                 openSubState(new NoteSplashEditorHelpSubState());
         }

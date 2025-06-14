@@ -636,7 +636,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 				updateHealthBar();
 			});
 
-		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 35, 75, healthIcon.getCharacter(), 8);
+		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 35, 75, healthIcon.char, 8);
 
 		vocalsInputText = new PsychUIInputText(15, healthIconInputText.y + 35, 75, character.vocalsFile != null ? character.vocalsFile : '', 8);
 
@@ -711,10 +711,10 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		if(id == PsychUIInputText.CHANGE_EVENT)
 		{
 			if(sender == healthIconInputText) {
-				var lastIcon = healthIcon.getCharacter();
+				var lastIcon = healthIcon.char;
 				healthIcon.changeIcon(healthIconInputText.text, false);
 				character.healthIcon = healthIconInputText.text;
-				if(lastIcon != healthIcon.getCharacter()) updatePresence();
+				if(lastIcon != healthIcon.char) updatePresence();
 				unsavedProgress = true;
 			}
 			else if(sender == vocalsInputText)
@@ -1054,7 +1054,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			{
 				if(!unsavedProgress)
 				{
-					MusicBeatState.switchState(new states.editors.MasterEditorMenu());
+					FlxG.switchState(new states.editors.MasterEditorMenu());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
 				else openSubState(new ExitConfirmationPrompt());
@@ -1062,7 +1062,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			else
 			{
 				FlxG.mouse.visible = false;
-				MusicBeatState.switchState(new PlayState());
+				FlxG.switchState(new PlayState());
 			}
 			return;
 		}
@@ -1134,7 +1134,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	inline function updatePresence() {
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Character Editor", "Character: " + _char, healthIcon.getCharacter());
+		DiscordClient.changePresence("Character Editor", "Character: " + _char, healthIcon.char);
 		#end
 	}
 
@@ -1219,7 +1219,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 	var characterList:Array<String> = [];
 	function reloadCharacterDropDown() {
-		characterList = Mods.mergeAllTextsNamed('data/characterList.txt');
+		characterList = Mods.mergeAllTextsNamed('data/menus/editors/characterList.txt');
 		var foldersToCheck:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'characters/');
 		for (folder in foldersToCheck)
 			for (file in FileSystem.readDirectory(folder))

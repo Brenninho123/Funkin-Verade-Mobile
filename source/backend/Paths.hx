@@ -34,7 +34,7 @@ class Paths
 			dumpExclusions.push(key);
 	}
 
-	public static var dumpExclusions:Array<String> = ['assets/shared/music/freakyMenu.$SOUND_EXT'];
+	public static var dumpExclusions:Array<String> = ['assets/shared/images/alphabet.png', 'assets/shared/music/freakyMenu.$SOUND_EXT', 'assets/shared/sounds/scrollMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT', 'assets/shared/sounds/cancelMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT'];
 	// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory()
 	{
@@ -229,13 +229,12 @@ class Paths
 	static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
 		key = Language.getFileTranslation('images/$key') + '.png';
-		var bitmap:BitmapData = null;
 		if (currentTrackedAssets.exists(key))
 		{
 			localTrackedAssets.push(key);
 			return currentTrackedAssets.get(key);
 		}
-		return cacheBitmap(key, parentFolder, bitmap, allowGPU);
+		return cacheBitmap(key, parentFolder, allowGPU);
 	}
 
 	public static function cacheBitmap(key:String, ?parentFolder:String = null, ?bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic

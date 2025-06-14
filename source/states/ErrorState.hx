@@ -1,6 +1,6 @@
 package states;
 
-class ErrorState extends MusicBeatState
+class ErrorState extends FlxTransitionableState
 {
 	public var acceptCallback:Void->Void;
 	public var backCallback:Void->Void;
@@ -15,35 +15,42 @@ class ErrorState extends MusicBeatState
 		super();
 	}
 
-	public var errorSine:Float = 0;
+	public var alphaSine(default, set):Float = 0;
+	private inline function set_alphaSine(s)
+	{
+		if (alphaSine == s) return alphaSine;
+
+		errorText.alpha = 1 - Math.sin((Math.PI * s) / 180);
+		return alphaSine = s;
+	}
+
 	public var errorText:FlxText;
+
 	override function create()
 	{
-		var bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		super.create();
+
+		var bg = new FlxSprite(0, 0, Paths.image('menuBG'));
 		bg.color = FlxColor.GRAY;
-		bg.antialiasing = ClientPrefs.data.antialiasing;
-		add(bg);
 		bg.screenCenter();
+		bg.antialiasing = ClientPrefs.data.antialiasing;
+		bg.active = false;
+		add(bg);
 
 		errorText = new FlxText(0, 0, FlxG.width - 300, errorMsg, 32);
-		errorText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		errorText.scrollFactor.set();
-		errorText.borderSize = 2;
+		errorText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
+		errorText.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
 		errorText.screenCenter();
+		errorText.active = false;
 		add(errorText);
-		super.create();
 	}
 
 	override function update(elapsed:Float)
 	{
-		errorSine += 180 * elapsed;
-		errorText.alpha = 1 - Math.sin((Math.PI * errorSine) / 180);
+		if (Controls.instance.ACCEPT && acceptCallback != null) acceptCallback();
+		if (Controls.instance.BACK && backCallback != null) backCallback();
 
-		if(controls.ACCEPT && acceptCallback != null)
-			acceptCallback();
-		else if(controls.BACK && backCallback != null)
-			backCallback();
-
+		alphaSine += 180 * elapsed;
 		super.update(elapsed);
 	}
 }
