@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Botão de incio.png">
+	<!-- Created using the Spritesheet and XML generator -->
+	<!-- https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web -->
+	<SubTexture name="NaoSelecionado0000" x="1203" y="0" width="1153" height="570" frameX="-112" frameY="-390" frameWidth="1378" frameHeight="1378"/>
+	<SubTexture name="Selecionado0000" x="0" y="0" width="1203" height="589" frameX="-87" frameY="-390" frameWidth="1378" frameHeight="1378"/>
+	<SubTexture name="Selecionado0001" x="0" y="589" width="1201" height="589" frameX="-89" frameY="-390" frameWidth="1378" frameHeight="1378"/>
+</TextureAtlas>

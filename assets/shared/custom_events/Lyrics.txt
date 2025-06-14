@@ -1,0 +1,7 @@
+Value 1: 1 text,2 text
+Value 2: Color 1,Color 2
+
+Example: 
+
+Value 1: Hi,Poop
+Value 2: FF0000,00BBFF

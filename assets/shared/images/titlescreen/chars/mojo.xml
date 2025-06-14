@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="mojo.png">
+	<!-- Created with Adobe Animate version 19.2.1.408 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="mojo0000" x="2" y="2" width="864" height="1310" frameX="0" frameY="-3" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0001" x="2" y="2" width="864" height="1310" frameX="0" frameY="-3" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0002" x="868" y="2" width="858" height="1298" frameX="-14" frameY="-15" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0003" x="868" y="2" width="858" height="1298" frameX="-14" frameY="-15" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0004" x="2" y="1314" width="857" height="1302" frameX="-22" frameY="-11" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0005" x="2" y="1314" width="857" height="1302" frameX="-22" frameY="-11" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0006" x="861" y="1314" width="859" height="1309" frameX="-19" frameY="-4" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0007" x="861" y="1314" width="859" height="1309" frameX="-19" frameY="-4" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0008" x="2" y="2625" width="861" height="1312" frameX="-11" frameY="-1" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0009" x="2" y="2625" width="861" height="1312" frameX="-11" frameY="-1" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0010" x="865" y="2625" width="862" height="1313" frameX="-8" frameY="0" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0011" x="865" y="2625" width="862" height="1313" frameX="-8" frameY="0" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0012" x="865" y="2625" width="862" height="1313" frameX="-8" frameY="0" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0013" x="865" y="2625" width="862" height="1313" frameX="-8" frameY="0" frameWidth="879" frameHeight="1313"/>
+	<SubTexture name="mojo0014" x="865" y="2625" width="862" height="1313" frameX="-8" frameY="0" frameWidth="879" frameHeight="1313"/>
+</TextureAtlas>

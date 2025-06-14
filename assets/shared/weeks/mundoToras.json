@@ -1,0 +1,13 @@
+{
+	"songs": [["irmaos-de-frutas", "torajo", [112, 167, 111]]],
+	"hiddenUntilUnlocked": false,
+	"hideFreeplay": false,
+	"weekBackground": "stage",
+	"difficulties": "Normal",
+	"weekCharacters": ["bf", "bf", "gf"],
+	"storyName": "Your New Week",
+	"weekName": "Custom Week",
+	"hideStoryMode": false,
+	"weekBefore": "tutorial",
+	"startUnlocked": true
+}

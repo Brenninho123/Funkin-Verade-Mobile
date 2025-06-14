@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="torajo.png">
+<SubTexture name="torajo idle0000" x="1630" y="1217" width="524" height="1155" frameX="-390" frameY="-70" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0001" x="1630" y="1217" width="524" height="1155" frameX="-390" frameY="-70" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0002" x="3325" y="0" width="518" height="1141" frameX="-381" frameY="-84" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0003" x="3325" y="0" width="518" height="1141" frameX="-381" frameY="-84" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0004" x="2790" y="1149" width="534" height="1143" frameX="-385" frameY="-82" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0005" x="2790" y="1149" width="534" height="1143" frameX="-385" frameY="-82" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0006" x="2790" y="0" width="535" height="1149" frameX="-388" frameY="-76" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0007" x="2790" y="0" width="535" height="1149" frameX="-388" frameY="-76" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0008" x="2154" y="1217" width="533" height="1152" frameX="-390" frameY="-73" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0009" x="2154" y="1217" width="533" height="1152" frameX="-390" frameY="-73" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0010" x="1103" y="1217" width="527" height="1155" frameX="-390" frameY="-70" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0011" x="1103" y="1217" width="527" height="1155" frameX="-390" frameY="-70" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo idle0012" x="1103" y="1217" width="527" height="1155" frameX="-390" frameY="-70" frameWidth="1280" frameHeight="1280" />
+<SubTexture name="torajo left0000" x="1137" y="0" width="595" height="1183" frameX="-626" frameY="-211" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo left0001" x="1137" y="0" width="595" height="1183" frameX="-626" frameY="-211" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo left0002" x="2212" y="0" width="578" height="1173" frameX="-620" frameY="-221" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo left0003" x="2212" y="0" width="578" height="1173" frameX="-620" frameY="-221" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo up0000" x="0" y="0" width="562" height="1217" frameX="-521" frameY="-171" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo up0001" x="0" y="0" width="562" height="1217" frameX="-521" frameY="-171" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo up0002" x="562" y="0" width="575" height="1204" frameX="-514" frameY="-184" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo up0003" x="562" y="0" width="575" height="1204" frameX="-514" frameY="-184" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo right0000" x="1732" y="0" width="480" height="1174" frameX="-452" frameY="-258" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo right0001" x="1732" y="0" width="480" height="1174" frameX="-452" frameY="-258" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo right0002" x="0" y="1217" width="469" height="1170" frameX="-469" frameY="-262" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo right0003" x="0" y="1217" width="469" height="1170" frameX="-469" frameY="-262" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo down0000" x="0" y="2387" width="631" height="1138" frameX="-379" frameY="-402" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo down0001" x="0" y="2387" width="631" height="1138" frameX="-379" frameY="-402" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo down0002" x="469" y="1217" width="634" height="1156" frameX="-371" frameY="-384" frameWidth="1600" frameHeight="1600" />
+<SubTexture name="torajo down0003" x="469" y="1217" width="634" height="1156" frameX="-371" frameY="-384" frameWidth="1600" frameHeight="1600" />
+</TextureAtlas>

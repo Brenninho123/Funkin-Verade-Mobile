@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="mona.png">
+	<!-- Created with Adobe Animate version 19.2.1.408 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="mona0000" x="2" y="2" width="424" height="684" frameX="-1" frameY="-4" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0001" x="2" y="2" width="424" height="684" frameX="-1" frameY="-4" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0002" x="428" y="2" width="426" height="688" frameX="-13" frameY="0" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0003" x="428" y="2" width="426" height="688" frameX="-13" frameY="0" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0004" x="856" y="2" width="422" height="688" frameX="-16" frameY="0" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0005" x="856" y="2" width="422" height="688" frameX="-16" frameY="0" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0006" x="1280" y="2" width="421" height="687" frameX="-10" frameY="-1" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0007" x="1280" y="2" width="421" height="687" frameX="-10" frameY="-1" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0008" x="2" y="692" width="423" height="686" frameX="-4" frameY="-2" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0009" x="2" y="692" width="423" height="686" frameX="-4" frameY="-2" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0010" x="427" y="692" width="423" height="685" frameX="-1" frameY="-3" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0011" x="427" y="692" width="423" height="685" frameX="-1" frameY="-3" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0012" x="852" y="692" width="424" height="685" frameX="0" frameY="-3" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0013" x="852" y="692" width="424" height="685" frameX="0" frameY="-3" frameWidth="439" frameHeight="688"/>
+	<SubTexture name="mona0014" x="852" y="692" width="424" height="685" frameX="0" frameY="-3" frameWidth="439" frameHeight="688"/>
+</TextureAtlas>

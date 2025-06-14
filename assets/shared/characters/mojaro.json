@@ -1,0 +1,63 @@
+{
+	"animations": [
+		{
+			"offsets": [-504, -321],
+			"loop": false,
+			"fps": 24,
+			"anim": "idle",
+			"indices": [],
+			"name": "idle"
+		},
+		{
+			"offsets": [-568, -304],
+			"loop": false,
+			"fps": 24,
+			"anim": "tchola",
+			"indices": [],
+			"name": "tchola"
+		},
+		{
+			"loop": false,
+			"offsets": [-540, -281],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "right",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [-526, -356],
+			"anim": "singDOWN",
+			"fps": 24,
+			"name": "left",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [-512, -281],
+			"anim": "singLEFT",
+			"fps": 24,
+			"name": "up",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [-527, -340],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "down",
+			"indices": []
+		}
+	],
+	"vocals_file": "",
+	"no_antialiasing": false,
+	"image": "characters/mojaro",
+	"position": [-560, -390],
+	"healthicon": "morajo",
+	"flip_x": false,
+	"healthbar_colors": [250, 107, 104],
+	"camera_position": [550, 270],
+	"sing_duration": 4,
+	"scale": 0.8,
+	"_editor_isPlayer": false
+}

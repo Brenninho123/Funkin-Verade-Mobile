@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="blfi.png">
+	<!-- Created with Adobe Animate version 19.2.1.408 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="blfi0000" x="2" y="2" width="633" height="734" frameX="-12" frameY="-12" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0001" x="2" y="2" width="633" height="734" frameX="-12" frameY="-12" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0002" x="637" y="2" width="657" height="728" frameX="-22" frameY="-18" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0003" x="637" y="2" width="657" height="728" frameX="-22" frameY="-18" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0004" x="1296" y="2" width="658" height="719" frameX="-23" frameY="-27" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0005" x="1296" y="2" width="658" height="719" frameX="-23" frameY="-27" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0006" x="2" y="738" width="647" height="719" frameX="-18" frameY="-27" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0007" x="2" y="738" width="647" height="719" frameX="-18" frameY="-27" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0008" x="651" y="738" width="642" height="725" frameX="-12" frameY="-21" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0009" x="651" y="738" width="642" height="725" frameX="-12" frameY="-21" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0010" x="1295" y="738" width="640" height="728" frameX="-10" frameY="-18" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0011" x="1295" y="738" width="640" height="728" frameX="-10" frameY="-18" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0012" x="2" y="1468" width="637" height="731" frameX="-10" frameY="-15" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0013" x="2" y="1468" width="637" height="731" frameX="-10" frameY="-15" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0014" x="2" y="1468" width="637" height="731" frameX="-10" frameY="-15" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0015" x="641" y="1468" width="639" height="732" frameX="-9" frameY="-14" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0016" x="641" y="1468" width="639" height="732" frameX="-9" frameY="-14" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0017" x="1282" y="1468" width="613" height="746" frameX="-3" frameY="0" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0018" x="1282" y="1468" width="613" height="746" frameX="-3" frameY="0" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0019" x="2" y="2216" width="612" height="744" frameX="0" frameY="-2" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0020" x="2" y="2216" width="612" height="744" frameX="0" frameY="-2" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0021" x="616" y="2216" width="624" height="743" frameX="-6" frameY="-3" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0022" x="616" y="2216" width="624" height="743" frameX="-6" frameY="-3" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0023" x="1242" y="2216" width="629" height="739" frameX="-10" frameY="-7" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0024" x="1242" y="2216" width="629" height="739" frameX="-10" frameY="-7" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0025" x="2" y="2962" width="633" height="734" frameX="-10" frameY="-12" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0026" x="2" y="2962" width="633" height="734" frameX="-10" frameY="-12" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0027" x="2" y="1468" width="637" height="731" frameX="-10" frameY="-15" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0028" x="2" y="1468" width="637" height="731" frameX="-10" frameY="-15" frameWidth="681" frameHeight="746"/>
+	<SubTexture name="blfi0029" x="2" y="1468" width="637" height="731" frameX="-10" frameY="-15" frameWidth="681" frameHeight="746"/>
+</TextureAtlas>
