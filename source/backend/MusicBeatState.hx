@@ -36,6 +36,7 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 
 		if (!_psychCameraInitialized) initPsychCamera();
 		super.create();
+		if (transIn?.cameraMode != DEFAULT) return;
 
 		if (FlxTransitionableState.skipNextTransIn)
 		{
@@ -131,9 +132,13 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 	{
 		if (subState is flixel.addons.transition.Transition)
 		{
-			subState.camera.fade(transOut.color ?? FlxG.cameras.bgColor, 0.01, false, true);
-			trace(FlxG.cameras.list.indexOf(subState.camera));
-			trace(FlxG.cameras.list);
+			var _cam = switch (transOut?.cameraMode)
+			{
+				case TOP: FlxG.cameras.list[FlxG.cameras.list.length - 1];
+				case NEW: Reflect.field(subState, "_customCamera");
+				case DEFAULT: getDefaultCamera();
+			};
+			_cam.fade(transOut.color ?? FlxG.cameras.bgColor, 0.01, false, true);
 		}
 		super.finishTransOut();
 	}

@@ -27,6 +27,7 @@ class TitleState extends MusicBeatState
 	var titleText:FlxSprite;
 	var chars:Array<FlxSprite> = []; // I REFUSE to create another group, they're too much of a hassle!
 	final bopInterval:Int = 2;
+	final lerpSpeed:Float = 4.4;
 
 	var credCam:FlxCamera;
 	var credGroup:FlxGroup = new FlxGroup();
@@ -75,20 +76,26 @@ class TitleState extends MusicBeatState
 		bg.antialiasing = false;
 		add(bg);
 
-		var blueyBop:FlxSprite = new FlxSprite(365, 405);
+		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
+		bgGrid.scale.set(1.85, 1.85); bgGrid.updateHitbox();
+		bgGrid.velocity.set(-24, 24);
+		bgGrid.alpha = 0.13;
+		add(bgGrid);
+
+		var blueyBop:FlxSprite = new FlxSprite(385, 405);
 		blueyBop.frames = Paths.getSparrowAtlas('titlescreen/chars/blfi');
 		blueyBop.animation.addByIndices('danceLeft', 'blfi', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 		blueyBop.animation.addByIndices('danceRight', 'blfi', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		blueyBop.scale.set(0.5, 0.5); blueyBop.updateHitbox();
 		chars.push(blueyBop);
 
-		var mornaaBop:FlxSprite = new FlxSprite((blueyBop.x + blueyBop.width) - 65, blueyBop.y - 25);
+		var mornaaBop:FlxSprite = new FlxSprite((blueyBop.x + blueyBop.width) - 75, blueyBop.y - 25);
 		mornaaBop.frames = Paths.getSparrowAtlas('titlescreen/chars/mona');
 		mornaaBop.animation.addByPrefix('idle', 'mona', 24, false);
 		mornaaBop.scale.set(0.53, 0.53); mornaaBop.updateHitbox();
 		chars.push(mornaaBop);
 		
-		var tonhoBop:FlxSprite = new FlxSprite(0, 100);
+		var tonhoBop:FlxSprite = new FlxSprite(20, 100);
 		tonhoBop.frames = Paths.getSparrowAtlas('titlescreen/chars/tojo');
 		tonhoBop.animation.addByIndices('danceLeft', 'tojo', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 		tonhoBop.animation.addByIndices('danceRight', 'tojo', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
@@ -99,11 +106,11 @@ class TitleState extends MusicBeatState
 		morjoBop.frames = Paths.getSparrowAtlas('titlescreen/chars/mojo');
 		morjoBop.animation.addByPrefix('idle', 'mojo', 24, false);
 		morjoBop.scale.set(0.5, 0.5); morjoBop.updateHitbox();
-		morjoBop.x -= morjoBop.width + (40 - tonhoBop.x);
+		morjoBop.x -= morjoBop.width + (40 + tonhoBop.x);
 		chars.push(morjoBop);
 
 		logo = new FlxSprite(0, 0, Paths.image('titlescreen/logo'));
-		logo.scale.set(0.3, 0.3); logo.updateHitbox();
+		logo.scale.set(0.34, 0.34); logo.updateHitbox();
 		logo.screenCenter().y -= 155;
 		logo.active = false;
 		logo.antialiasing = ClientPrefs.data.antialiasing;
@@ -156,8 +163,8 @@ class TitleState extends MusicBeatState
 		if (skippedIntro)
 		{
 			logo.scale.set(
-				FlxMath.lerp(0.3, logo.scale.x, Math.exp(-elapsed * 2)),
-				FlxMath.lerp(0.3, logo.scale.y, Math.exp(-elapsed * 2))
+				FlxMath.lerp(0.34, logo.scale.x, Math.exp(-elapsed * lerpSpeed)),
+				FlxMath.lerp(0.34, logo.scale.y, Math.exp(-elapsed * lerpSpeed))
 			); logo.updateHitbox();
 			logo.y = (logo.screenCenter().y - 155);
 		}
@@ -187,6 +194,7 @@ class TitleState extends MusicBeatState
 			case true:
 				spr.frames = Paths.getAtlas(image);
 				spr.animation.addByPrefix('anim', image, 24, false);
+				spr.animation.play('anim');
 		}
 		spr.antialiasing = ClientPrefs.data.antialiasing;
 
@@ -345,11 +353,11 @@ class TitleState extends MusicBeatState
 	function __makeText(pos:Int, offset:Float, text:String)
 	{
 		var textSpr:Alphabet = new Alphabet(0, (60 * pos) + (200 + offset), text);
-		textSpr.screenCenter(X);
 		textGroup.add(textSpr);
 
-		final diff:Float = Math.max((textSpr.width - FlxG.width) / FlxG.width, 1);
-		final scaleToAppear:Float = 1 - diff;
+		final diff:Float = Math.max(textSpr.width / FlxG.width, 1);
+		final scaleToAppear:Float = diff - 1;
 		textSpr.scaleX = scaleToAppear > 0 ? scaleToAppear : 1;
+		textSpr.screenCenter(X);
 	}
 }

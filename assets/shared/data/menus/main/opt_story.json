@@ -4,6 +4,7 @@
 	"render": {
 		"imageName": "fnfToras",
 		"scale": 0.7,
-		"offset": [-660, -130]
+		"offset": [-490, -215],
+		"originAlign": "bottomL"
 	}
 }

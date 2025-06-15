@@ -4,6 +4,7 @@
 	"render": {
 		"imageName": "ohwow_theymadethis",
 		"scale": 1.56,
-		"offset": [30, 130]
+		"offset": [108, 52],
+		"originAlign": "topR"
 	}
 }

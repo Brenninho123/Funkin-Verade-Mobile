@@ -8,16 +8,24 @@ import flixel.util.typeLimit.NextState;
 import openfl.display.BitmapData;
 import flixel.util.FlxGradient;
 import flixel.addons.display.FlxGridOverlay;
-import flixel.addons.display.FlxBackdrop;
 import flixel.effects.FlxFlicker;
-import states.editors.MasterEditorMenu;
 import options.OptionsState;
+
+private enum abstract AlignType(String) from String 
+{
+	final CENTER:String = "centered";
+	final BOTTOM_LEFT:String = "bottomL";
+	final BOTTOM_RIGHT:String = "bottomR";
+	final TOP_LEFT:String = "topL";
+	final TOP_RIGHT:String = "topR";
+}
 
 private typedef RenderData = 
 {
 	imageName:String,
 	offset:Array<Float>,
-	scale:Float
+	scale:Float,
+	?originAlign:AlignType
 }
 
 private typedef MenuOpt = 
@@ -43,7 +51,10 @@ class MainMenuState extends MusicBeatState
 	var bgGrad:FlxSprite;
 
 	var renderSprs:Array<FlxSprite> = [];
-	var renderScales:Array<Float> = []; // Neat bopping effect
+	// Neat bopping effect
+	var renderScales:Array<Float> = [];
+	final bopInterval:Int = 2;
+	final lerpSpeed:Float = 6;
 
 	override function create()
 	{
@@ -83,7 +94,7 @@ class MainMenuState extends MusicBeatState
 		bgGrad.blend = MULTIPLY; // screen
 		add(bgGrad);
 
-		var bgGrid:FlxBackdrop = new FlxBackdrop(FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
+		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
 		bgGrid.scale.set(1.85, 1.85); bgGrid.updateHitbox();
 		bgGrid.velocity.set(-24, 24);
 		bgGrid.alpha = 0.13;
@@ -108,7 +119,7 @@ class MainMenuState extends MusicBeatState
 		add(overlay);
 		add(menuItems);
 
-		var psychVer:FlxText = new FlxText(0, 0, 0, 'Funkin\' Verade V${lime.app.Application.current.meta["version"]}\nPsych V1.0.4');
+		var psychVer:FlxText = new FlxText(0, 0, 0, 'Funkin\' Verade V${lime.app.Application.current.meta["version"]}\nPsych V$psychEngineVersion');
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		psychVer.setPosition(
 			(FlxG.width - psychVer.width) - psychVer.size, 
@@ -134,7 +145,7 @@ class MainMenuState extends MusicBeatState
 
 		var spr:FlxSprite = new FlxSprite(x, y);
 		spr.frames = Paths.getSparrowAtlas('mainmenu/options/$name', false);
-		spr.animation.addByPrefix('idle', 'NaoSelecionado', 24);
+		spr.animation.addByPrefix('idle', 'NaoSelecionado', 0, false);
 		spr.animation.addByPrefix('selected', 'Selecionado', 24);
 		spr.animation.play('idle');
 
@@ -149,12 +160,25 @@ class MainMenuState extends MusicBeatState
 
 	function createRender(data:RenderData)
 	{
+		data.originAlign ??= AlignType.CENTER;
+
 		var spr:FlxSprite = new FlxSprite(FlxG.width / 2.5, 0, Paths.image('mainmenu/renders/${data.imageName}'));
 		spr.scale.set(data.scale, data.scale); spr.updateHitbox();
 		spr.screenCenter(Y);
-		spr.offset.set(-data.offset[0], -data.offset[1]);
+		spr.active = false;
 		spr.visible = false;
 		spr.antialiasing = true;
+
+		final originOffsets:Array<Float> = switch (data.originAlign)
+		{
+			case CENTER: [0.5, 0.5];
+			case BOTTOM_LEFT: [0.2, 0.8];
+			case BOTTOM_RIGHT: [0.8, 0.8];
+			case TOP_LEFT: [0.2, 0.2];
+			case TOP_RIGHT: [0.8, 0.2];
+		};
+		spr.origin.set(spr.frameWidth * originOffsets[0], spr.frameHeight * originOffsets[1]);
+		spr.offset.set(-data.offset[0], -data.offset[1]);
 
 		renderSprs.push(spr);
 		renderScales.push(data.scale);
@@ -168,6 +192,7 @@ class MainMenuState extends MusicBeatState
 			super.update(elapsed);
 			return;
 		}
+		if (FlxG.sound.music?.playing) Conductor.songPosition = FlxG.sound.music.time;
 
 		final up_p:Bool = controls.UI_UP_P;
 		if (up_p || controls.UI_DOWN_P)
@@ -185,16 +210,26 @@ class MainMenuState extends MusicBeatState
 		if (controls.justPressed('debug_1'))
 		{
 			selectedSomethin = true;
-			FlxG.switchState(new MasterEditorMenu());
+
+			var editorsMenu:flixel.FlxSubState = new states.editors.MasterEditorMenu();
+			editorsMenu.closeCallback = () -> selectedSomethin = false;
+			openSubState(editorsMenu);
 		}
 		#end
 
 		super.update(elapsed);
-		/* if (!renderSprs[curSelected]?.visible) return;
+		// if (!renderSprs[curSelected]?.visible) return;
 
 		renderSprs[curSelected].scale.set(
+			FlxMath.lerp(renderScales[curSelected], renderSprs[curSelected].scale.x, Math.exp(-elapsed * lerpSpeed)),
+			FlxMath.lerp(renderScales[curSelected], renderSprs[curSelected].scale.y, Math.exp(-elapsed * lerpSpeed))
+		);
+	}
 
-		); */
+	override function beatHit()
+	{
+		if (curBeat % bopInterval != 0) return;
+		renderSprs[curSelected].scale.add(0.042, 0.042);
 	}
 
 	function changeItem(change:Int)

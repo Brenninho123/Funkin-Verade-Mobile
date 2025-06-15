@@ -113,7 +113,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 
-		healthBar = new Bar(30, FlxG.height - 75);
+		healthBar = new Bar(30, FlxG.height - 163);
 		healthBar.scrollFactor.set();
 		healthBar.cameras = [camHUD];
 
@@ -122,6 +122,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		healthIcon.cameras = [camHUD];
 
 		add(cameraFollowPointer);
+		fixHealthBar();
 		add(healthBar);
 		add(healthIcon);
 		add(animsTxt);
@@ -860,6 +861,11 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	var undoOffsets:Array<Float> = null;
 	override function update(elapsed:Float)
 	{
+		if (healthBar != null)
+		{
+			healthBar.rightBar.x = (healthBar.x - 20);
+			healthBar.leftBar.x = (healthBar.rightBar.x - healthBar.barWidth) - 5.5;
+		}
 		super.update(elapsed);
 
 		if(PsychUIInputText.focusOn != null)
@@ -941,10 +947,10 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		}
 		else holdingArrowsTime = 0;
 
-		if(FlxG.mouse.pressedRight && (FlxG.mouse.deltaScreenX != 0 || FlxG.mouse.deltaScreenY != 0))
+		if(FlxG.mouse.pressedRight && (FlxG.mouse.deltaViewX != 0 || FlxG.mouse.deltaViewY != 0))
 		{
-			character.offset.x -= FlxG.mouse.deltaScreenX;
-			character.offset.y -= FlxG.mouse.deltaScreenY;
+			character.offset.x -= FlxG.mouse.deltaViewX;
+			character.offset.y -= FlxG.mouse.deltaViewY;
 			changedOffset = true;
 		}
 
@@ -1050,36 +1056,27 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		}
 		else if(FlxG.keys.justPressed.ESCAPE)
 		{
-			if(!_goToPlayState)
+			if (!_goToPlayState)
 			{
 				if(!unsavedProgress)
 				{
-					FlxG.switchState(new states.editors.MasterEditorMenu());
+					FlxG.switchState(() -> new MainMenuState());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
 				else openSubState(new ExitConfirmationPrompt());
 			}
-			else
-			{
-				FlxG.mouse.visible = false;
-				FlxG.switchState(new PlayState());
-			}
-			return;
+			else FlxG.switchState(() -> new PlayState());
 		}
 	}
 
-	final assetFolder = 'week1';  //load from assets/week1/
 	inline function loadBG()
 	{
-		var lastLoaded = Paths.currentLevel;
-		Paths.currentLevel = assetFolder;
-
-		/////////////
-		// bg data //
-		/////////////
 		#if !BASE_GAME_FILES
 		camEditor.bgColor = 0xFF666666;
 		#else
+		final lastLoaded:String = Paths.currentLevel;
+		Paths.setCurrentLevel(backend.StageData.getStageFile("stage").directory);
+
 		var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
 		add(bg);
 
@@ -1087,13 +1084,11 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
 		stageFront.updateHitbox();
 		add(stageFront);
-		#end
 
+		Paths.setCurrentLevel(lastLoaded);
+		#end
 		dadPosition.set(100, 100);
 		bfPosition.set(770, 100);
-		/////////////
-
-		Paths.currentLevel = lastLoaded;
 	}
 
 	inline function updatePointerPos(?snap:Bool = true)
@@ -1121,12 +1116,39 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		}
 	}
 
+	inline function fixHealthBar()
+	{
+		final halfWidth:Float = (healthBar.bg.width / 2);
+		final offset:Float = 20;
+
+		healthBar.barHeight = 19;
+		healthBar.barOffset.y = 81;
+
+		healthBar.leftBar.flipX = true;
+		healthBar.rightBar.flipX = true;
+		healthBar.barWidth = Math.round(halfWidth - offset);
+
+		var blackBG:FlxSprite = new FlxSprite(22, healthBar.barOffset.y).makeGraphic(healthBar.barWidth * 2, healthBar.barHeight, FlxColor.BLACK);
+		blackBG.active = false;
+		healthBar.insert(0, blackBG);
+
+		healthBar.bg.clipRect = new flixel.math.FlxRect(halfWidth - offset, 0, halfWidth + offset, healthBar.bg.height);
+		healthBar.bg.clipRect = healthBar.bg.clipRect;
+		blackBG.clipRect = healthBar.bg.clipRect;
+		healthBar.regenerateClips();
+
+		healthBar.x -= healthBar.bg.clipRect.width + offset;
+		healthIcon.setPosition((healthBar.x + healthBar.barWidth), healthBar.y + 21);
+	}
+
 	inline function updateHealthBar()
 	{
 		healthColorStepperR.value = character.healthColorArray[0];
 		healthColorStepperG.value = character.healthColorArray[1];
 		healthColorStepperB.value = character.healthColorArray[2];
-		healthBar.leftBar.color = healthBar.rightBar.color = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
+		final newColor:FlxColor = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
+
+		healthBar.setColors(newColor, newColor);
 		healthIcon.changeIcon(character.healthIcon, false);
 		updatePresence();
 	}

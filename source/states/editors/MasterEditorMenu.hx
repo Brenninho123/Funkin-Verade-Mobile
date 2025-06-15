@@ -2,168 +2,150 @@ package states.editors;
 
 import backend.WeekData;
 
-import objects.Character;
-
-import states.MainMenuState;
-import states.FreeplayState;
-
-class MasterEditorMenu extends MusicBeatState
+class MasterEditorMenu extends flixel.FlxSubState
 {
-	var options:Array<String> = [
-		'Chart Editor',
+	final options:Array<String> = 
+	[
+		'Charter',
 		'Character Editor',
 		'Stage Editor',
 		'Week Editor',
-		'Menu Character Editor',
+		'Week Character Editor',
 		'Dialogue Editor',
 		'Dialogue Portrait Editor',
 		'Note Splash Editor'
 	];
-	private var grpTexts:FlxTypedGroup<Alphabet>;
-	private var directories:Array<String> = [null];
+	var directories:Array<String> = [null];
+	final mouseLastVis:Bool;
 
-	private var curSelected = 0;
-	private var curDirectory = 0;
-	private var directoryTxt:FlxText;
+	static var curSelected = 0;
+	static var curDirectory = 0;
+	var blockInput:Bool = false;
+
+	var grpTexts:FlxTypedGroup<Alphabet>;
+	var directoryTxt:FlxText;
+
+	public function new()
+	{
+		mouseLastVis = FlxG.mouse.visible;
+		super(0x90000000);
+	}
 
 	override function create()
 	{
-		FlxG.camera.bgColor = FlxColor.BLACK;
-		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Editors Main Menu", null);
-		#end
-
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
-		bg.scrollFactor.set();
-		bg.color = 0xFF353535;
-		add(bg);
+		FlxG.mouse.visible = false;
+		super.create();
 
 		grpTexts = new FlxTypedGroup<Alphabet>();
 		add(grpTexts);
 
-		for (i in 0...options.length)
+		for (p=>o in options)
 		{
-			var leText:Alphabet = new Alphabet(90, 320, options[i], true);
+			var leText:Alphabet = new Alphabet(0, 320, o);
 			leText.isMenuItem = true;
-			leText.targetY = i;
+			leText.targetY = p;
+			leText.changeX = false;
+			leText.screenCenter(X);
+			leText.alpha = 0.6;
 			grpTexts.add(leText);
-			leText.snapToPosition();
 		}
+		changeSelection(0);
 		
 		#if MODS_ALLOWED
-		var textBG:FlxSprite = new FlxSprite(0, FlxG.height - 42).makeGraphic(FlxG.width, 42, 0xFF000000);
+		for (folder in Mods.getModDirectories()) directories.push(folder);
+		final found:Int = directories.indexOf(Mods.currentModDirectory);
+		if (found != -1) curDirectory = found;
+
+		directoryTxt = new FlxText(0, FlxG.height, FlxG.width);
+		directoryTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
+		changeDirectory(0);
+		directoryTxt.y -= directoryTxt.height - (directoryTxt.size + 10);
+		add(directoryTxt);
+
+		var textBG:FlxSprite = new FlxSprite(0, FlxG.height).makeGraphic(FlxG.width, (directoryTxt.size + 10), 0xFFFFFFFF);
+		textBG.y -= textBG.height;
 		textBG.alpha = 0.6;
 		add(textBG);
-
-		directoryTxt = new FlxText(textBG.x, textBG.y + 4, FlxG.width, '', 32);
-		directoryTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
-		directoryTxt.scrollFactor.set();
-		add(directoryTxt);
-		
-		for (folder in Mods.getModDirectories())
-		{
-			directories.push(folder);
-		}
-
-		var found:Int = directories.indexOf(Mods.currentModDirectory);
-		if(found > -1) curDirectory = found;
-		changeDirectory();
 		#end
-		changeSelection();
-
-		FlxG.mouse.visible = false;
-		super.create();
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_UP_P)
+		if (blockInput)
 		{
-			changeSelection(-1);
+			super.update(elapsed);
+			return;
 		}
-		if (controls.UI_DOWN_P)
-		{
-			changeSelection(1);
-		}
+
+		if (Controls.instance.UI_UP_P) changeSelection(-1);
+		if (Controls.instance.UI_DOWN_P) changeSelection(1);
 		#if MODS_ALLOWED
-		if(controls.UI_LEFT_P)
-		{
-			changeDirectory(-1);
-		}
-		if(controls.UI_RIGHT_P)
-		{
-			changeDirectory(1);
-		}
+		if (Controls.instance.UI_LEFT_P) changeDirectory(-1);
+		if (Controls.instance.UI_RIGHT_P) changeDirectory(1);
 		#end
 
-		if (controls.BACK)
+		if (Controls.instance.BACK)
 		{
-			FlxG.switchState(new MainMenuState());
+			FlxG.mouse.visible = mouseLastVis;
+			close();
 		}
-
-		if (controls.ACCEPT)
-		{
-			FlxG.mouse.visible = true;
-			switch(options[curSelected]) {
-				case 'Chart Editor'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ChartingState(), false);
-				case 'Character Editor':
-					LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
-				case 'Stage Editor':
-					LoadingState.loadAndSwitchState(new StageEditorState());
-				case 'Week Editor':
-					FlxG.switchState(new WeekEditorState());
-				case 'Menu Character Editor':
-					FlxG.switchState(new MenuCharacterEditorState());
-				case 'Dialogue Editor':
-					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
-				case 'Dialogue Portrait Editor':
-					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
-				case 'Note Splash Editor':
-					FlxG.switchState(new NoteSplashEditorState());
-			}
-			FlxG.sound.music.volume = 0;
-			FreeplayState.destroyFreeplayVocals();
-		}
+		if (Controls.instance.ACCEPT) selectItem(options[curSelected].toLowerCase());
 		
-		for (num => item in grpTexts.members)
-		{
-			item.targetY = num - curSelected;
-			item.alpha = 0.6;
-			if (item.targetY == 0)
-				item.alpha = 1;
-		}
 		super.update(elapsed);
 	}
 
-	function changeSelection(change:Int = 0)
+	function changeSelection(change:Int)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-		curSelected = FlxMath.wrap(curSelected + change, 0, options.length - 1);
+		grpTexts.members[curSelected].alpha = 0.6;
+
+		if (change != 0) curSelected = FlxMath.wrap(curSelected + change, 0, options.length - 1);
+
+		for (i=>t in grpTexts.members) t.targetY = i - curSelected;
+		grpTexts.members[curSelected].alpha = 1;
 	}
 
 	#if MODS_ALLOWED
-	function changeDirectory(change:Int = 0)
+	function changeDirectory(change:Int)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-
-		curDirectory += change;
-
-		if(curDirectory < 0)
-			curDirectory = directories.length - 1;
-		if(curDirectory >= directories.length)
-			curDirectory = 0;
-	
-		WeekData.setDirectoryFromWeek();
-		if(directories[curDirectory] == null || directories[curDirectory].length < 1)
-			directoryTxt.text = '< No Mod Directory Loaded >';
-		else
+		if (change != 0)
 		{
+			curDirectory = FlxMath.wrap(curDirectory + change, 0, directories.length - 1);
+			WeekData.setDirectoryFromWeek();
 			Mods.currentModDirectory = directories[curDirectory];
-			directoryTxt.text = '< Loaded Mod Directory: ' + Mods.currentModDirectory + ' >';
 		}
+
+		if (directories[curDirectory] == null) directoryTxt.text = '< No Mod Directory >';
+		else directoryTxt.text = '< Mod Directory to Edit: ${directories[curDirectory]} >';
 		directoryTxt.text = directoryTxt.text.toUpperCase();
 	}
 	#end
+
+	function selectItem(choice:String)
+	{
+		var state:flixel.util.typeLimit.NextState = switch (choice)
+		{
+			case 'charter': () -> new ChartingState();
+			case 'character editor': () -> new CharacterEditorState(null, false);
+			case 'stage editor': () -> new StageEditorState();
+			case 'week editor': () -> new WeekEditorState();
+			case 'week character editor': () -> new MenuCharacterEditorState();
+			case 'dialogue editor': () -> new DialogueEditorState();
+			case 'dialogue portrait editor': () -> new DialogueCharacterEditorState();
+			case 'note splash editor': () -> new NoteSplashEditorState();
+			default: null;
+		};
+
+		if (state == null)
+		{
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.log.warn('"$choice" doesn\'t do anything');
+
+			return;
+		}
+		blockInput = true;
+
+		FreeplayState.destroyFreeplayVocals();
+		FlxG.mouse.visible = true;
+		FlxG.switchState(state);
+	}
 }
