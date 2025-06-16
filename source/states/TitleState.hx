@@ -298,7 +298,7 @@ class TitleState extends MusicBeatState
 				var ng:FlxSprite = createCoolSprite(0, 0, 'newgrounds_logo');
 				ng.scale.set(0.35, 0.35); ng.updateHitbox();
 				ng.screenCenter().y += 75;
-			case 9: createCoolText(['Não tamo na'], -20);
+			case 9: createCoolText(['FNF Original feito pela galera lá da'], -20);
 			case 10: credGroup.visible = true;
 
 			case 11:
@@ -352,12 +352,17 @@ class TitleState extends MusicBeatState
 	@:noCompletion
 	function __makeText(pos:Int, offset:Float, text:String)
 	{
-		var textSpr:Alphabet = new Alphabet(0, (60 * pos) + (200 + offset), text);
+		var textSpr:FlxText = new FlxText(0, (60 * pos) + (200 + offset), 0, text, 76);
+		textSpr.font = Paths.font("fraiche.ttf");
+		textSpr.textField.multiline = false;
+		textSpr.textField.wordWrap = false;
+		textSpr.active = false;
+		textSpr.antialiasing = ClientPrefs.data.antialiasing;
 		textGroup.add(textSpr);
 
 		final diff:Float = Math.max(textSpr.width / FlxG.width, 1);
 		final scaleToAppear:Float = diff - 1;
-		textSpr.scaleX = scaleToAppear > 0 ? scaleToAppear : 1;
+		textSpr.scale.x = scaleToAppear > 0 ? scaleToAppear : 1;
 		textSpr.screenCenter(X);
 	}
 }
