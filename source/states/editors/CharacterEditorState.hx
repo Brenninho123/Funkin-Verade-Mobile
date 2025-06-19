@@ -1137,7 +1137,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		blackBG.clipRect = healthBar.bg.clipRect;
 		healthBar.regenerateClips();
 
-		healthBar.x -= healthBar.bg.clipRect.width + offset;
+		healthBar.x -= healthBar.bg.clipRect.width + 3;
 		healthIcon.setPosition((healthBar.x + healthBar.barWidth), healthBar.y + 21);
 	}
 
