@@ -298,7 +298,7 @@ class TitleState extends MusicBeatState
 				var ng:FlxSprite = createCoolSprite(0, 0, 'newgrounds_logo');
 				ng.scale.set(0.35, 0.35); ng.updateHitbox();
 				ng.screenCenter().y += 75;
-			case 9: createCoolText(['FNF Original feito pela galera lá da'], -20);
+			case 9: createCoolText(['FNF Original feito pela galera na'], -20);
 			case 10: credGroup.visible = true;
 
 			case 11:
