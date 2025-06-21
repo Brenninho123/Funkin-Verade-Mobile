@@ -66,6 +66,73 @@
 				"showReuseMessage": false
 			},
 			"detail": "Compiles a new build without testing it."
+		},
+
+		{
+			"type": "shell",
+			"command": "lime test cpp -debug -DDEMO",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "test",
+			"label": "Test DEMO Debug Build",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			}
+		},
+		{
+			"type": "shell",
+			"command": "lime test cpp -DDEMO",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "test",
+			"label": "Test DEMO Release Build",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			}
+		},
+		{
+			"type": "shell",
+			"command": "lime build cpp -debug -DDEMO",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "Build DEMO Debug",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			},
+			"detail": "Compiles a new DEMO debug build without testing it."
+		},
+		{
+			"type": "shell",
+			"command": "lime build cpp -DDEMO",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "Build DEMO Release",
+			"presentation": {
+				"echo": false,
+				"showReuseMessage": false
+			},
+			"detail": "Compiles a new DEMO build without testing it."
 		}
 	]
 }

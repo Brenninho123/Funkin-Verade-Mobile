@@ -2433,19 +2433,20 @@ class PlayState extends MusicBeatState
 		var ret:Dynamic = callOnScripts('onEndSong', null, true);
 		if(ret != LuaUtils.Function_Stop && !transitioning)
 		{
-			#if !switch
 			var percent:Float = ratingPercent;
 			if(Math.isNaN(percent)) percent = 0;
 			Highscore.saveScore(Song.loadedSongName, songScore, storyDifficulty, percent);
-			#end
 			playbackRate = 1;
 
+			#if EDITORS_ALLOWED
 			if (chartingMode)
 			{
 				openChartEditor();
 				return false;
 			}
+			#end
 
+			#if !DEMO
 			if (isStoryMode)
 			{
 				campaignScore += songScore;
@@ -2501,6 +2502,13 @@ class PlayState extends MusicBeatState
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				changedDifficulty = false;
 			}
+			#else
+			#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
+			canResync = false;
+
+			FlxG.switchState(() -> new MainMenuState());
+			changedDifficulty = false;
+			#end
 			transitioning = true;
 		}
 		return true;

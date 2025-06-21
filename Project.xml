@@ -15,6 +15,7 @@
 	<!-- ______________________ PSYCH ENGINE CUSTOMIZATION | DEFINES ______________________ -->
 
 	<define name="release" unless="debug" /> <!-- WDYM -RELEASE IS MANUAL?!!?! -->
+	<define name="EDITORS_ALLOWED"	if="desktop debug" />
 	<define name="HSCRIPT_ALLOWED" 	if="desktop" />
 	<define name="LUA_ALLOWED" 			if="desktop" />
 	<!-- <define name="ACHIEVEMENTS_ALLOWED" /> -->

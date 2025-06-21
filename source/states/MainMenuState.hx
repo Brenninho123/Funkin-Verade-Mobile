@@ -204,9 +204,11 @@ class MainMenuState extends MusicBeatState
 		if (controls.BACK) selectItem("exit");
 		if (controls.ACCEPT) selectItem(optionShit[curSelected]);
 
-		#if (debug && desktop)
+		#if debug
 		if (FlxG.keys.justPressed.F5) FlxG.resetState();
+		#end
 
+		#if EDITORS_ALLOWED
 		if (controls.justPressed('debug_1'))
 		{
 			selectedSomethin = true;
@@ -253,7 +255,7 @@ class MainMenuState extends MusicBeatState
 
 		switch (choice)
 		{
-			#if release
+			#if DEMO
 			case "story":
 				WeekData.reloadWeekFiles(true); // weeksList doesn't get set until we do this
 				PlayState.storyPlaylist = ["irmaos-de-frutas"];
