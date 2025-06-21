@@ -1,6 +1,6 @@
 function onCreatePost()
 {
-	if (PlayState.stageUI != "normal" || PlayState.stageUI != "pixel") return;
+	if (PlayState.stageUI != "normal" && PlayState.stageUI != "pixel") return;
 
 	game.healthBar.y -= 88;
 	game.healthBar.barHeight = 19;
@@ -30,7 +30,7 @@ function onCreatePost()
 
 function onUpdatePost()
 {
-	if (PlayState.stageUI != "normal" || PlayState.stageUI != "pixel") return;
+	if (PlayState.stageUI != "normal" && PlayState.stageUI != "pixel") return;
 
 	game.healthBar.rightBar.x = (game.healthBar.x - 20);
 	game.healthBar.leftBar.x = (game.healthBar.rightBar.x - game.healthBar.barWidth) - 5.5;
