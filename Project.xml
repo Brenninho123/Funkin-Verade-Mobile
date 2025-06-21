@@ -27,7 +27,7 @@
 	<define name="SHOW_LOADING_SCREEN" />
 	<!-- <define name="PSYCH_WATERMARKS"/> --> <!-- DELETE THIS TO REMOVE THE PSYCH LOGO FROM LOADING SCREEN -->
 
-	<define name="VIDEOS_ALLOWED" if="windows || linux || android || mac" unless="x86"/>
+	<define name="VIDEOS_ALLOWED" if="windows || linux || android || mac" unless="32"/>
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 
@@ -44,7 +44,7 @@
 
 	<set name="BUILD_DIR" value="export/debug" 		if="debug" />
 	<set name="BUILD_DIR" value="export/release" 	if="release" />
-	<set name="BUILD_DIR" value="export/32bit" 		if="x86" />
+	<set name="BUILD_DIR" value="export/32bit" 		if="32" />
 	<classpath name="source" />
 
 	<!-- __________________________ Game Assets & Etc. __________________________ -->
@@ -129,7 +129,7 @@
 	<haxedef name="HXCPP_STACK_TRACE" 	if="CRASH_HANDLER" />
 
 	<!--Compiling 32bit should be better-->
-	<define name="HXCPP_M32" if="x86"/>
+	<define name="HXCPP_M32" if="32"/>
 	
 	<!--Disable deprecated warnings-->
 	<!-- <haxedef name='no-deprecation-warnings' /> -->
