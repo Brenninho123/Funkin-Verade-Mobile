@@ -4,7 +4,7 @@
 	"stageUI": "",
 
 	"boyfriend": [1300, 610],
-	"girlfriend": [720, 606],
+	"girlfriend": [720, 600],
 	"opponent": [307, 613],
 	"hide_girlfriend": false
 }
