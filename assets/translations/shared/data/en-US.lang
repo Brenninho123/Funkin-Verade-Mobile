@@ -1,0 +1,28 @@
+English (US)
+
+score_text: "Score: {1} | Misses: {2} | Rating: {3}"
+score_text_instakill: "Score: {1} | Rating: {2}"
+noob_accuracy: "Wake Up"
+shit_accuracy: "Horrible"
+bad_accuracy: "Get Better"
+bruh_accuracy: "Brotha"
+good_accuracy: "Neat"
+great_accuracy: "Good"
+sick_accuracy: "Sick"
+perfect_accuracy: "Osu Player"
+
+dialogue_skip: "Press BACK to Skip"
+
+pause_resume: "Resume"
+pause_restart: "Restart"
+pause_options: "Options"
+pause_back: "Exit"
+images/pausescreen/info: "images/en/pausescreen_info"
+
+menus/introText: "en_menus/introText"
+
+musicplayer_tip: "Press SPACE to Pause/Unpause | ESC to Exit | RESET to Reset the Song"
+musicplayer_playing: "PLAYING: {1}"
+musicplayer_paused: "PLAYING: {1} (PAUSED)"
+
+controls_rebinding2: "Hold ESC to Cancel\nHold BACKSPACE to Delete"

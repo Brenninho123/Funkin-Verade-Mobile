@@ -47,7 +47,7 @@ class ControlsSubState extends MusicBeatSubstate
 	];
 	var curOptions:Array<Int>;
 	var curOptionsValid:Array<Int>;
-	static var defaultKey:String = 'Reset to Default Keys';
+	static var defaultKey:String = 'Resetar Keybinds para o Default';
 
 	var bg:FlxSprite;
 	var grpDisplay:FlxTypedGroup<Alphabet>;

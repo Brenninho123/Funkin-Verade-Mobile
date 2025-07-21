@@ -141,7 +141,7 @@ class TitleState extends MusicBeatState
 	
 	inline function getIntroTextShit():Array<Array<String>>
 	{
-		return [for (t in CoolUtil.coolTextFile('data/menus/introText.txt')) t.split("--")];
+		return [for (t in CoolUtil.coolTextFile('data/${Language.getFileTranslation('menus/introText')}.txt')) t.split("--")];
 	}
 
 	override function update(elapsed:Float)

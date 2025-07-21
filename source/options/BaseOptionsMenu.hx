@@ -171,7 +171,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						bindingText.alignment = CENTERED;
 						add(bindingText);
 						
-						bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'), true);
+						bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Segure ESC para Cancelar\nSegure BACKSPACE para Apagar'), true);
 						bindingText2.alignment = CENTERED;
 						add(bindingText2);
 	

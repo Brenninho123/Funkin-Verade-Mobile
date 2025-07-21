@@ -75,7 +75,7 @@ import states.TitleState;
 	public var guitarHeroSustains:Bool = true;
 	public var discordRPC:Bool = true;
 	public var loadingScreen:Bool = true;
-	public var language:String = 'en-US';
+	public var language:String = 'pt-BR';
 }
 
 class ClientPrefs {
