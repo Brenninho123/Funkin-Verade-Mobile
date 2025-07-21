@@ -42,25 +42,12 @@ class TitleState extends MusicBeatState
 		initSprites();
 		if (skippedIntro)
 		{
-			reloadMusic();
+			CoolUtil.playMenuSong();
 			return;
 		}
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 		initIntro();
-	}
-
-	inline function reloadMusic(fade:Bool = false)
-	{
-		if (FlxG.sound.music?.playing)
-		{
-			Conductor.bpm = 102;
-			return;
-		}
-
-		FlxG.sound.playMusic(Paths.music('freakyMenu'), fade ? 0 : 1);
-		if (fade) FlxG.sound.music.fadeIn(4, 0, 0.7);
-		Conductor.bpm = 102;
 	}
 
 	function initSprites()
@@ -82,10 +69,14 @@ class TitleState extends MusicBeatState
 		bgGrid.alpha = 0.13;
 		add(bgGrid);
 
+		// Since they're the same frame length, we can reuse the same array and save some mem and some typing	
+		final leftBopAnim:Array<Int> = CoolUtil.numberArray(14);
+		final rightBopAnim:Array<Int> = CoolUtil.numberArray(30, 15);
+
 		var blueyBop:FlxSprite = new FlxSprite(385, 405);
 		blueyBop.frames = Paths.getSparrowAtlas('titlescreen/chars/blfi');
-		blueyBop.animation.addByIndices('danceLeft', 'blfi', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		blueyBop.animation.addByIndices('danceRight', 'blfi', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+		blueyBop.animation.addByIndices('danceLeft', 'blfi', leftBopAnim, "", 24, false);
+		blueyBop.animation.addByIndices('danceRight', 'blfi', rightBopAnim, "", 24, false);
 		blueyBop.scale.set(0.5, 0.5); blueyBop.updateHitbox();
 		chars.push(blueyBop);
 
@@ -97,8 +88,8 @@ class TitleState extends MusicBeatState
 		
 		var tonhoBop:FlxSprite = new FlxSprite(20, 100);
 		tonhoBop.frames = Paths.getSparrowAtlas('titlescreen/chars/tojo');
-		tonhoBop.animation.addByIndices('danceLeft', 'tojo', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		tonhoBop.animation.addByIndices('danceRight', 'tojo', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+		tonhoBop.animation.addByIndices('danceLeft', 'tojo', leftBopAnim, "", 24, false);
+		tonhoBop.animation.addByIndices('danceRight', 'tojo', rightBopAnim, "", 24, false);
 		tonhoBop.scale.set(0.5, 0.5); tonhoBop.updateHitbox();
 		chars.push(tonhoBop);
 
@@ -141,19 +132,16 @@ class TitleState extends MusicBeatState
 		textGroup.camera = credCam;
 		add(textGroup);
 
-		var we:FlxSprite = createCoolSprite(0, 132, 'nois');
+		var we:FlxSprite = createCoolSprite(0, 132, 'avalanche');
 		we.scale.set(0.4, 0.4); we.updateHitbox();
 		we.screenCenter(X);
 
-		reloadMusic(true);
+		CoolUtil.playMenuSongForce(4);
 	}
 	
-	function getIntroTextShit():Array<Array<String>>
+	inline function getIntroTextShit():Array<Array<String>>
 	{
-		var list:Array<String> = CoolUtil.coolTextFile(Paths.txt('menus/introText'));
-
-		var lines:Array<Array<String>> = [for (t in list) t.split("--")];
-		return lines;
+		return [for (t in CoolUtil.coolTextFile('data/menus/introText.txt')) t.split("--")];
 	}
 
 	override function update(elapsed:Float)
@@ -185,7 +173,7 @@ class TitleState extends MusicBeatState
 
 	function createCoolSprite(x:Float, y:Float, image:String, ?sheetUser:Bool = false):FlxSprite
 	{
-		if (!image.startsWith("titlescreen/")) image = 'titlescreen/$image';
+		// if (!image.startsWith("titlescreen/")) image = 'titlescreen/$image';
 
 		var spr:FlxSprite = new FlxSprite(x, y);
 		switch (sheetUser)
@@ -284,7 +272,7 @@ class TitleState extends MusicBeatState
 			case 4:
 				deleteCoolText();
 
-				var tonho:FlxSprite = createCoolSprite(0, 0, 'Torajinho');
+				var tonho:FlxSprite = createCoolSprite(0, 0, 'titlescreen/tonho');
 				tonho.scale.set(0.35, 0.35); tonho.updateHitbox();
 				tonho.screenCenter();
 			case 5: createCoolText(['O Torajo'], -45);
@@ -295,7 +283,7 @@ class TitleState extends MusicBeatState
 			case 8:
 				deleteCoolText();
 
-				var ng:FlxSprite = createCoolSprite(0, 0, 'newgrounds_logo');
+				var ng:FlxSprite = createCoolSprite(0, 0, 'titlescreen/newgrounds_logo');
 				ng.scale.set(0.35, 0.35); ng.updateHitbox();
 				ng.screenCenter().y += 75;
 			case 9: createCoolText(['FNF Original feito pela galera na'], -20);
@@ -320,7 +308,7 @@ class TitleState extends MusicBeatState
 			case 12:
 				if (!secondWacky) deleteCoolText(true);
 
-				var theWacky:String = secondWacky ? curWacky[2] ?? "...isso aí, eu acho.." : curWacky[1];
+				var theWacky:String = secondWacky ? (curWacky[2] ?? "...isso aí, eu acho..") : curWacky[1];
 				addMoreText(theWacky);
 				credGroup.visible = secondWacky;
 			case 13:

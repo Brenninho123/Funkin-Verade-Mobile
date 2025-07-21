@@ -399,11 +399,7 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.ESCAPE)
 			{
-				if(!unsavedProgress)
-				{
-					FlxG.switchState(() -> new MainMenuState());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-				}
+				if (!unsavedProgress) FlxG.switchState(() -> new MainMenuState());
 				else openSubState(new ExitConfirmationPrompt(function() unsavedProgress = false));
 			}
 		}
@@ -739,7 +735,7 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 			super.update(elapsed);
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.switchState(new WeekEditorFreeplayState(WeekEditorState.loadedWeek));
+			FlxG.switchState(() -> new WeekEditorFreeplayState(WeekEditorState.loadedWeek));
 			WeekEditorState.loadedWeek = null;
 			return;
 		}
@@ -749,12 +745,9 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 		else
 		{
 			ClientPrefs.toggleVolumeKeys(true);
-			if(FlxG.keys.justPressed.ESCAPE) {
-				if(!WeekEditorState.unsavedProgress)
-				{
-					FlxG.switchState(() -> new MainMenuState());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-				}
+			if(FlxG.keys.justPressed.ESCAPE)
+			{
+				if (!WeekEditorState.unsavedProgress) FlxG.switchState(() -> new MainMenuState());
 				else openSubState(new ExitConfirmationPrompt());
 			}
 

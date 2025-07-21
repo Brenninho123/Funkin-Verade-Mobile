@@ -534,8 +534,9 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 					lastOffsets = anim.offsets;
 					if(character.hasAnimation(animationInputText.text))
 					{
-						if(!character.isAnimateAtlas) character.animation.remove(animationInputText.text);
-						else @:privateAccess character.atlas.anim.animsMap.remove(animationInputText.text);
+						#if flxanimate
+						@:privateAccess if (character.isAnimateAtlas) character.atlas.anim.animsMap.remove(animationInputText.text);
+						else #end character.animation.remove(animationInputText.text);
 					}
 					character.animationsArray.remove(anim);
 				}
@@ -562,8 +563,9 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 					if(anim.anim == character.getAnimationName()) resetAnim = true;
 					if(character.hasAnimation(anim.anim))
 					{
-						if(!character.isAnimateAtlas) character.animation.remove(anim.anim);
-						else @:privateAccess character.atlas.anim.animsMap.remove(anim.anim);
+						#if flxanimate
+						@:privateAccess if (character.isAnimateAtlas) character.atlas.anim.animsMap.remove(anim.anim);
+						else #end character.animation.remove(anim.anim);
 						character.animOffsets.remove(anim.anim);
 						character.animationsArray.remove(anim);
 					}
@@ -639,11 +641,11 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 35, 75, healthIcon.char, 8);
 
-		vocalsInputText = new PsychUIInputText(15, healthIconInputText.y + 35, 75, character.vocalsFile != null ? character.vocalsFile : '', 8);
+		vocalsInputText = new PsychUIInputText(15, healthIconInputText.y + 35, 75, character.vocalsFile ?? "", 8);
 
 		singDurationStepper = new PsychUINumericStepper(15, vocalsInputText.y + 45, 0.1, 4, 0, 999, 1);
 
-		scaleStepper = new PsychUINumericStepper(15, singDurationStepper.y + 40, 0.1, 1, 0.05, 10, 2);
+		scaleStepper = new PsychUINumericStepper(15, singDurationStepper.y + 40, 0.1, character.jsonScale ?? 1, 0.05, 10, 2);
 
 		flipXCheckBox = new PsychUICheckBox(singDurationStepper.x + 80, singDurationStepper.y, "Flip X", 50);
 		flipXCheckBox.checked = character.flipX;
@@ -796,10 +798,11 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		var anims:Array<AnimArray> = character.animationsArray.copy();
 
 		character.atlas = FlxDestroyUtil.destroy(character.atlas);
-		character.isAnimateAtlas = false;
 		character.color = FlxColor.WHITE;
 		character.alpha = 1;
 
+		#if flxanimate
+		character.isAnimateAtlas = false;
 		if(Paths.fileExists('images/' + character.imageFile + '/Animation.json', TEXT))
 		{
 			character.atlas = new FlxAnimate();
@@ -815,6 +818,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			character.isAnimateAtlas = true;
 		}
 		else
+		#end
 		{
 			character.frames = Paths.getMultiAtlas(character.imageFile.split(','));
 		}
@@ -1009,15 +1013,20 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 			var frames:Int = -1;
 			var length:Int = -1;
-			if(!character.isAnimateAtlas && character.animation.curAnim != null)
+			if (!character.isAnimationNull())
 			{
-				frames = character.animation.curAnim.curFrame;
-				length = character.animation.curAnim.numFrames;
-			}
-			else if(character.isAnimateAtlas && character.atlas.anim != null)
+				#if flxanimate
+				if (character.isAnimateAtlas)
 			{
 				frames = character.atlas.anim.curFrame;
 				length = character.atlas.anim.length;
+				}
+				else
+				#end
+				{
+					frames = character.animation.curAnim.curFrame;
+					length = character.animation.curAnim.numFrames;
+				}
 			}
 
 			if(length >= 0)
@@ -1031,8 +1040,9 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 					if(holdingFrameTime <= 0.5 || holdingFrameElapsed > 0.1)
 					{
 						frames = FlxMath.wrap(frames + Std.int(isLeft ? -shiftMult : shiftMult), 0, length-1);
-						if(!character.isAnimateAtlas) character.animation.curAnim.curFrame = frames;
-						else character.atlas.anim.curFrame = frames;
+						#if flxanimate
+						if (character.isAnimateAtlas) character.atlas.anim.curFrame = frames;
+						else #end character.animation.curAnim.curFrame = frames;
 						holdingFrameElapsed -= 0.1;
 					}
 				}
@@ -1058,11 +1068,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		{
 			if (!_goToPlayState)
 			{
-				if(!unsavedProgress)
-				{
-					FlxG.switchState(() -> new MainMenuState());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-				}
+				if (!unsavedProgress) FlxG.switchState(() -> new MainMenuState());
 				else openSubState(new ExitConfirmationPrompt());
 			}
 			else FlxG.switchState(() -> new PlayState());
@@ -1208,19 +1214,21 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 	function addAnimation(anim:String, name:String, fps:Float, loop:Bool, indices:Array<Int>)
 	{
-		if(!character.isAnimateAtlas)
-		{
-			if(indices != null && indices.length > 0)
-				character.animation.addByIndices(anim, name, indices, "", fps, loop);
-			else
-				character.animation.addByPrefix(anim, name, fps, loop);
-		}
-		else
+		#if flxanimate
+		if (character.isAnimateAtlas)
 		{
 			if(indices != null && indices.length > 0)
 				character.atlas.anim.addBySymbolIndices(anim, name, indices, fps, loop);
 			else
 				character.atlas.anim.addBySymbol(anim, name, fps, loop);
+		}
+		else
+		#end
+		{
+			if(indices != null && indices.length > 0)
+				character.animation.addByIndices(anim, name, indices, "", fps, loop);
+			else
+				character.animation.addByPrefix(anim, name, fps, loop);
 		}
 
 		if(!character.hasAnimation(anim))
@@ -1270,6 +1278,8 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	function onSaveComplete(_):Void
 	{
 		if(_file == null) return;
+		unsavedProgress = false;
+
 		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
 		_file.removeEventListener(Event.CANCEL, onSaveCancel);
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);

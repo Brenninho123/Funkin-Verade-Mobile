@@ -744,23 +744,23 @@ class FunkinLua {
 			return true;
 		});
 		Lua_helper.add_callback(lua, "exitSong", function(?skipTransition:Bool = false) {
-			if(skipTransition)
+			if (skipTransition)
 			{
 				FlxTransitionableState.skipNextTransIn = true;
 				FlxTransitionableState.skipNextTransOut = true;
 			}
 
-			if(PlayState.isStoryMode)
+			if (PlayState.isStoryMode)
 				FlxG.switchState(new StoryMenuState());
 			else
 				FlxG.switchState(new FreeplayState());
+			CoolUtil.playMenuSongForce();
 
 			#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
-
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			PlayState.changedDifficulty = false;
 			PlayState.chartingMode = false;
 			game.transitioning = true;
+
 			FlxG.camera.followLerp = 0;
 			Mods.loadTopMod();
 			return true;

@@ -5,7 +5,6 @@ class HealthIcon extends FlxSprite
 	public var sprTracker:FlxSprite;
 	private var isPlayer:Bool = false;
 	public var char(default, null):String = '';
-	public var autoAdjustOffset:Bool = true;
 
 	public function new(char:String = 'face', isPlayer:Bool = false, ?allowGPU:Bool = true)
 	{
@@ -36,11 +35,9 @@ class HealthIcon extends FlxSprite
 		)
 			name = 'icons/face';
 		
-		var graphic = Paths.image(name, allowGPU);
-		var grid:Float = Math.round(graphic.width / graphic.height);
+		final graphic:flixel.graphics.FlxGraphic = Paths.image(name, allowGPU);
+		final grid:Float = Math.round(graphic.width / graphic.height);
 		loadGraphic(graphic, true, Math.floor(graphic.width / grid));
-		iconOffsets[0] = (width - 150) / grid;
-		iconOffsets[1] = (height - 150) / grid;
 		updateHitbox();
 
 		animation.add(char, [for (i in 0...frames.frames.length) i], 0, false, isPlayer);
@@ -49,17 +46,5 @@ class HealthIcon extends FlxSprite
 
 		if (!ClientPrefs.data.antialiasing) return;
 		antialiasing = !this.char.endsWith("-pixel");
-	}
-
-	override function updateHitbox()
-	{
-		if (!autoAdjustOffset)
-		{
-			super.updateHitbox();
-			return;
-		}
-
-		super.updateHitbox();
-		offset.set(iconOffsets[0], iconOffsets[1]);
 	}
 }

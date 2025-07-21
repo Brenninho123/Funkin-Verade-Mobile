@@ -73,90 +73,50 @@ class WeekData {
 
 	public static function reloadWeekFiles(isStoryMode:Null<Bool> = false)
 	{
-		weeksList = [];
+		weeksList.resize(0);
 		weeksLoaded.clear();
 		#if MODS_ALLOWED
 		var directories:Array<String> = [Paths.mods(), Paths.getSharedPath()];
-		var originalLength:Int = directories.length;
+		final originalLength:Int = directories.length;
 
-		for (mod in Mods.parseList().enabled)
-			directories.push(Paths.mods(mod + '/'));
-		#else
-		var directories:Array<String> = [Paths.getSharedPath()];
-		var originalLength:Int = directories.length;
+		for (mod in Mods.parseList().enabled) directories.push(Paths.mods('$mod/'));
 		#end
-
-		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getSharedPath('weeks/weekList.txt'));
-		for (i in 0...sexList.length) {
-			for (j in 0...directories.length) {
-				var fileToCheck:String = directories[j] + 'weeks/' + sexList[i] + '.json';
-				if(!weeksLoaded.exists(sexList[i])) {
-					var week:WeekFile = getWeekFile(fileToCheck);
-					if(week != null) {
-						var weekFile:WeekData = new WeekData(week, sexList[i]);
-
-						#if MODS_ALLOWED
-						if(j >= originalLength) {
-							weekFile.folder = directories[j].substring(Paths.mods().length, directories[j].length-1);
-						}
-						#end
-
-						if(weekFile != null && (isStoryMode == null || (isStoryMode && !weekFile.hideStoryMode) || (!isStoryMode && !weekFile.hideFreeplay))) {
-							weeksLoaded.set(sexList[i], weekFile);
-							weeksList.push(sexList[i]);
-						}
-					}
-				}
-			}
-		}
 
 		#if MODS_ALLOWED
-		for (i in 0...directories.length) {
-			var directory:String = directories[i] + 'weeks/';
-			if(FileSystem.exists(directory)) {
-				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
-				for (daWeek in listOfWeeks)
-				{
-					var path:String = directory + daWeek + '.json';
-					if(FileSystem.exists(path))
-					{
-						addWeek(daWeek, path, directories[i], i, originalLength);
-					}
-				}
-
-				for (file in FileSystem.readDirectory(directory))
-				{
-					var path = haxe.io.Path.join([directory, file]);
-					if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
-					{
-						addWeek(file.substr(0, file.length - 5), path, directories[i], i, originalLength);
-					}
-				}
-			}
-		}
+		final sexList:Array<String> = Mods.mergeAllTextsNamed('weeks/weekList.txt');
+		#else
+		final sexList:Array<String> = CoolUtil.coolTextFile('weeks/weekList.txt');
 		#end
+		for (w in sexList)
+		{
+			#if MODS_ALLOWED
+			for (i=>d in directories) addWeek(w, '${d}weeks/$w.json', d, i, originalLength, isStoryMode);
+			#else
+			addWeek(w, Paths.getSharedPath('weeks/$w.json'), isStoryMode);
+			#end
+		}
 	}
 
-	private static function addWeek(weekToCheck:String, path:String, directory:String, i:Int, originalLength:Int)
+	private static function addWeek(weekToCheck:String, path:String, #if MODS_ALLOWED directory:String, i:Int, originalLength:Int, #end ?forStory:Bool)
 	{
-		if(!weeksLoaded.exists(weekToCheck))
+		forStory ??= PlayState.isStoryMode;
+		if (weeksLoaded.exists(weekToCheck)) return;
+		
+		var week:WeekFile = getWeekFile(path);
+		if (week == null) return;
+
+		var weekFile:WeekData = new WeekData(week, weekToCheck);
+		#if MODS_ALLOWED
+		if (i >= originalLength)
 		{
-			var week:WeekFile = getWeekFile(path);
-			if(week != null)
-			{
-				var weekFile:WeekData = new WeekData(week, weekToCheck);
-				if(i >= originalLength)
-				{
-					#if MODS_ALLOWED
-					weekFile.folder = directory.substring(Paths.mods().length, directory.length-1);
-					#end
-				}
-				if((PlayState.isStoryMode && !weekFile.hideStoryMode) || (!PlayState.isStoryMode && !weekFile.hideFreeplay))
-				{
-					weeksLoaded.set(weekToCheck, weekFile);
-					weeksList.push(weekToCheck);
-				}
-			}
+			weekFile.folder = directory.substring(Paths.mods().length, directory.length - 1);
+		}
+		#end
+
+		if ((forStory && !weekFile.hideStoryMode) || (!forStory && !weekFile.hideFreeplay))
+		{
+			weeksLoaded.set(weekToCheck, weekFile);
+			weeksList.push(weekToCheck);
 		}
 	}
 

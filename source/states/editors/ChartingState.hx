@@ -352,17 +352,14 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			columns += GRID_COLUMNS_PER_PLAYER;
 
 			var icon:HealthIcon = new HealthIcon();
-			icon.autoAdjustOffset = false;
 			icon.y = iconY;
 			icon.alpha = 0.6;
-			icon.scrollFactor.set();
-			icon.scale.set(0.3, 0.3);
-			icon.updateHitbox();
-			icon.ID = i+1;
+			icon.scale.set(0.3, 0.3); icon.updateHitbox();
+			icon.ID = (i + 1);
 			add(icon);
 			icons.push(icon);
 			
-			icon.x = iconX + GRID_SIZE * (GRID_COLUMNS_PER_PLAYER/2) - icon.width/2;
+			icon.x = iconX + GRID_SIZE * (GRID_COLUMNS_PER_PLAYER / 2) - (icon.width / 2);
 			iconX += GRID_SIZE * GRID_COLUMNS_PER_PLAYER;
 		}
 		prevGridBg.stripes = nextGridBg.stripes = gridBg.stripes = gridStripes;
@@ -4029,8 +4026,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		{
 			PlayState.chartingMode = false;
 			FlxG.switchState(() -> new MainMenuState());
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			FlxG.mouse.visible = false;
 		}, btnWid);
 		btn.text.alignment = LEFT;
 		tab_group.add(btn);

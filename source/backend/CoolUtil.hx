@@ -41,14 +41,9 @@ class CoolUtil
 	inline public static function capitalize(text:String)
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
 
-	inline public static function coolTextFile(path:String):Array<String>
+	public static function coolTextFile(path:String):Array<String>
 	{
-		var daList:String = null;
-		#if (sys || MODS_ALLOWED)
-		if(FileSystem.exists(path)) daList = File.getContent(path);
-		#else
-		if(Assets.exists(path)) daList = Assets.getText(path);
-		#end
+		var daList:String = Paths.getTextFromFile(path);
 		return daList != null ? listFromString(daList) : [];
 	}
 
@@ -69,6 +64,7 @@ class CoolUtil
 		if (string == "") return [];
 
 		var daList:Array<String> = [for (i in string.split('\n')) i.trim()];
+		daList = daList.filter((f) -> !f.startsWith("//") && !f.startsWith("// "));
 		return daList;
 	}
 
@@ -80,45 +76,39 @@ class CoolUtil
 		return Math.floor(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 	}
 
-	inline public static function dominantColor(sprite:flixel.FlxSprite):Int
+	public static function dominantColor(sprite:FlxSprite):FlxColor
 	{
-		var countByColor:Map<Int, Int> = [];
-		for(col in 0...sprite.frameWidth)
+		var counting:Map<FlxColor, Int> = [];
+		final actualWidth:Int = Math.round(sprite.frameWidth * sprite.scale.x);
+		final actualHeight:Int = Math.round(sprite.frameHeight * sprite.scale.y);
+
+		for (col in 0...actualWidth)
 		{
-			for(row in 0...sprite.frameHeight)
+			for (row in 0...actualHeight)
 			{
-				var colorOfThisPixel:FlxColor = sprite.pixels.getPixel32(col, row);
-				if(colorOfThisPixel.alphaFloat > 0.05)
-				{
-					colorOfThisPixel = FlxColor.fromRGB(colorOfThisPixel.red, colorOfThisPixel.green, colorOfThisPixel.blue, 255);
-					var count:Int = countByColor.exists(colorOfThisPixel) ? countByColor[colorOfThisPixel] : 0;
-					countByColor[colorOfThisPixel] = count + 1;
-				}
+				var pixelCol:FlxColor = sprite.pixels.getPixel32(col, row);
+				if (pixelCol.alphaFloat < 0.1 || pixelCol.brightness < 0.12) continue; // Avoiding dark colors, since colors that tone normally are outlines
+				pixelCol.alpha = 1;
+				
+				final count:Int = counting.exists(pixelCol) ? counting[pixelCol] : 0;
+				counting[pixelCol] = count + 1;
 			}
 		}
 
-		var maxCount = 0;
-		var maxKey:Int = 0; //after the loop this will store the max color
-		countByColor[FlxColor.BLACK] = 0;
-		for(key => count in countByColor)
+		var maxCol:Int = 0;
+		var maxCount:Int = 0;
+		for (col=>uses in counting)
 		{
-			if(count >= maxCount)
-			{
-				maxCount = count;
-				maxKey = key;
-			}
+			if (uses < maxCount) continue;
+			
+			maxCount = uses;
+			maxCol = col;
 		}
-		countByColor = [];
-		return maxKey;
+		return maxCol;
 	}
 
-	inline public static function numberArray(max:Int, ?min = 0):Array<Int>
-	{
-		var dumbArray:Array<Int> = [];
-		for (i in min...max) dumbArray.push(i);
-
-		return dumbArray;
-	}
+	public static inline function numberArray(max:Int, ?min = 0):Array<Int>
+		return [for (i in min...(max + 1)) i];
 
 	inline public static function browserLoad(site:String) {
 		#if linux
@@ -177,5 +167,37 @@ class CoolUtil
 			default:
 				text.borderStyle = NONE;
 		}
+	}
+
+	/**
+	 * Plays `freakyMenu.ogg` AND sets the bpm to `freakyMenu`'s.
+	 * If a song is already playing, then it won't be overriden by this.
+	 * @param fadeIn **OPTIONAL** FadeIn duration. When excluded (or -1), the menu music won't have a fade in effect.
+	 */
+	public static function playMenuSong(fadeIn:Float = -1)
+	{
+		if (FlxG.sound.music?.playing)
+		{
+			// Conductor.bpm = 102;
+			return;
+		}
+		final doFade:Bool = fadeIn > -1;
+
+		FlxG.sound.playMusic(Paths.music("freakyMenu"), doFade ? 0 : 1);
+		if (doFade) FlxG.sound.music.fadeIn(fadeIn, 0, 0.7);
+		Conductor.bpm = 102;
+	}
+
+	/**
+	 * Plays `freakyMenu.ogg` AND sets the bpm to `freakyMenu`'s, unminding of the currently playing song.
+	 * @param fadeIn **OPTIONAL** FadeIn duration. When excluded (or -1), the menu music won't have a fade in effect.
+	 */
+	public static function playMenuSongForce(fadeIn:Float = -1)
+	{
+		final doFade:Bool = fadeIn > -1;
+
+		FlxG.sound.playMusic(Paths.music("freakyMenu"), doFade ? 0 : 1);
+		if (doFade) FlxG.sound.music.fadeIn(fadeIn, 0, 0.7);
+		Conductor.bpm = 102;
 	}
 }

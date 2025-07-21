@@ -401,20 +401,12 @@ class NoteOffsetState extends MusicBeatState
 
 		if(controls.BACK)
 		{
-			if(zoomTween != null) zoomTween.cancel();
-			if(beatTween != null) beatTween.cancel();
+			zoomTween?.cancel();
+			beatTween?.cancel();
 
-			persistentUpdate = false;
-			FlxG.switchState(new options.OptionsState());
-			if(OptionsState.onPlayState)
-			{
-				if(ClientPrefs.data.pauseMusic != 'None')
-					FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)));
-				else
-					FlxG.sound.music.volume = 0;
-			}
-			else FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			FlxG.mouse.visible = false;
+			FlxG.switchState(() -> new OptionsState());
+			if (OptionsState.onPlayState) FlxG.sound.playMusic(Paths.music("breakfast"));
+			else CoolUtil.playMenuSongForce();
 		}
 
 		Conductor.songPosition = FlxG.sound.music.time;

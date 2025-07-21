@@ -29,9 +29,10 @@ class Paths
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 	inline public static var VIDEO_EXT = "mp4";
 
-	public static function excludeAsset(key:String) {
-		if (!dumpExclusions.contains(key))
-			dumpExclusions.push(key);
+	public static function avoidDumping(key:String)
+	{
+		if (dumpExclusions.contains(key)) return;
+		dumpExclusions.push(key);
 	}
 
 	public static var dumpExclusions:Array<String> = ['assets/shared/images/alphabet.png', 'assets/shared/music/freakyMenu.$SOUND_EXT', 'assets/shared/sounds/scrollMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT', 'assets/shared/sounds/cancelMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT'];

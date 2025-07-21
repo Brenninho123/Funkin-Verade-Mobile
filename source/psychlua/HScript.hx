@@ -179,6 +179,7 @@ class HScript extends Iris
 		#if flxanimate
 		set('FlxAnimate', FlxAnimate);
 		#end
+		set('trace', function(v:Dynamic) PlayState.instance.addTextToDebug(Std.string(v), FlxColor.WHITE));
 
 		// Functions & Variables
 		set('setVar', function(name:String, value:Dynamic) {

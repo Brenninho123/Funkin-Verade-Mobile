@@ -57,28 +57,29 @@ class FreeplayState extends MusicBeatState
 		//Paths.clearStoredMemory();
 		//Paths.clearUnusedMemory();
 		
-		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
 
-		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In the Menus", null);
-		#end
-
-		if(WeekData.weeksList.length < 1)
+		if (WeekData.weeksList.length < 1)
 		{
+			FlxTransitionableState.skipNextTransOut = true;
 			FlxTransitionableState.skipNextTransIn = true;
-			persistentUpdate = false;
-			FlxG.switchState(new states.ErrorState("NO WEEKS ADDED FOR FREEPLAY\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu.",
-				function() FlxG.switchState(new states.editors.WeekEditorState()),
-				function() FlxG.switchState(new states.MainMenuState())));
+			
+			FlxG.switchState(function() 
+			{
+				return new ErrorState(
+					"No weeks were found!!\nPress ACCEPT to use the Week Editor Menu | Press BACK to back out.",
+					() -> FlxG.switchState(() -> new states.editors.WeekEditorState()),
+					() -> FlxG.switchState(() -> new MainMenuState())
+				);
+			});
 			return;
 		}
+		persistentUpdate = true;
 
 		for (i in 0...WeekData.weeksList.length)
 		{
-			if(weekIsLocked(WeekData.weeksList[i])) continue;
+			if (weekIsLocked(WeekData.weeksList[i])) continue;
 
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var leSongs:Array<String> = [];
@@ -312,8 +313,7 @@ class FreeplayState extends MusicBeatState
 				player.playingMusic = false;
 				player.switchPlayMusic();
 
-				FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
-				FlxTween.tween(FlxG.sound.music, {volume: 1}, 1);
+				CoolUtil.playMenuSongForce(1);
 			}
 			else 
 			{
@@ -602,8 +602,7 @@ class FreeplayState extends MusicBeatState
 		super.destroy();
 
 		FlxG.autoPause = ClientPrefs.data.autoPause;
-		if (!FlxG.sound.music.playing && !stopMusicPlay)
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		if (!stopMusicPlay) CoolUtil.playMenuSong();
 	}	
 }
 

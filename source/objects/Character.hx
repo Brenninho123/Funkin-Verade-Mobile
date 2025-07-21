@@ -320,9 +320,9 @@ class Character extends FlxSprite
 		return !isAnimateAtlas ? animation.curAnim.finished : atlas.anim.finished;
 	}
 
-	public function finishAnimation():Void
+	public function finishAnimation()
 	{
-		if(isAnimationNull()) return;
+		if (isAnimationNull()) return;
 
 		if(!isAnimateAtlas) animation.curAnim.finish();
 		else atlas.anim.curFrame = atlas.anim.length - 1;
@@ -330,13 +330,17 @@ class Character extends FlxSprite
 
 	public function hasAnimation(anim:String):Bool
 	{
-		return animOffsets.exists(anim);
+		#if flxanimate
+		return !isAnimateAtlas ? animation.exists(anim) : @:privateAccess { atlas.anim.animsMap.exists(anim); };
+		#else
+		return animation.exists(anim);
+		#end
 	}
 
 	public var animPaused(get, set):Bool;
 	private function get_animPaused():Bool
 	{
-		if(isAnimationNull()) return false;
+		if (isAnimationNull()) return false;
 		return !isAnimateAtlas ? animation.curAnim.paused : atlas.anim.isPlaying;
 	}
 	private function set_animPaused(value:Bool):Bool

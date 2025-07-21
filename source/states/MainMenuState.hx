@@ -43,7 +43,7 @@ class MainMenuState extends MusicBeatState
 	public static var curSelected:Int = 0;
 	var selectedSomethin:Bool = false;
 
-	final datasPath:String = 'menus/main/';
+	final datasPath:String = 'data/menus/main/';
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	var optionShit:Array<String> = [];
 
@@ -58,7 +58,10 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
-		optionShit = CoolUtil.coolTextFile(Paths.txt('${datasPath}list'));
+		FlxG.mouse.visible = false;
+		optionShit = CoolUtil.coolTextFile('${datasPath}list.txt');
+		CoolUtil.playMenuSong();
+
 		if (optionShit.length == 0)
 		{
 			selectedSomethin = true;
@@ -68,7 +71,7 @@ class MainMenuState extends MusicBeatState
 			FlxG.switchState(function() 
 			{
 				return new ErrorState(
-					'No menu items were found!! You can fix this by adding one in "./data/${datasPath}menuList.txt".\nPress ACCEPT to reload | Press BACK to back out',
+					'No menu items were found!! You can fix this by adding one in "./${datasPath}menuList.txt".\nPress ACCEPT to Reload | Press BACK to Leave this Menu',
 					() -> FlxG.switchState(() -> new MainMenuState()),
 					() -> FlxG.switchState(() -> new TitleState())
 				);
@@ -103,7 +106,7 @@ class MainMenuState extends MusicBeatState
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		for (o in optionShit)
 		{
-			final optData:MenuOpt = Json.parse(Paths.getTextFromFile('data/${datasPath}opt_$o.json'));
+			final optData:MenuOpt = Json.parse(Paths.getTextFromFile('${datasPath}opt_$o.json'));
 
 			var item:FlxSprite = createMenuItem(o, 30, -200, optData);
 			menuColors.push(CoolUtil.dominantColor(item));
@@ -231,7 +234,7 @@ class MainMenuState extends MusicBeatState
 	override function beatHit()
 	{
 		if (curBeat % bopInterval != 0) return;
-		renderSprs[curSelected].scale.add(0.042, 0.042);
+		renderSprs[curSelected].scale.add(0.024, 0.024);
 	}
 
 	function changeItem(change:Int)
@@ -257,11 +260,11 @@ class MainMenuState extends MusicBeatState
 		{
 			#if DEMO
 			case "story":
-				WeekData.reloadWeekFiles(true); // weeksList doesn't get set until we do this
-				PlayState.storyPlaylist = ["irmaos-de-frutas"];
+				WeekData.reloadWeekFiles(true); // WeekData.weeksList doesn't get set until we do this
+				PlayState.storyPlaylist = [for (s in WeekData.getCurrentWeek().songs) s[0]]; // Make sure to set PlayState.currentWeek beforehand or it'll grab the first week
 				PlayState.isStoryMode = true;
 
-				Song.loadFromJson("irmaos-de-frutas");
+				Song.loadFromJson(PlayState.storyPlaylist[0]);
 				PlayState.campaignScore = 0;
 				PlayState.campaignMisses = 0;
 
@@ -275,7 +278,7 @@ class MainMenuState extends MusicBeatState
 
 		final state:NextState = switch (choice)
 		{
-			#if release
+			#if DEMO
 			case "story": () -> new PlayState();
 			#else
 			case "story": () -> new FreeplayState();

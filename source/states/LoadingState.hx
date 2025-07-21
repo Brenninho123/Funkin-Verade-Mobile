@@ -582,25 +582,13 @@ class LoadingState extends MusicBeatState
 			var character:Dynamic = Json.parse(Assets.getText(path));
 			#end
 
-			var isAnimateAtlas:Bool = false;
 			var img:String = character.image;
 			img = img.trim();
 			#if flxanimate
-			var animToFind:String = Paths.getPath('images/$img/Animation.json', TEXT);
-			if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind))
-				isAnimateAtlas = true;
-			#end
+			final animToFind:String = Paths.getPath('images/$img/Animation.json', TEXT);
+			final isAnimateAtlas:Bool = #if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind);
 
-			if (!isAnimateAtlas)
-			{
-				var split:Array<String> = img.split(',');
-				for (file in split)
-				{
-					imagesToPrepare.push(file.trim());
-				}
-			}
-			#if flxanimate
-			else
+			if (isAnimateAtlas)
 			{
 				for (i in 0...10)
 				{
@@ -615,7 +603,12 @@ class LoadingState extends MusicBeatState
 					}
 				}
 			}
+			else
 			#end
+			{
+				var split:Array<String> = img.split(',');
+				for (file in split) imagesToPrepare.push(file.trim());
+			}
 	
 			if (prefixVocals != null && character.vocals_file != null && character.vocals_file.length > 0)
 			{

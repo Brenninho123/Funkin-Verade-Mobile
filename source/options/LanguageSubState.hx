@@ -6,8 +6,8 @@ class LanguageSubState extends MusicBeatSubstate
 {
 	#if TRANSLATIONS_ALLOWED
 	var grpLanguages:FlxTypedGroup<Alphabet> = new FlxTypedGroup<Alphabet>();
-	var languages:Array<String> = [];
-	var displayLanguages:Map<String, String> = [];
+	var languages:Array<String> = [ClientPrefs.defaultData.language];
+	var displayLanguages:Map<String, String> = [ClientPrefs.defaultData.language => Language.defaultLangName];
 	var curSelected:Int = 0;
 	public function new()
 	{
@@ -20,8 +20,6 @@ class LanguageSubState extends MusicBeatSubstate
 		add(bg);
 		add(grpLanguages);
 
-		languages.push(ClientPrefs.defaultData.language); //English (US)
-		displayLanguages.set(ClientPrefs.defaultData.language, Language.defaultLangName);
 		var directories:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'data/');
 		for (directory in directories)
 		{
@@ -35,7 +33,7 @@ class LanguageSubState extends MusicBeatSubstate
 
 					if(!displayLanguages.exists(langFile))
 					{
-						var path:String = '$directory/$file';
+						var path:String = '$directory$file';
 						#if MODS_ALLOWED 
 						var txt:String = File.getContent(path);
 						#else
@@ -121,7 +119,7 @@ class LanguageSubState extends MusicBeatSubstate
 
 		if(controls.ACCEPT)
 		{
-			FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
+			FlxG.sound.play(Paths.sound('confirmMenu'));
 			ClientPrefs.data.language = languages[curSelected];
 			//trace(ClientPrefs.data.language);
 			ClientPrefs.saveSettings();
@@ -139,7 +137,7 @@ class LanguageSubState extends MusicBeatSubstate
 			lang.alpha = 0.6;
 			if(num == curSelected) lang.alpha = 1;
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 	#end
 }
