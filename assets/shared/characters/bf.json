@@ -84,12 +84,12 @@
 	"vocals_file": "",
 	"no_antialiasing": false,
 	"image": "characters/bluetooth, characters/bluetoothMisses",
-	"position": [-278, -445],
+	"position": [-278, -483],
 	"healthicon": "bf",
 	"flip_x": true,
 	"healthbar_colors": [123, 210, 244],
 	"camera_position": [-220, 580],
 	"sing_duration": 4,
-	"scale": 0.34,
+	"scale": 0.363,
 	"_editor_isPlayer": true
 }
