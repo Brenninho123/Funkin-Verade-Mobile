@@ -1,0 +1,4 @@
+Plays a [non-mp4] mid-screen cutscene. Used on "Irmãos de Frutas".
+
+Value 1: Transition name
+Value 2: Sound volume (or 0.85 when unspecified)

@@ -2460,6 +2460,7 @@
 		}
 	],
 	"events": [
+		[107400, [["Transitions", "stealAMic", "2"]]],
 		[
 			109440,
 			[
