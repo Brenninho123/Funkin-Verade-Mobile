@@ -1,5 +1,6 @@
 package states;
 
+import substates.TonhoPauseSubstate;
 import backend.Highscore;
 import backend.StageData;
 import backend.WeekData;
@@ -614,11 +615,7 @@ class PlayState extends MusicBeatState
 		if(ClientPrefs.data.hitsoundVolume > 0) Paths.sound('hitsound');
 		if(!ClientPrefs.data.ghostTapping) for (i in 1...4) Paths.sound('missnote$i');
 		Paths.image('alphabet');
-
-		if (PauseSubState.songName != null)
-			Paths.music(PauseSubState.songName);
-		else if(Paths.formatToSongPath(ClientPrefs.data.pauseMusic) != 'none')
-			Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic));
+		TonhoPauseSubstate.cacheStuff(curSong);
 
 		resetRPC();
 
@@ -1158,6 +1155,10 @@ class PlayState extends MusicBeatState
 			str += ' ($percent%) - $ratingFC';
 		}
 
+		#if TRANSLATIONS_ALLOWED
+		@:privateAccess trace(Language.phrases);
+		#end
+
 		var tempScore:String;
 		if(!instakillOnMiss) tempScore = Language.getPhrase('score_text', 'Pontuação: {1} | Erros: {2} | Avaliação: {3}', [songScore, songMisses, str]);
 		else tempScore = Language.getPhrase('score_text_instakill', 'Pontuação: {1} | Avaliação: {2}', [songScore, str]);
@@ -1194,7 +1195,7 @@ class PlayState extends MusicBeatState
 		var rat:Array<String> = null;
 		for (p=>r in ratingStuff)
 		{
-			if (percent <= Std.parseFloat(p))
+			if (Std.parseFloat(p) <= percent)
 			{
 				rat = r;
 				break;
@@ -1955,7 +1956,7 @@ class PlayState extends MusicBeatState
 					note.resetAnim = 0;
 				}
 		}
-		openSubState(new PauseSubState());
+		openSubState(new TonhoPauseSubstate(camOther));
 
 		#if DISCORD_ALLOWED
 		if(autoUpdateRPC) DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.char);
@@ -2001,6 +2002,10 @@ class PlayState extends MusicBeatState
 		isDead = true;
 		deathCounter++;
 		boyfriend.stunned = true;
+
+		// Conquista: Aprendizagem
+		Achievements.addScore('learner');
+		if (Achievements.getScore('learner') == Achievements.achievements['learner'].maxScore) Achievements.unlock('learner');
 
 		FlxG.animationTimeScale = 1;
 		paused = true;
@@ -2289,7 +2294,7 @@ class PlayState extends MusicBeatState
 						LuaUtils.setVarInArray(this, value1, trueValue);
 					}
 				}
-				catch(e:Dynamic)
+				catch(e)
 				{
 					var len:Int = e.message.indexOf('\n') + 1;
 					if(len <= 0) len = e.message.length;
@@ -2528,14 +2533,16 @@ class PlayState extends MusicBeatState
 		if (stageUI != "normal")
 			uiFolder = uiPrefix + "UI/";
 
+
 		for (rating in ratingsData)
 		{
-			var img:flixel.graphics.FlxGraphic = Paths.image(uiFolder + rating.image + uiPostfix);
+			// Uses the base images if the UI doesn't have custom ones
+			var img:flixel.graphics.FlxGraphic = Paths.image(uiFolder + rating.image + uiPostfix) ?? Paths.image(rating.image);
 			ratingHeights.push(img.height);
 		}
 		for (i in 0...10)
 		{
-			var img:flixel.graphics.FlxGraphic = Paths.image(uiFolder + 'num$i' + uiPostfix);
+			var img:flixel.graphics.FlxGraphic = Paths.image(uiFolder + 'num$i' + uiPostfix) ?? Paths.image('num$i');
 			comboWidths.push(img.width);
 		}
 	}
@@ -2584,7 +2591,7 @@ class PlayState extends MusicBeatState
 		var scale:Float = !isPixelStage ? 0.2 : (daPixelZoom * 0.65);
 		final heightAvg:Float = averageCalc(ratingHeights) * scale;
 		
-		var rating:FlxSprite = new FlxSprite(0, placementY, Paths.image(uiFolder + daRating.image + uiPostfix));
+		var rating:FlxSprite = new FlxSprite(0, placementY, Paths.image(uiFolder + daRating.image + uiPostfix) ?? Paths.image(daRating.image));
 		rating.scale.set(scale, scale); rating.updateHitbox();
 		rating.screenCenter(X);
 		rating.visible = showRating;
@@ -2602,7 +2609,7 @@ class PlayState extends MusicBeatState
 			final yOffset:Float = 22;
 			final numPlacement:Float = !ClientPrefs.data.downScroll ? (rating.y + heightAvg) - yOffset : (rating.y - yOffset);
 
-			var numScore:FlxSprite = new FlxSprite(0, numPlacement, Paths.image(uiFolder + 'num$n' + uiPostfix));
+			var numScore:FlxSprite = new FlxSprite(0, numPlacement, Paths.image(uiFolder + 'num$n' + uiPostfix) ?? Paths.image('num$n'));
 			numScore.scale.set(numScale, numScale); numScore.updateHitbox();
 			numScore.screenCenter(X).x -= (widthAvg / 2) * (comboStr.length - 1);
 			numScore.x += widthAvg * i;
@@ -3080,7 +3087,8 @@ class PlayState extends MusicBeatState
 		grpNoteSplashes.add(splash);
 	}
 
-	override function destroy() {
+	override function destroy()
+	{
 		if (psychlua.CustomSubstate.instance != null)
 		{
 			closeSubState();
@@ -3128,6 +3136,7 @@ class PlayState extends MusicBeatState
 		Note.globalRgbShaders = [];
 		backend.NoteTypesConfig.clearNoteTypesData();
 		NoteSplash.configs.clear();
+		TonhoPauseSubstate.clearCache();
 
 		instance = null;
 		stageUI = "normal";
@@ -3433,53 +3442,45 @@ class PlayState extends MusicBeatState
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
+	@:noCompletion private function __shouldUnlockAchieve(achieve:String):Bool
+	{
+		final usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice') || ClientPrefs.getGameplaySetting('botplay'));
+
+		if (achieve.startsWith('${WeekData.getWeekFileName()}_complete')) // Relacionados a Week
+		{
+			final beatWeek:Bool = (isStoryMode && storyPlaylist.length <= 1) && !usedPractice;
+
+			trace(achieve.substring(achieve.lastIndexOf('complete') + 1));
+			return switch (achieve.substring(achieve.lastIndexOf('complete') + 1))
+			{
+				case 'FC': beatWeek && (campaignMisses + songMisses == 0); // Campeão Perfeito
+				case 'Pain': beatWeek && (campaignMisses + songMisses > 0 && campaignMisses + songMisses < 3); // Dor Sem Palavras (Quase Perfeição)
+				default: beatWeek; // Campeão
+			};
+		}
+
+		return switch (achieve)
+		{
+			case 'mojaroGameplay': ratingPercent < 0.15 && !usedPractice; // À Beira da Morte
+			case 'BFLevel': songMisses == 0 && !usedPractice; // Perfeição
+			case 'OSUPlayer': ratingPercent >= 1 && !usedPractice; // Perfeccionista
+			case 'learner': deathCounter == 5; // Aprendizagem
+			case 'persistence': deathCounter >= 50; // Persistência
+			case 'niceJob': ratingPercent >= 0.69 && !usedPractice; // Nice
+			default: false;
+		};
+	}
+
 	private function checkForAchievement(achievesToCheck:Array<String> = null)
 	{
-		if(chartingMode) return;
+		if (chartingMode || cpuControlled) return;
 
-		var usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice') || ClientPrefs.getGameplaySetting('botplay'));
-		if(cpuControlled) return;
+		for (name in achievesToCheck)
+		{
+			if (!Achievements.exists(name)) continue;
 
-		for (name in achievesToCheck) {
-			if(!Achievements.exists(name)) continue;
-
-			var unlock:Bool = false;
-			if (name != WeekData.getWeekFileName() + '_nomiss') // common achievements
-			{
-				switch(name)
-				{
-					case 'ur_bad':
-						unlock = (ratingPercent < 0.2 && !practiceMode);
-
-					case 'ur_good':
-						unlock = (ratingPercent >= 1 && !usedPractice);
-
-					case 'oversinging':
-						unlock = (boyfriend.holdTimer >= 10 && !usedPractice);
-
-					case 'hype':
-						unlock = (!boyfriendIdled && !usedPractice);
-
-					case 'two_keys':
-						unlock = (!usedPractice && keysPressed.length <= 2);
-
-					case 'toastie':
-						unlock = (!ClientPrefs.data.cacheOnGPU && !ClientPrefs.data.shaders && ClientPrefs.data.lowQuality && !ClientPrefs.data.antialiasing);
-
-					#if BASE_GAME_FILES
-					case 'debugger':
-						unlock = (songName == 'test' && !usedPractice);
-					#end
-				}
-			}
-			else // any FC achievements, name should be "weekFileName_nomiss", e.g: "week3_nomiss";
-			{
-				if(isStoryMode && campaignMisses + songMisses < 1 && Difficulty.getString().toUpperCase() == 'HARD'
-					&& storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
-					unlock = true;
-			}
-
-			if(unlock) Achievements.unlock(name);
+			final unlock:Bool = __shouldUnlockAchieve(name);
+			if (unlock) Achievements.unlock(name);
 		}
 	}
 	#end

@@ -1,5 +1,7 @@
 package states;
 
+import lime.app.Application;
+import flixel.input.keyboard.FlxKey;
 import backend.WeekData;
 import backend.Song;
 import tjson.TJSON;
@@ -56,6 +58,12 @@ class MainMenuState extends MusicBeatState
 	final bopInterval:Int = 2;
 	final lerpSpeed:Float = 6;
 
+	var easterEggs:Map<String, Void->Void> = [];
+	var eggsLastClues:Array<Int> = [];
+	var eggsLastGuesses:Array<String> = [];
+	var eggHunts:Array<Void->Void> = [];
+	var lastFoundEgg:String = "";
+
 	override function create()
 	{
 		FlxG.mouse.visible = false;
@@ -79,6 +87,27 @@ class MainMenuState extends MusicBeatState
 			return;
 		}
 
+		// Bota easter egg aq blz??
+		easterEggs = 
+		[
+			"abel" => spawnAbels, // ai q odio isso do abel, vai ser dificil fzr viu
+			"algorithomus" => FlxG.resetGame
+		];
+
+		for (_ in 0...Lambda.count(easterEggs))
+		{
+			eggsLastClues.push(-1);
+			eggsLastGuesses.push("");
+		}
+
+		var eggId:Int = 0;
+		for (clues=>egg in easterEggs)
+		{
+			final huntTask:Void->Void = () -> huntForEgg(egg, eggId++, clues);
+			eggHunts.push(huntTask);
+			FlxG.signals.preUpdate.add(huntTask);
+		}
+
 		super.create();
 		#if DISCORD_ALLOWED DiscordClient.changePresence("In the Menus"); #end
 
@@ -94,7 +123,7 @@ class MainMenuState extends MusicBeatState
 		bgGrad.screenCenter();
 		bgGrad.active = false;
 		bgGrad.antialiasing = false;
-		bgGrad.blend = MULTIPLY; // screen
+		bgGrad.blend = MULTIPLY;
 		add(bgGrad);
 
 		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
@@ -108,7 +137,7 @@ class MainMenuState extends MusicBeatState
 		{
 			final optData:MenuOpt = Json.parse(Paths.getTextFromFile('${datasPath}opt_$o.json'));
 
-			var item:FlxSprite = createMenuItem(o, 30, -200, optData);
+			var item:FlxSprite = createMenuItem(o, 30, -200 / ((optionShit.length / 2) - 1), optData);
 			menuColors.push(CoolUtil.dominantColor(item));
 
 			createRender(optData.render);
@@ -222,6 +251,9 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
+		FlxG.watch.addQuick("lastPRessedEaster", eggsLastClues);
+		FlxG.watch.addQuick("lastTypedEaster", eggsLastGuesses);
+
 		super.update(elapsed);
 		// if (!renderSprs[curSelected]?.visible) return;
 
@@ -235,6 +267,43 @@ class MainMenuState extends MusicBeatState
 	{
 		if (curBeat % bopInterval != 0) return;
 		renderSprs[curSelected].scale.add(0.024, 0.024);
+	}
+
+	function huntForEgg(egg:Void->Void, eggId:Int, clues:String)
+	{
+		if (FlxG.keys.firstJustPressed() == -1 || lastFoundEgg != "") return;
+		final eachClue:Array<String> = clues.split("");
+		var lastFound:Int = eggsLastClues[eggId];
+		var lastGuess:String = eggsLastGuesses[eggId];
+
+		if (FlxG.keys.firstJustPressed() == FlxKey.fromString(eachClue[lastFound + 1])) lastGuess += eachClue[++lastFound];
+		/* else
+		{
+			lastFound = -1;
+			lastGuess = "";
+		} */
+
+		if (lastGuess == clues.toLowerCase())
+		{
+			lastFoundEgg = clues.toLowerCase();
+			lastFound = -1;
+			lastGuess = "";
+
+			FlxG.sound.play(Paths.sound('confirmMenu'), 0.5);
+			egg();
+		}
+	}
+
+	function spawnAbels()
+	{
+		final posX:Float = FlxG.random.float(40, FlxG.width - 40);
+		final posY:Float = FlxG.random.float(40, FlxG.height - 40);
+	}
+
+	override function destroy()
+	{
+		eggHunts.resize(0);
+		super.destroy();
 	}
 
 	function changeItem(change:Int)
@@ -283,8 +352,9 @@ class MainMenuState extends MusicBeatState
 			#else
 			case "story": () -> new FreeplayState();
 			#end
-			case "credits": () -> new CreditsState();
+			case "credits": () -> new CoolCreditsState();
 			case "settings": () -> new OptionsState();
+			case "achieves": () -> new AchievementsMenuState();
 			case "exit": () -> new TitleState();
 			default: null;
 		};

@@ -18,6 +18,7 @@ typedef WeekFile =
 	var hideStoryMode:Bool;
 	var hideFreeplay:Bool;
 	var difficulties:String;
+	@:optional var renderPath:String;
 }
 
 class WeekData {
@@ -37,6 +38,7 @@ class WeekData {
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
+	public var renderPath:String = "mainmenu/renders/fnfToras";
 
 	public var fileName:String;
 
