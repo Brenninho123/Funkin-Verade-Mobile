@@ -54,8 +54,13 @@
 	"image": "characters/mojaro",
 	"position": [-560, -390],
 	"healthicon": "morajo",
+	"healthfruit": "apple",
 	"flip_x": false,
 	"healthbar_colors": [250, 107, 104],
+	"fruit_colors": {
+		"colors": [255, 105, 104],
+		"accent": [3, 248, 243]
+	},
 	"camera_position": [550, 270],
 	"sing_duration": 4,
 	"scale": 0.8,

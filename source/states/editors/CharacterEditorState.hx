@@ -113,12 +113,11 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 
-		healthBar = new Bar(30, FlxG.height - 163);
+		healthBar = new Bar(45, FlxG.height);
 		healthBar.scrollFactor.set();
 		healthBar.cameras = [camHUD];
 
-		healthIcon = new HealthIcon(character.healthIcon, false, false);
-		healthIcon.y = FlxG.height - 150;
+		healthIcon = new HealthIcon(character.healthIcon, false, character.healthFruit, false);
 		healthIcon.cameras = [camHUD];
 
 		add(cameraFollowPointer);
@@ -252,7 +251,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		UI_box.scrollFactor.set();
 		UI_box.cameras = [camHUD];
 
-		UI_characterbox = new PsychUIBox(UI_box.x - 100, UI_box.y + UI_box.height + 10, 350, 280, ['Animations', 'Character']);
+		UI_characterbox = new PsychUIBox(UI_box.x - 100, UI_box.y + UI_box.height + 10, 350, 350, ['Animations', 'Character']);
 		UI_characterbox.scrollFactor.set();
 		UI_characterbox.cameras = [camHUD];
 		add(UI_characterbox);
@@ -377,63 +376,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	{
 		var tab_group = UI_box.getTab('Settings').menu;
 
-		check_player = new PsychUICheckBox(10, 60, "Playable Character", 100);
-		check_player.checked = character.isPlayer;
-		check_player.onClick = function()
-		{
-			character.isPlayer = !character.isPlayer;
-			character.flipX = !character.flipX;
-			updateCharacterPositions();
-			updatePointerPos(false);
-		};
-
-		var reloadCharacter:PsychUIButton = new PsychUIButton(140, 20, "Reload Char", function()
-		{
-			addCharacter(true);
-			updatePointerPos();
-			reloadCharacterOptions();
-			reloadCharacterDropDown();
-		});
-
-		var templateCharacter:PsychUIButton = new PsychUIButton(140, 50, "Load Template", function()
-		{
-			final _template:CharacterFile =
-			{
-				animations: [
-					newAnim('idle', 'BF idle dance'),
-					newAnim('singLEFT', 'BF NOTE LEFT0'),
-					newAnim('singDOWN', 'BF NOTE DOWN0'),
-					newAnim('singUP', 'BF NOTE UP0'),
-					newAnim('singRIGHT', 'BF NOTE RIGHT0')
-				],
-				no_antialiasing: false,
-				flip_x: false,
-				healthicon: 'face',
-				image: 'characters/BOYFRIEND',
-				sing_duration: 4,
-				scale: 1,
-				healthbar_colors: [161, 161, 161],
-				camera_position: [0, 0],
-				position: [0, 0],
-				vocals_file: null
-			};
-
-			character.loadCharacterFile(_template);
-			character.missingCharacter = false;
-			character.color = FlxColor.WHITE;
-			character.alpha = 1;
-			reloadAnimList();
-			reloadCharacterOptions();
-			updateCharacterPositions();
-			updatePointerPos();
-			reloadCharacterDropDown();
-			updateHealthBar();
-		});
-		templateCharacter.normalStyle.bgColor = FlxColor.RED;
-		templateCharacter.normalStyle.textColor = FlxColor.WHITE;
-
-
-		charDropDown = new PsychUIDropDownMenu(10, 30, [''], function(index:Int, intended:String)
+		charDropDown = new PsychUIDropDownMenu(15, 30, [''], function(index:Int, intended:String)
 		{
 			if(intended == null || intended.length < 1) return;
 
@@ -461,10 +404,71 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		reloadCharacterDropDown();
 		charDropDown.selectedLabel = _char;
 
+		check_player = new PsychUICheckBox(charDropDown.x, charDropDown.y + 25, "Playable Character", 100);
+		check_player.checked = character.isPlayer;
+		check_player.onClick = function()
+		{
+			character.isPlayer = !character.isPlayer;
+			character.flipX = !character.flipX;
+			updateCharacterPositions();
+			updatePointerPos(false);
+		};
+
+		var reloadCharacter:PsychUIButton = new PsychUIButton((check_player.x + check_player.width) + 30, charDropDown.y - 20, "Reload Char", function()
+		{
+			addCharacter(true);
+			updatePointerPos();
+			reloadCharacterOptions();
+			reloadCharacterDropDown();
+		});
+
+		var templateCharacter:PsychUIButton = new PsychUIButton(reloadCharacter.x, (reloadCharacter.y + reloadCharacter.height) + 10, "Load Template", function()
+		{
+			final _template:CharacterFile =
+			{
+				animations: [
+					newAnim('idle', 'idle'),
+					newAnim('singLEFT', 'left'),
+					newAnim('singDOWN', 'down'),
+					newAnim('singUP', 'up'),
+					newAnim('singRIGHT', 'right')
+				],
+				no_antialiasing: false,
+				flip_x: false,
+				healthicon: null,
+				healthfruit: null,
+				image: 'characters/bluetooth',
+				sing_duration: 4,
+				scale: 1,
+				healthbar_colors: null,
+				fruit_colors: null,
+				camera_position: [0, 0],
+				position: [0, 0],
+				vocals_file: null,
+				_editor_isPlayer: false
+			};
+
+			character.loadCharacterFile(_template);
+			character.missingCharacter = false;
+			character.color = FlxColor.WHITE;
+			character.alpha = 1;
+			reloadAnimList();
+			reloadCharacterOptions();
+			updateCharacterPositions();
+			updatePointerPos();
+			reloadCharacterDropDown();
+			updateHealthBar();
+		});
+		templateCharacter.normalStyle.bgColor = FlxColor.RED;
+		templateCharacter.normalStyle.textColor = FlxColor.WHITE;
+
+		var saveCharacterButton:PsychUIButton = new PsychUIButton(reloadCharacter.x, (templateCharacter.y + templateCharacter.height) + 10, "Save Character", saveCharacter);
+
 		tab_group.add(new FlxText(charDropDown.x, charDropDown.y - 18, 80, 'Character:'));
 		tab_group.add(check_player);
 		tab_group.add(reloadCharacter);
 		tab_group.add(templateCharacter);
+		tab_group.add(saveCharacterButton);
 		tab_group.add(charDropDown);
 	}
 
@@ -580,13 +584,12 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 				}
 		});
 		reloadAnimList();
-		animationDropDown.selectedLabel = anims[0] != null ? anims[0].anim : '';
+		animationDropDown.selectedLabel = anims[0].anim ?? "";
 
-		tab_group.add(new FlxText(animationDropDown.x, animationDropDown.y - 18, 100, 'Animations:'));
-		tab_group.add(new FlxText(animationInputText.x, animationInputText.y - 18, 100, 'Animation name:'));
+		tab_group.add(new FlxText(animationInputText.x, animationInputText.y - 18, 100, 'Animation Name:'));
 		tab_group.add(new FlxText(animationFramerate.x, animationFramerate.y - 18, 100, 'Framerate:'));
-		tab_group.add(new FlxText(animationNameInputText.x, animationNameInputText.y - 18, 150, 'Animation Symbol Name/Tag:'));
-		tab_group.add(new FlxText(animationIndicesInputText.x, animationIndicesInputText.y - 18, 170, 'ADVANCED - Animation Indices:'));
+		tab_group.add(new FlxText(animationNameInputText.x, animationNameInputText.y - 18, 150, 'Animation Tag:'));
+		tab_group.add(new FlxText(animationIndicesInputText.x, animationIndicesInputText.y - 18, 170, 'Animation Indices:'));
 
 		tab_group.add(animationInputText);
 		tab_group.add(animationNameInputText);
@@ -615,6 +618,15 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	var healthColorStepperR:PsychUINumericStepper;
 	var healthColorStepperG:PsychUINumericStepper;
 	var healthColorStepperB:PsychUINumericStepper;
+
+	var fruitColorStepperR:PsychUINumericStepper;
+	var fruitColorStepperG:PsychUINumericStepper;
+	var fruitColorStepperB:PsychUINumericStepper;
+	
+	var fruitAccentStepperR:PsychUINumericStepper;
+	var fruitAccentStepperG:PsychUINumericStepper;
+	var fruitAccentStepperB:PsychUINumericStepper;
+
 	function addCharacterUI()
 	{
 		var tab_group = UI_characterbox.getTab('Character').menu;
@@ -629,15 +641,6 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 				character.playAnim(lastAnim, true);
 			}
 		});
-
-		var decideIconColor:PsychUIButton = new PsychUIButton(reloadImage.x, reloadImage.y + 30, "Get Icon Color", function()
-			{
-				var coolColor:FlxColor = FlxColor.fromInt(CoolUtil.dominantColor(healthIcon));
-				character.healthColorArray[0] = coolColor.red;
-				character.healthColorArray[1] = coolColor.green;
-				character.healthColorArray[2] = coolColor.blue;
-				updateHealthBar();
-			});
 
 		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 35, 75, healthIcon.char, 8);
 
@@ -671,13 +674,30 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		positionCameraXStepper = new PsychUINumericStepper(positionXStepper.x, positionXStepper.y + 40, 10, character.cameraPosition[0], -9000, 9000, 0);
 		positionCameraYStepper = new PsychUINumericStepper(positionYStepper.x, positionYStepper.y + 40, 10, character.cameraPosition[1], -9000, 9000, 0);
 
-		var saveCharacterButton:PsychUIButton = new PsychUIButton(reloadImage.x, noAntialiasingCheckBox.y + 40, "Save Character", function() {
-			saveCharacter();
-		});
+		healthColorStepperR = new PsychUINumericStepper(singDurationStepper.x, scaleStepper.y + 40, 20, character.healthColorArray[0], 0, 255, 0);
+		healthColorStepperG = new PsychUINumericStepper(healthColorStepperR.x + healthColorStepperR.width, healthColorStepperR.y, 20, character.healthColorArray[1], 0, 255, 0);
+		healthColorStepperB = new PsychUINumericStepper(healthColorStepperG.x + healthColorStepperG.width, healthColorStepperR.y, 20, character.healthColorArray[2], 0, 255, 0);
 
-		healthColorStepperR = new PsychUINumericStepper(singDurationStepper.x, saveCharacterButton.y, 20, character.healthColorArray[0], 0, 255, 0);
-		healthColorStepperG = new PsychUINumericStepper(singDurationStepper.x + 65, saveCharacterButton.y, 20, character.healthColorArray[1], 0, 255, 0);
-		healthColorStepperB = new PsychUINumericStepper(singDurationStepper.x + 130, saveCharacterButton.y, 20, character.healthColorArray[2], 0, 255, 0);
+		fruitColorStepperR = new PsychUINumericStepper(healthColorStepperR.x, (healthColorStepperR.y +  healthColorStepperR.height) + 25, 20, character.fruitColorArray[0], 0, 255, 0);
+		fruitColorStepperG = new PsychUINumericStepper(fruitColorStepperR.x + fruitColorStepperR.width, fruitColorStepperR.y, 20, character.fruitColorArray[1], 0, 255, 0);
+		fruitColorStepperB = new PsychUINumericStepper(healthColorStepperG.x + healthColorStepperG.width, fruitColorStepperR.y, 20, character.fruitColorArray[2], 0, 255, 0);
+
+		fruitAccentStepperR = new PsychUINumericStepper(healthColorStepperR.x, (fruitColorStepperR.y +  fruitColorStepperR.height) + 25, 20, character.fruitAccentColor[0], 0, 255, 0);
+		fruitAccentStepperG = new PsychUINumericStepper(fruitColorStepperR.x + fruitColorStepperR.width, fruitAccentStepperR.y, 20, character.fruitAccentColor[1], 0, 255, 0);
+		fruitAccentStepperB = new PsychUINumericStepper(healthColorStepperG.x + healthColorStepperG.width, fruitAccentStepperR.y, 20, character.fruitAccentColor[2], 0, 255, 0);
+
+		for (b in [healthColorStepperR.buttonPlus, healthColorStepperR.buttonMinus, fruitColorStepperR.buttonPlus, fruitColorStepperR.buttonMinus, fruitAccentStepperR.buttonPlus, fruitAccentStepperR.buttonMinus]) b.color = FlxColor.RED;
+		for (b in [healthColorStepperG.buttonPlus, healthColorStepperG.buttonMinus, fruitColorStepperG.buttonPlus, fruitColorStepperG.buttonMinus, fruitAccentStepperG.buttonPlus, fruitAccentStepperG.buttonMinus]) b.color = FlxColor.LIME;
+		for (b in [healthColorStepperB.buttonPlus, healthColorStepperB.buttonMinus, fruitColorStepperB.buttonPlus, fruitColorStepperB.buttonMinus, fruitAccentStepperB.buttonPlus, fruitAccentStepperB.buttonMinus]) b.color = FlxColor.BLUE;
+
+		var decideIconColor:PsychUIButton = new PsychUIButton((healthColorStepperB.x + healthColorStepperB.width) + 35, healthColorStepperB.y, "Use Icon Color", function()
+		{
+			var coolColor:FlxColor = FlxColor.fromInt(CoolUtil.dominantColor(healthIcon.charSprite));
+			character.healthColorArray[0] = coolColor.red;
+			character.healthColorArray[1] = coolColor.green;
+			character.healthColorArray[2] = coolColor.blue;
+			updateHealthBar();
+		}, null, Math.floor(healthColorStepperB.height));
 
 		tab_group.add(new FlxText(15, imageInputText.y - 18, 100, 'Image file name:'));
 		tab_group.add(new FlxText(15, healthIconInputText.y - 18, 100, 'Health icon name:'));
@@ -686,10 +706,11 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		tab_group.add(new FlxText(15, scaleStepper.y - 18, 100, 'Scale:'));
 		tab_group.add(new FlxText(positionXStepper.x, positionXStepper.y - 18, 100, 'Character X/Y:'));
 		tab_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 100, 'Camera X/Y:'));
-		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 100, 'Health Bar R/G/B:'));
+		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 14, 100, 'Health Bar R/G/B:'));
+		tab_group.add(new FlxText(fruitColorStepperR.x, fruitColorStepperR.y - 14, 100, 'Icon Fruit R/G/B:'));
+		tab_group.add(new FlxText(fruitAccentStepperR.x, fruitAccentStepperR.y - 14, 100, 'Fruit Accent R/G/B:'));
 		tab_group.add(imageInputText);
 		tab_group.add(reloadImage);
-		tab_group.add(decideIconColor);
 		tab_group.add(healthIconInputText);
 		tab_group.add(vocalsInputText);
 		tab_group.add(singDurationStepper);
@@ -703,91 +724,107 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		tab_group.add(healthColorStepperR);
 		tab_group.add(healthColorStepperG);
 		tab_group.add(healthColorStepperB);
-		tab_group.add(saveCharacterButton);
+		tab_group.add(decideIconColor);
+		tab_group.add(fruitColorStepperR);
+		tab_group.add(fruitColorStepperG);
+		tab_group.add(fruitColorStepperB);
+		tab_group.add(fruitAccentStepperR);
+		tab_group.add(fruitAccentStepperG);
+		tab_group.add(fruitAccentStepperB);
 	}
 
 	public function UIEvent(id:String, sender:Dynamic) {
 		//trace(id, sender);
-		if(id == PsychUICheckBox.CLICK_EVENT)
-			unsavedProgress = true;
+		unsavedProgress = true;
 
 		if(id == PsychUIInputText.CHANGE_EVENT)
 		{
-			if(sender == healthIconInputText) {
+			unsavedProgress = true;
+			if(sender == healthIconInputText)
+			{
 				var lastIcon = healthIcon.char;
 				healthIcon.changeIcon(healthIconInputText.text, false);
 				character.healthIcon = healthIconInputText.text;
 				if(lastIcon != healthIcon.char) updatePresence();
-				unsavedProgress = true;
 			}
-			else if(sender == vocalsInputText)
-			{
-				character.vocalsFile = vocalsInputText.text;
-				unsavedProgress = true;
-			}
-			else if(sender == imageInputText)
-			{
-				character.imageFile = imageInputText.text;
-				unsavedProgress = true;
-			}
+			else if(sender == vocalsInputText) character.vocalsFile = vocalsInputText.text;
+			else if(sender == imageInputText) character.imageFile = imageInputText.text;
 		}
 		else if(id == PsychUINumericStepper.CHANGE_EVENT)
 		{
 			if (sender == scaleStepper)
 			{
-				reloadCharacterImage();
+				// reloadCharacterImage();
 				character.jsonScale = sender.value;
 				character.scale.set(character.jsonScale, character.jsonScale);
 				character.updateHitbox();
 				updatePointerPos(false);
-				unsavedProgress = true;
 			}
 			else if(sender == positionXStepper)
 			{
 				character.positionArray[0] = positionXStepper.value;
 				updateCharacterPositions();
-				unsavedProgress = true;
 			}
 			else if(sender == positionYStepper)
 			{
 				character.positionArray[1] = positionYStepper.value;
 				updateCharacterPositions();
-				unsavedProgress = true;
 			}
-			else if(sender == singDurationStepper)
-			{
-				character.singDuration = singDurationStepper.value;
-				unsavedProgress = true;
-			}
+			else if(sender == singDurationStepper) character.singDuration = singDurationStepper.value;
 			else if(sender == positionCameraXStepper)
 			{
 				character.cameraPosition[0] = positionCameraXStepper.value;
 				updatePointerPos();
-				unsavedProgress = true;
 			}
 			else if(sender == positionCameraYStepper)
 			{
 				character.cameraPosition[1] = positionCameraYStepper.value;
 				updatePointerPos();
-				unsavedProgress = true;
 			}
 			else if(sender == healthColorStepperR)
 			{
 				character.healthColorArray[0] = Math.round(healthColorStepperR.value);
 				updateHealthBar();
-				unsavedProgress = true;
 			}
 			else if(sender == healthColorStepperG)
 			{
 				character.healthColorArray[1] = Math.round(healthColorStepperG.value);
 				updateHealthBar();
-				unsavedProgress = true;
 			}
 			else if(sender == healthColorStepperB)
 			{
 				character.healthColorArray[2] = Math.round(healthColorStepperB.value);
 				updateHealthBar();
-				unsavedProgress = true;
+			}
+			else if(sender == fruitColorStepperR)
+			{
+				character.fruitColorArray[0] = Math.round(fruitColorStepperR.value);
+				updateHealthBar();
+			}
+			else if(sender == fruitColorStepperG)
+			{
+				character.fruitColorArray[1] = Math.round(fruitColorStepperG.value);
+				updateHealthBar();
+			}
+			else if(sender == fruitColorStepperB)
+			{
+				character.fruitColorArray[2] = Math.round(fruitColorStepperB.value);
+				updateHealthBar();
+			}
+			else if(sender == fruitAccentStepperR)
+			{
+				character.fruitAccentColor[0] = Math.round(fruitAccentStepperR.value);
+				updateHealthBar();
+			}
+			else if(sender == fruitAccentStepperG)
+			{
+				character.fruitAccentColor[1] = Math.round(fruitAccentStepperG.value);
+				updateHealthBar();
+			}
+			else if(sender == fruitAccentStepperB)
+			{
+				character.fruitAccentColor[2] = Math.round(fruitAccentStepperB.value);
+				updateHealthBar();
 			}
 		}
 	}
@@ -1017,9 +1054,9 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			{
 				#if flxanimate
 				if (character.isAnimateAtlas)
-			{
-				frames = character.atlas.anim.curFrame;
-				length = character.atlas.anim.length;
+				{
+					frames = character.atlas.anim.curFrame;
+					length = character.atlas.anim.length;
 				}
 				else
 				#end
@@ -1124,27 +1161,20 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 	inline function fixHealthBar()
 	{
-		final halfWidth:Float = (healthBar.bg.width / 2);
-		final offset:Float = 20;
+		healthBar.bg.scale.set(0.73, 0.73); healthBar.bg.updateHitbox();
 
-		healthBar.barHeight = 19;
-		healthBar.barOffset.y = 81;
+		healthBar.barWidth = 552;
+		for (b in [healthBar.leftBar, healthBar.rightBar])
+		{
+			b.loadGraphic(Paths.image('healthBar_bar'));
+			b.antialiasing = true;
+			b.offset.set(34, -5);
+		}
+		healthBar.barOffset.set(-2, -1);
+		healthBar.leftToRight = true;
 
-		healthBar.leftBar.flipX = true;
-		healthBar.rightBar.flipX = true;
-		healthBar.barWidth = Math.round(halfWidth - offset);
-
-		var blackBG:FlxSprite = new FlxSprite(22, healthBar.barOffset.y).makeGraphic(healthBar.barWidth * 2, healthBar.barHeight, FlxColor.BLACK);
-		blackBG.active = false;
-		healthBar.insert(0, blackBG);
-
-		healthBar.bg.clipRect = new flixel.math.FlxRect(halfWidth - offset, 0, halfWidth + offset, healthBar.bg.height);
-		healthBar.bg.clipRect = healthBar.bg.clipRect;
-		blackBG.clipRect = healthBar.bg.clipRect;
-		healthBar.regenerateClips();
-
-		healthBar.x -= healthBar.bg.clipRect.width + 3;
-		healthIcon.setPosition((healthBar.x + healthBar.barWidth), healthBar.y + 21);
+		healthBar.y -= (healthBar.height + healthBar.x);
+		healthIcon.setPosition(healthBar.x, (healthBar.y + healthBar.x) - 75);
 	}
 
 	inline function updateHealthBar()
@@ -1152,10 +1182,18 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		healthColorStepperR.value = character.healthColorArray[0];
 		healthColorStepperG.value = character.healthColorArray[1];
 		healthColorStepperB.value = character.healthColorArray[2];
-		final newColor:FlxColor = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
+		final healthColor:FlxColor = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
+		healthBar.setColors(healthColor, healthColor);
 
-		healthBar.setColors(newColor, newColor);
 		healthIcon.changeIcon(character.healthIcon, false);
+		healthIcon.changeFruit(character.healthFruit);
+
+		fruitColorStepperR.value = character.fruitColorArray[0]; fruitAccentStepperR.value = character.fruitAccentColor[0];
+		fruitColorStepperG.value = character.fruitColorArray[1]; fruitAccentStepperG.value = character.fruitAccentColor[1];
+		fruitColorStepperB.value = character.fruitColorArray[2]; fruitAccentStepperB.value = character.fruitAccentColor[2];
+		healthIcon.fruitRGB.r = FlxColor.fromRGB(character.fruitColorArray[0], character.fruitColorArray[1], character.fruitColorArray[2]);
+		healthIcon.fruitRGB.b = FlxColor.fromRGB(character.fruitAccentColor[0], character.fruitAccentColor[1], character.fruitAccentColor[2]);
+
 		updatePresence();
 	}
 

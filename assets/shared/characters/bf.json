@@ -86,8 +86,13 @@
 	"image": "characters/bluetooth, characters/bluetoothMisses",
 	"position": [-278, -483],
 	"healthicon": "bf",
+	"healthfruit": "blueberry",
 	"flip_x": true,
 	"healthbar_colors": [123, 210, 244],
+	"fruit_colors": {
+		"color": [91, 105, 226],
+		"accent": [252, 252, 124]
+	},
 	"camera_position": [-220, 580],
 	"sing_duration": 4,
 	"scale": 0.363,

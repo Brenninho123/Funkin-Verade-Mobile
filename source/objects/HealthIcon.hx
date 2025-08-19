@@ -1,17 +1,33 @@
 package objects;
 
-class HealthIcon extends FlxSprite
+import flixel.group.FlxSpriteContainer;
+import shaders.RGBPalette;
+
+class HealthIcon extends FlxSpriteContainer
 {
 	public var sprTracker:FlxSprite;
 	private var isPlayer:Bool = false;
-	public var char(default, null):String = '';
 
-	public function new(char:String = 'face', isPlayer:Bool = false, ?allowGPU:Bool = true)
+	public var char(default, null):String = "";
+	public var charSprite:FlxSprite = new FlxSprite();
+
+	public var fruit(default, null):String = "";
+	public var fruitSprite:FlxSprite = new FlxSprite(-15, -7);
+	public var fruitRGB:RGBPalette = new RGBPalette();
+
+	public function new(char:String = 'face', isPlayer:Bool = false, ?fruit:String, ?allowGPU:Bool = true)
 	{
 		super();
 		this.isPlayer = isPlayer;
-		changeIcon(char, allowGPU);
 		scrollFactor.set();
+
+		if (fruit != null)
+		{
+			changeFruit(fruit, allowGPU);
+			add(fruitSprite);
+		}
+		changeIcon(char, allowGPU);
+		add(charSprite);
 	}
 
 	override function update(elapsed:Float)
@@ -19,14 +35,13 @@ class HealthIcon extends FlxSprite
 		super.update(elapsed);
 		if (sprTracker == null) return;
 
-		setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
+		setPosition((sprTracker.x + sprTracker.width) + 12, sprTracker.y - 30);
 	}
 
-	private var iconOffsets:Array<Float> = [0, 0];
 	public function changeIcon(char:String, ?allowGPU:Bool = true)
 	{
 		if (char == this.char || char == this.char.replace("-pixel", "")) return;
-		final lastAnimFrame:Int = animation.curAnim?.curFrame;
+		final lastAnimFrame:Int = charSprite.animation.curAnim?.curFrame;
 
 		var name:String = 'icons/$char';
 		if (
@@ -37,14 +52,36 @@ class HealthIcon extends FlxSprite
 		
 		final graphic:flixel.graphics.FlxGraphic = Paths.image(name, allowGPU);
 		final grid:Float = Math.round(graphic.width / graphic.height);
-		loadGraphic(graphic, true, Math.floor(graphic.width / grid));
-		updateHitbox();
+		charSprite.loadGraphic(graphic, true, Math.floor(graphic.width / grid));
 
-		animation.add(char, [for (i in 0...frames.frames.length) i], 0, false, isPlayer);
-		animation.play(char, true, false, lastAnimFrame);
-		this.char = name.substr(6);
+		charSprite.animation.add(char, [for (i in 0...charSprite.frames.frames.length) i], 0, false, isPlayer);
+		charSprite.animation.play(char, true, false, lastAnimFrame);
+		this.char = name.substring(name.lastIndexOf("/") + 1);
 
 		if (!ClientPrefs.data.antialiasing) return;
-		antialiasing = !this.char.endsWith("-pixel");
+		charSprite.antialiasing = !this.char.endsWith("-pixel");
+	}
+
+	public function changeFruit(fruit:String, ?allowGPU:Bool = true)
+	{
+		if (fruit == this.fruit || fruit == this.fruit.replace("-pixel", "")) return;
+		fruitSprite.shader = null;
+
+		var name:String = 'icons/fruit-$fruit';
+		if (
+			!Paths.fileExists('images/$name.png', IMAGE) 
+			&& !Paths.fileExists('images/${name += '-pixel'}.png', IMAGE)
+		)
+			name = 'icons/fruit-jabuticaba';
+
+		fruitSprite.loadGraphic(Paths.image(name));
+		fruitSprite.shader = fruitRGB.shader;
+		fruitSprite.scale.set(1.1, 1.1); fruitSprite.updateHitbox();
+
+		fruitSprite.flipX = isPlayer;
+		this.fruit = name.substring(name.lastIndexOf("-") + 1);
+
+		if (!ClientPrefs.data.antialiasing) return;
+		fruitSprite.antialiasing = !this.fruit.endsWith("-pixel");
 	}
 }

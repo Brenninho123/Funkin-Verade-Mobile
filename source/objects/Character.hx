@@ -5,19 +5,20 @@ import backend.animation.PsychAnimationController;
 import flixel.util.FlxSort;
 import flixel.util.FlxDestroyUtil;
 
-import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import haxe.Json;
 
 import backend.Song;
 import states.stages.objects.TankmenBG;
 
-typedef CharacterFile = {
+typedef CharacterFile = 
+{
 	var animations:Array<AnimArray>;
 	var image:String;
 	var scale:Float;
 	var sing_duration:Float;
 	var healthicon:String;
+	var healthfruit:String;
 
 	var position:Array<Float>;
 	var camera_position:Array<Float>;
@@ -25,11 +26,13 @@ typedef CharacterFile = {
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
+	var fruit_colors:{color:Array<Int>, accent:Array<Int>};
 	var vocals_file:String;
 	@:optional var _editor_isPlayer:Null<Bool>;
 }
 
-typedef AnimArray = {
+typedef AnimArray = 
+{
 	var anim:String;
 	var name:String;
 	var fps:Int;
@@ -63,11 +66,14 @@ class Character extends FlxSprite
 	public var skipDance:Bool = false;
 
 	public var healthIcon:String = 'face';
+	public var healthFruit:String = 'jabuticaba';
 	public var animationsArray:Array<AnimArray> = [];
 
 	public var positionArray:Array<Float> = [0, 0];
 	public var cameraPosition:Array<Float> = [0, 0];
-	public var healthColorArray:Array<Int> = [255, 0, 0];
+	public var healthColorArray:Array<Int> = [161, 161, 161];
+	public var fruitColorArray:Array<Int> = [267, 16, 100];
+	public var fruitAccentColor:Array<Int> = [33, 65, 100];
 
 	public var missingCharacter:Bool = false;
 	public var missingText:FlxText;
@@ -141,7 +147,7 @@ class Character extends FlxSprite
 		dance();
 	}
 
-	public function loadCharacterFile(json:Dynamic)
+	public function loadCharacterFile(json:CharacterFile)
 	{
 		isAnimateAtlas = false;
 
@@ -188,10 +194,13 @@ class Character extends FlxSprite
 
 		// data
 		healthIcon = json.healthicon;
+		healthFruit = json.healthfruit;
 		singDuration = json.sing_duration;
 		flipX = (json.flip_x != isPlayer);
-		healthColorArray = (json.healthbar_colors != null && json.healthbar_colors.length > 2) ? json.healthbar_colors : [161, 161, 161];
-		vocalsFile = json.vocals_file != null ? json.vocals_file : '';
+		healthColorArray = (json.healthbar_colors != null) ? json.healthbar_colors : [161, 161, 161];
+		fruitColorArray = (json.fruit_colors?.color != null) ? json.fruit_colors.color : [267, 16, 100];
+		fruitAccentColor = (json.fruit_colors?.accent != null) ? json.fruit_colors.accent : [33, 65, 100];
+		vocalsFile = json.vocals_file ?? "";
 		originalFlipX = (json.flip_x == true);
 		editorIsPlayer = json._editor_isPlayer;
 

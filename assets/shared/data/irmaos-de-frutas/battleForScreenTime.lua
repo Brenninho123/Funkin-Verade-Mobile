@@ -1,0 +1,164 @@
+luaDebugMode = true
+
+tcholaMoment = false -- toggle this script
+isPlayer = false
+iconSpr = "" -- which original icon to do the swapping
+icon = "" -- second char icon
+
+_lastIconPlayer = ""
+_lastIcon = ""
+_lastFruitPlayer = ""
+_lastFruit = ""
+_hpColorPlayer = {}
+_hpColor = {}
+_fruitColorPlayer = {}
+_fruitColor = {}
+_fruitAccentPlayer = {}
+_fruitAccent = {}
+
+function onCreate()
+	runHaxeCode([[
+		import Reflect;
+		import objects.HealthIcon;
+
+		var iconP3:HealthIcon = new HealthIcon(null, false, "");
+		iconP3.charSprite.scale.set(0.65, 0.65); iconP3.charSprite.updateHitbox();
+		iconP3.fruitSprite.scale.set(1.5, 1.5); iconP3.fruitSprite.updateHitbox();
+		iconP3.fruitSprite.x += 22; iconP3.fruitSprite.y += 27;
+		iconP3.setPosition(game.iconP2.x + 17, game.iconP2.y - 40);
+		iconP3.visible = false;
+
+		setVar('iconP3', iconP3);
+		game.uiGroup.insert(game.uiGroup.members.indexOf(game.iconP2) - 1, iconP3);
+
+		function setFruitColors(icon:String, customIcon:Bool, main:Array<Int>, accent:Array<Int>)
+		{
+			var icon:HealthIcon = customIcon ? getVar(icon) : Reflect.getProperty(game, icon);
+			icon.fruitRGB.r = FlxColor.fromRGB(main[0], main[1], main[2]);
+			icon.fruitRGB.b = FlxColor.fromRGB(accent[0], accent[1], accent[2]);
+		}
+	]])
+end
+
+function onCreatePost()
+	_lastIconPlayer = getProperty('boyfriend.healthIcon')
+	_hpColorPlayer = getProperty('boyfriend.healthColorArray')
+	_lastIcon = getProperty('dad.healthIcon')
+	_hpColor = getProperty('dad.healthColorArray')
+
+	_lastFruitPlayer = getProperty('boyfriend.healthFruit')
+	_lastFruit = getProperty('dad.healthFruit')
+
+	_fruitAccentPlayer = getProperty('boyfriend.fruitAccentColor')
+	_fruitAccent = getProperty('dad.fruitAccentColor')
+	_fruitColorPlayer = getProperty('boyfriend.fruitColorArray')
+	_fruitColor = getProperty('dad.fruitColorArray')
+end
+
+function opponentNoteHitPre(_, _, t, s)
+	if s then return end
+	local healthBar = (getPropertyFromClass("states.PlayState", 'stageUI') ~= 'legacy') and 'opponentHealthBar' or 'healthBar'
+
+	doIconShi(isPlayer, t, 'dad', healthBar)
+end
+function goodNoteHitPre(_, _, t, s)
+	if s then return end
+	doIconShi((not isPlayer), t, 'boyfriend', 'healthBar')
+end
+
+function doIconShi(playerCheck, noteType, character, healthBar)
+	if not tcholaMoment then return end
+	local doIconSwap = getVar('paIconShi') or false
+
+	if noteType ~= 'Alt Animation' or playerCheck then
+		if not playerCheck then
+			swapIcon(character, iconSpr, healthBar)
+			if doIconSwap then
+				swapIcon('extra', 'iconP3', healthBar)
+				callMethod('iconP3.changeFruit', {getProperty(character..'.healthFruit')})
+				runHaxeFunction('setFruitColors', {'iconP3', true, getProperty(character..'.fruitColorArray'), getProperty(character..'.fruitAccentColor')})
+			end
+		end
+		return
+	end
+
+	swapIcon('extra', iconSpr, healthBar, true)
+	if doIconSwap then
+		swapIcon(character, 'iconP3', healthBar, true)
+		callMethod('iconP3.changeFruit', {getProperty('extra.healthFruit')})
+		runHaxeFunction('setFruitColors', {'iconP3', true, getProperty('extra.fruitColorArray'), getProperty('extra.fruitAccentColor')})
+	end
+end
+
+function swapIcon(character, iconTag, healthBarTag, forced)
+	forced = forced or false
+	if not forced and getProperty(iconTag..'.char') == getProperty(character..'.healthIcon') then return end
+
+	callMethod(iconTag..'.changeIcon', {getProperty(character..'.healthIcon')})
+	setProperty(healthBarTag..'.leftBar.color', FlxColor( rgbArrayToHex(getProperty(character..'.healthColorArray')) ))
+end
+
+function onEvent(n, v1, v2)
+	v1 = stringTrim(v1:lower())
+	if n == 'Change Character' then
+		local charTag = 'boyfriend'
+		if v1 == 'gf' or v1 == 'girlfriend' then
+			charTag = 'gf'
+		elseif v1 == 'dad' or v1 == 'opponent' then
+			charTag = 'dad'
+		else
+			charTag = tagFromNumV1(v1)
+		end
+		setVar('paIconShi', stringEndsWith(v2, 'fight'))
+
+		isPlayer = getProperty(charTag..'.isPlayer')
+		setProperty('iconP3.isPlayer', isPlayer)
+
+		iconSpr = 'iconP'..(isPlayer and '1' or '2')
+		if getVar('paIconShi') then
+			setProperty('iconP2.fruitSprite.visible', false)
+			setProperty('iconP3.visible', true)
+		end
+
+		setVar('extra', {
+			['healthIcon'] = (isPlayer and _lastIconPlayer or _lastIcon),
+			['healthColorArray'] = (isPlayer and _hpColorPlayer or _hpColor),
+			['healthFruit'] = (isPlayer and _lastFruitPlayer or _lastFruit),
+			['fruitColorArray'] = (isPlayer and _fruitColorPlayer or _fruitColor),
+			['fruitAccentColor'] = (isPlayer and _fruitAccentPlayer or _fruitAccent)
+		})
+		if charTag == 'boyfriend' then
+			_lastIconPlayer = getProperty('boyfriend.healthIcon')
+			_lastFruitPlayer = getProperty('boyfriend.healthFruit')
+			_hpColorPlayer = getProperty('boyfriend.healthColorArray')
+
+			_fruitColorPlayer = getProperty('boyfriend.fruitColorArray')
+			_fruitAccentPlayer = getProperty('boyfriend.fruitAccentColor')
+		else
+			_lastIcon = getProperty('dad.healthIcon')
+			_lastFruit = getProperty('dad.healthFruit')
+			_hpColor = getProperty('dad.healthColorArray')
+
+			_fruitColor = getProperty('dad.fruitColorArray')
+			_fruitAccent = getProperty('dad.fruitAccentColor')
+		end
+
+		tcholaMoment = true
+	end
+end
+
+function tagFromNumV1(v1)
+	if tonumber(v1) == nil then return 'boyfriend' end
+
+	local tag = 'boyfriend'
+	if tonumber(v1) == 2 then
+		tag = 'gf'
+	elseif tonumber(v1) == 1 then
+		tag = 'dad'
+	end
+	return tag
+end
+
+function rgbArrayToHex(array)
+	return string.format("#%x%x%x", array[1], array[2], array[3])
+end

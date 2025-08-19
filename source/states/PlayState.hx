@@ -531,18 +531,18 @@ class PlayState extends MusicBeatState
 		healthBar.leftToRight = false;
 		healthBar.scrollFactor.set();
 		healthBar.visible = !ClientPrefs.data.hideHud;
-		reloadHealthBarColors();
 		uiGroup.add(healthBar);
 
-		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
+		iconP1 = new HealthIcon(boyfriend.healthIcon, true, boyfriend.healthFruit);
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		uiGroup.add(iconP1);
 
-		iconP2 = new HealthIcon(dad.healthIcon, false);
+		iconP2 = new HealthIcon(dad.healthIcon, false, dad.healthFruit);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		uiGroup.add(iconP2);
+		reloadHealthBarColors();
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -708,6 +708,11 @@ class PlayState extends MusicBeatState
 			FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
 			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2])
 		);
+
+		iconP1.fruitRGB.r = FlxColor.fromRGB(boyfriend.fruitColorArray[0], boyfriend.fruitColorArray[1], boyfriend.fruitColorArray[2]);
+		iconP1.fruitRGB.b = FlxColor.fromRGB(boyfriend.fruitAccentColor[0], boyfriend.fruitAccentColor[1], boyfriend.fruitAccentColor[2]);
+		iconP2.fruitRGB.r = FlxColor.fromRGB(dad.fruitColorArray[0], dad.fruitColorArray[1], dad.fruitColorArray[2]);
+		iconP2.fruitRGB.b = FlxColor.fromRGB(dad.fruitAccentColor[0], dad.fruitAccentColor[1], dad.fruitAccentColor[2]);
 	}
 
 	public function addCharacterToList(newCharacter:String, type:Int) {
@@ -1917,8 +1922,8 @@ class PlayState extends MusicBeatState
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
-		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP1.charSprite.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.charSprite.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 		return health;
 	}
 
@@ -2205,6 +2210,7 @@ class PlayState extends MusicBeatState
 							boyfriend = boyfriendMap.get(value2);
 							boyfriend.alpha = lastAlpha;
 							iconP1.changeIcon(boyfriend.healthIcon);
+							iconP1.changeFruit(boyfriend.healthFruit);
 						}
 						setOnScripts('boyfriendName', boyfriend.curCharacter);
 
@@ -2227,6 +2233,7 @@ class PlayState extends MusicBeatState
 							}
 							dad.alpha = lastAlpha;
 							iconP2.changeIcon(dad.healthIcon);
+							iconP2.changeFruit(dad.healthFruit);
 						}
 						setOnScripts('dadName', dad.curCharacter);
 

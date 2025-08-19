@@ -46,8 +46,13 @@
 	"image": "characters/torajo",
 	"position": [-560, -390],
 	"healthicon": "torajo",
+	"healthfruit": "apple",
 	"flip_x": false,
 	"healthbar_colors": [20, 209, 116],
+	"fruit_colors": {
+		"color": [0, 244, 113],
+		"accent": [220, 91, 235]
+	},
 	"camera_position": [300, 240],
 	"sing_duration": 4,
 	"scale": 0.7,
