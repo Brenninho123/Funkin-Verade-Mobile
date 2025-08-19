@@ -32,32 +32,27 @@ enum abstract AchievementOp(String)
 class Achievements {
 	public static function init()
 	{
-		createAchievement('friday_night_play',		{name: "Freaky on a Friday Night", description: "Play on a Friday... Night.", hidden: true});
-		#if BASE_GAME_FILES
-		createAchievement('week1_nomiss',			{name: "She Calls Me Daddy Too", description: "Beat Week 1 on Hard with no Misses."});
-		createAchievement('week2_nomiss',			{name: "No More Tricks", description: "Beat Week 2 on Hard with no Misses."});
-		createAchievement('week3_nomiss',			{name: "Call Me The Hitman", description: "Beat Week 3 on Hard with no Misses."});
-		createAchievement('week4_nomiss',			{name: "Lady Killer", description: "Beat Week 4 on Hard with no Misses."});
-		createAchievement('week5_nomiss',			{name: "Missless Christmas", description: "Beat Week 5 on Hard with no Misses."});
-		createAchievement('week6_nomiss',			{name: "Highscore!!", description: "Beat Week 6 on Hard with no Misses."});
-		createAchievement('week7_nomiss',			{name: "God Effing Damn It!", description: "Beat Week 7 on Hard with no Misses."});
-		createAchievement('weekend1_nomiss',		{name: "Just a Friendly Sparring", description: "Beat Weekend 1 on Hard with no Misses."});
+		#if DEMO
+		createAchievement('appleBrothers', 		{name: "Campeão", description: "Zere \"Irmãos de Frutas\"."});
+		createAchievement('mojaroGameplay', 	{name: "Beira da Morte", description: "Zere \"Irmãos de Frutas\" com 15% de precisão."});
+		createAchievement('OSUPlayer', 				{name: "Campeão Perfeito", description: "Zere \"Irmãos de Frutas\" de PFC."});
+		createAchievement('almostThere', 			{name: "Dor Sem Palavras", description: "Zere \"Irmãos de Frutas\" QUASE sem erros."});
+		#else
+		createAchievement('mundoToras_complete', 				{name: "Campeão", description: "Zere a Primeira Week."});
+		createAchievement('mundoToras_completeSucks', 	{name: "Beira da Morte", description: "Zere a Primeira Week com 15% de precisão."});
+		createAchievement('mundoToras_completeFC', 			{name: "Campeão Perfeito", description: "Zere a Primeira Week sem erros."});
+		createAchievement('mundoToras_completePain', 		{name: "Dor Sem Palavras", description: "Zere a Primeira Week QUASE sem erros."});
 		#end
-		createAchievement('ur_bad',					{name: "What a Funkin' Disaster!", description: "Complete a Song with a rating lower than 20%."});
-		createAchievement('ur_good',				{name: "Perfectionist", description: "Complete a Song with a rating of 100%."});
-		#if BASE_GAME_FILES
-		createAchievement('roadkill_enthusiast',	{name: "Roadkill Enthusiast", description: "Watch the Henchmen die 50 times.", maxScore: 50, maxDecimals: 0});
-		#end
-		createAchievement('oversinging', 			{name: "Oversinging Much...?", description: "Sing for 10 seconds without going back to Idle."});
-		createAchievement('hype',					{name: "Hyperactive", description: "Finish a Song without going back to Idle."});
-		createAchievement('two_keys',				{name: "Just the Two of Us", description: "Finish a Song pressing only two keys."});
-		createAchievement('toastie',				{name: "Toaster Gamer", description: "Have you tried to run the game on a toaster?"});
-		#if BASE_GAME_FILES
-		createAchievement('debugger',				{name: "Debugger", description: "Beat the \"Test\" Stage from the Chart Editor.", hidden: true});
-		#end
-		#if (TITLE_SCREEN_EASTER_EGG || PSYCH_WATERMARKS)
-		createAchievement('pessy_easter_egg',		{name: "Engine Gal Pal", description: "Teehee, you found me~!", hidden: true});
-		#end
+
+		createAchievement('abel.webp', {name: "Como Pegar Abel Atualizado Sem Vírus APK gama baja", description: "Spawne Abels no menu principal.", hidden: true});
+		createAchievement('deivCameo', {name: "Tripulação Reunida", description: "Clique no Deiv no menu principal."});
+		createAchievement('niceJob', {name: "Nice..", description: "Vença uma música com 69% de precisão."});
+		createAchievement('learner', {name: "Aprendizagem", description: "Morra 5 vezes.", maxScore: 5, maxDecimals: 0});
+
+		createAchievement('sillyDoodles', {name: "Arte", description: "Confira a Galeria do mod."});
+		createAchievement('persistence', {name: "Capa! Pera, Jogo Errado", description: "Torajo, é você jogando??\n(Morra 50 vezes)", maxScore: 50, maxDecimals: 0});
+		createAchievement('totem', {name: "Imortalidade", description: "Erre 30 notas, mas zere uma música mesmo assim."});
+		createAchievement('walktrough', {name: "E isso.. foi Funkin' Em Verade.", description: "Zere o mod 100%", hidden: true});
 
 		//dont delete this thing below
 		_originalLength = _sortID + 1;

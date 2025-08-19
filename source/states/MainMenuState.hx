@@ -11,7 +11,7 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.effects.FlxFlicker;
 import options.OptionsState;
 
-private enum abstract AlignType(String)
+private enum abstract AlignType(String) from String
 {
 	final CENTER:String = "centered";
 	final BOTTOM_LEFT:String = "bottomL";

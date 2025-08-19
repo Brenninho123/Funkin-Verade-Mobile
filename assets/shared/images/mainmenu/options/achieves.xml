@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Achieves.png">
+	<!-- Created using the Spritesheet and XML generator -->
+	<!-- https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web -->
+	<SubTexture name="NaoSelecionado0000" x="0" y="356" width="653" height="150" frameX="-362" frameY="-614" frameWidth="1378" frameHeight="1378"/>
+	<SubTexture name="Selecionado0000" x="0" y="0" width="679" height="179" frameX="-350" frameY="-599" frameWidth="1378" frameHeight="1378"/>
+	<SubTexture name="Selecionado0001" x="0" y="179" width="677" height="177" frameX="-351" frameY="-600" frameWidth="1378" frameHeight="1378"/>
+</TextureAtlas>
