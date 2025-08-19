@@ -141,13 +141,15 @@ class WeekData {
 	//   FUNCTIONS YOU WILL PROBABLY NEVER NEED TO USE
 
 	//To use on PlayState.hx or Highscore stuff
-	public static function getWeekFileName():String {
+	public static inline function getWeekFileName():String
+	{
 		return weeksList[PlayState.storyWeek];
 	}
 
 	//Used on LoadingState, nothing really too relevant
-	public static function getCurrentWeek():WeekData {
-		return weeksLoaded.get(weeksList[PlayState.storyWeek]);
+	public static function getCurrentWeek():WeekData
+	{
+		return weeksLoaded[getWeekFileName()];
 	}
 
 	public static function setDirectoryFromWeek(?data:WeekData = null) {

@@ -55,22 +55,18 @@ class AchievementsMenuState extends MusicBeatState
 		{
 			var hasAntialias:Bool = ClientPrefs.data.antialiasing;
 			var graphic = null;
-			if(option.unlocked)
+			if (option.unlocked)
 			{
 				#if MODS_ALLOWED Mods.currentModDirectory = option.mod; #end
-				var image:String = 'achievements/' + option.name;
-				if(Paths.fileExists('images/$image-pixel.png', IMAGE))
-				{
-					graphic = Paths.image('$image-pixel');
-					hasAntialias = false;
-				}
-				else graphic = Paths.image(image);
-
-				if(graphic == null) graphic = Paths.image('unknownMod');
+				var image:String = 'achievements/${option.name}';
+				if (!Paths.fileExists('images/$image.png', IMAGE) && Paths.fileExists('images/${image += '-pixel'}.png', IMAGE))
+					image = 'unknownMod';
+				graphic = Paths.image(image) ?? Paths.image('unknownMod');
+				hasAntialias = ClientPrefs.data.antialiasing && !image.endsWith('-pixel');
 			}
 			else graphic = Paths.image('achievements/lockedachievement');
 
-			var spr:FlxSprite = new FlxSprite(0, Math.floor(grpOptions.members.length / MAX_PER_ROW) * 180).loadGraphic(graphic);
+			var spr:FlxSprite = new FlxSprite(0, Math.floor(grpOptions.members.length / MAX_PER_ROW) * 180, graphic);
 			spr.scrollFactor.x = 0;
 			spr.screenCenter(X);
 			spr.x += 180 * ((grpOptions.members.length % MAX_PER_ROW) - MAX_PER_ROW/2) + spr.width / 2 + 15;
@@ -81,8 +77,7 @@ class AchievementsMenuState extends MusicBeatState
 		#if MODS_ALLOWED Mods.loadTopMod(); #end
 
 		var box:FlxSprite = new FlxSprite(0, -30).makeGraphic(1, 1, FlxColor.BLACK);
-		box.scale.set(grpOptions.width + 60, grpOptions.height + 60);
-		box.updateHitbox();
+		box.scale.set(grpOptions.width + 60, grpOptions.height + 60); box.updateHitbox();
 		box.alpha = 0.6;
 		box.scrollFactor.x = 0;
 		box.screenCenter(X);

@@ -15,6 +15,7 @@ vs_Community.exe
 # Local history which shouldn't be shared.
 .history
 .ionide
+dump/
 # macOS file attribute which can cause problems when uploading.
 *.DS_Store
 # ! means a file should be added regardless of it it gets ignored prior.

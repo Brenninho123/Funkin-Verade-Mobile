@@ -113,12 +113,17 @@ class Paths
 			//catch(haxe.Exception) {}
 		}
 
-		for (member in FlxG.state.members)
-			checkForGraphics(member);
-
-		if(FlxG.state.subState != null)
-			for (member in FlxG.state.subState.members)
+		if (FlxG.state != null)
+		{
+			for (member in FlxG.state.members)
 				checkForGraphics(member);
+
+			if (FlxG.state.subState != null)
+			{
+				for (member in FlxG.state.subState.members)
+					checkForGraphics(member);
+			}
+		}
 
 		for (key in currentTrackedAssets.keys())
 		{
@@ -282,11 +287,11 @@ class Paths
 
 	inline static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
-		var path:String = getPath(key, TEXT, !ignoreMods);
+		if ((!key.startsWith('assets/') && !key.contains(':assets/')) && !key.startsWith('./')) key = getPath(key, TEXT, !ignoreMods);
 		#if sys
-		return (FileSystem.exists(path)) ? File.getContent(path) : null;
+		return (FileSystem.exists(key)) ? File.getContent(key) : null;
 		#else
-		return (OpenFlAssets.exists(path, TEXT)) ? Assets.getText(path) : null;
+		return (OpenFlAssets.exists(key, TEXT)) ? Assets.getText(key) : null;
 		#end
 	}
 

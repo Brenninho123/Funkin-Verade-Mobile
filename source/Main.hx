@@ -151,6 +151,7 @@ class Main extends Sprite
 		fpsVar.visible = ClientPrefs.data.showFPS;
 		
 		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
+		FlxG.signals.preGameReset.add(Paths.freeGraphicsFromMemory); // "Cannot render destroyed graphic" fix
 		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour
 
 		#if (linux || mac) // fix the app icon not showing up on the Linux Panel / Mac Dock
