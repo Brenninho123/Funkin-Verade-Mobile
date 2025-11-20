@@ -1,17 +1,9 @@
 package states;
 
-import lime.app.Application;
 import flixel.input.keyboard.FlxKey;
 import backend.WeekData;
 import backend.Song;
-import tjson.TJSON;
-import haxe.Json;
 import flixel.util.typeLimit.NextState;
-import openfl.display.BitmapData;
-import flixel.util.FlxGradient;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.effects.FlxFlicker;
-import options.OptionsState;
 
 private enum abstract AlignType(String) from String
 {
@@ -44,10 +36,11 @@ class MainMenuState extends MusicBeatState
 
 	public static var curSelected:Int = 0;
 	var selectedSomethin:Bool = false;
+	var optionShit:Array<String> = [];
+	var selectionShit:Map<Int, Array<String>> = [];
 
 	final datasPath:String = 'data/menus/main/';
 	var menuItems:FlxTypedGroup<FlxSprite>;
-	var optionShit:Array<String> = [];
 
 	var menuColors:Array<FlxColor> = [];
 	var bgGrad:FlxSprite;
@@ -64,10 +57,42 @@ class MainMenuState extends MusicBeatState
 	var eggHunts:Array<Void->Void> = [];
 	var lastFoundEgg:String = "";
 
+	@:noCompletion inline function __selectionDataFromNode(element:Xml):Array<String>
+	{
+		var selectionData:Array<String> = [];
+		for (d in element.elements())
+		{
+			selectionData.push(
+				#if DEMO
+				d.get("demo").length > 0 ? d.get("demo") : d.get("default")
+				#else
+				d.get("default")
+				#end);
+		}
+
+		if (selectionData[selectionData.length - 1].length == 0) selectionData.resize(1);
+		return selectionData;
+	}
+
+	public function new()
+	{
+		final optionData:Xml = Xml.parse(Paths.getTextFromFile('${datasPath}options.xml')).firstElement();
+
+		var i:Int = 0;
+		for (e in optionData.elements())
+		{
+			optionShit.push(e.get("name"));
+			if (e.firstElement() == null) continue;
+
+			selectionShit[i++] = __selectionDataFromNode(e);
+		}
+
+		super();
+	}
+
 	override function create()
 	{
 		FlxG.mouse.visible = false;
-		optionShit = CoolUtil.coolTextFile('${datasPath}list.txt');
 		CoolUtil.playMenuSong();
 
 		if (optionShit.length == 0)
@@ -79,7 +104,7 @@ class MainMenuState extends MusicBeatState
 			FlxG.switchState(function() 
 			{
 				return new ErrorState(
-					'No menu items were found!! You can fix this by adding one in "./${datasPath}menuList.txt".\nPress ACCEPT to Reload | Press BACK to Leave this Menu',
+					'No menu items were found!! Try making sure options are added correctly in "assets/${datasPath}options.xml".\nPress ACCEPT to Reload | Press BACK to Leave this Menu',
 					() -> FlxG.switchState(() -> new MainMenuState()),
 					() -> FlxG.switchState(() -> new TitleState())
 				);
@@ -87,25 +112,25 @@ class MainMenuState extends MusicBeatState
 			return;
 		}
 
-		// Bota easter egg aq blz??
+		// Easter eggs são assinalados aqui pq não se pode acessar funções locais no declarar de variáveis
+		EasterEggs.state = this;
+		FlxG.signals.postUpdate.add(EasterEggs.onUpdate);
 		easterEggs = 
 		[
-			"abel" => spawnAbels, // ai q odio isso do abel, vai ser dificil fzr viu
-			"algorithomus" => FlxG.resetGame
+			"abel" => EasterEggs.spawnAbels/* ,
+			"algorithomus" => FlxG.resetGame */
 		];
-
-		for (_ in 0...Lambda.count(easterEggs))
-		{
-			eggsLastClues.push(-1);
-			eggsLastGuesses.push("");
-		}
 
 		var eggId:Int = 0;
 		for (clues=>egg in easterEggs)
 		{
-			final huntTask:Void->Void = () -> huntForEgg(egg, eggId++, clues);
+			eggsLastClues.push(-1);
+			eggsLastGuesses.push("");
+			final huntTask:Void->Void = huntForEgg.bind(egg, eggId, clues);
+
 			eggHunts.push(huntTask);
 			FlxG.signals.preUpdate.add(huntTask);
+			++eggId;
 		}
 
 		super.create();
@@ -118,27 +143,30 @@ class MainMenuState extends MusicBeatState
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
 
-		bgGrad = new FlxSprite(0, 0, FlxGradient.createGradientBitmapData(200, 120, [0xFFADADAD, 0xFF3F3F3F]));
-		bgGrad.setGraphicSize(FlxG.width, FlxG.height); bgGrad.updateHitbox();
-		bgGrad.screenCenter();
-		bgGrad.active = false;
-		bgGrad.antialiasing = false;
-		bgGrad.blend = MULTIPLY;
-		add(bgGrad);
+		if (!ClientPrefs.data.lowQuality)
+		{	
+			bgGrad = new FlxSprite(0, 0, flixel.util.FlxGradient.createGradientBitmapData(1, FlxG.height, [0xFFADADAD, 0xFF3F3F3F]));
+			bgGrad.scale.x = FlxG.width; bgGrad.updateHitbox();
+			bgGrad.screenCenter();
+			bgGrad.active = false;
+			bgGrad.antialiasing = false;
+			bgGrad.blend = MULTIPLY;
+			add(bgGrad);
 
-		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
-		bgGrid.scale.set(1.85, 1.85); bgGrid.updateHitbox();
-		bgGrid.velocity.set(-24, 24);
-		bgGrid.alpha = 0.13;
-		add(bgGrid);
+			var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
+			bgGrid.scale.set(1.85, 1.85); bgGrid.updateHitbox();
+			bgGrid.velocity.set(-24, 24);
+			bgGrid.alpha = 0.13;
+			add(bgGrid);
+		}
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		for (o in optionShit)
 		{
-			final optData:MenuOpt = Json.parse(Paths.getTextFromFile('${datasPath}opt_$o.json'));
+			final optData:MenuOpt = haxe.Json.parse(Paths.getTextFromFile('${datasPath}opt_$o.json'));
 
 			var item:FlxSprite = createMenuItem(o, 30, -200 / ((optionShit.length / 2) - 1), optData);
-			menuColors.push(CoolUtil.dominantColor(item));
+			if (bgGrad != null) menuColors.push(CoolUtil.dominantColor(item));
 
 			createRender(optData.render);
 		}
@@ -213,7 +241,7 @@ class MainMenuState extends MusicBeatState
 		spr.offset.set(-data.offset[0], -data.offset[1]);
 
 		renderSprs.push(spr);
-		renderScales.push(data.scale);
+		if (!ClientPrefs.data.lowQuality) renderScales.push(data.scale);
 		add(spr);
 	}
 
@@ -233,8 +261,12 @@ class MainMenuState extends MusicBeatState
 			changeItem(1 * (up_p ? -1 : 1));
 		}
 
-		if (controls.BACK) selectItem("exit");
-		if (controls.ACCEPT) selectItem(optionShit[curSelected]);
+		if (controls.BACK)
+		{
+			FlxG.sound.play(Paths.sound("cancelMenu"));
+			FlxG.switchState(() -> new TitleState());
+		}
+		if (controls.ACCEPT) chooseItem();
 
 		#if debug
 		if (FlxG.keys.justPressed.F5) FlxG.resetState();
@@ -251,11 +283,10 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-		FlxG.watch.addQuick("lastPRessedEaster", eggsLastClues);
-		FlxG.watch.addQuick("lastTypedEaster", eggsLastGuesses);
-
 		super.update(elapsed);
-		// if (!renderSprs[curSelected]?.visible) return;
+		FlxG.watch.addQuick("lastPressedEaster", eggsLastClues);
+		FlxG.watch.addQuick("lastTypedEaster", eggsLastGuesses);
+		if (renderScales.length == 0) return;
 
 		renderSprs[curSelected].scale.set(
 			FlxMath.lerp(renderScales[curSelected], renderSprs[curSelected].scale.x, Math.exp(-elapsed * lerpSpeed)),
@@ -265,44 +296,50 @@ class MainMenuState extends MusicBeatState
 
 	override function beatHit()
 	{
-		if (curBeat % bopInterval != 0) return;
+		if (curBeat % bopInterval != 0 || renderScales.length == 0) return;
 		renderSprs[curSelected].scale.add(0.024, 0.024);
 	}
 
 	function huntForEgg(egg:Void->Void, eggId:Int, clues:String)
 	{
-		if (FlxG.keys.firstJustPressed() == -1 || lastFoundEgg != "") return;
-		final eachClue:Array<String> = clues.split("");
-		var lastFound:Int = eggsLastClues[eggId];
-		var lastGuess:String = eggsLastGuesses[eggId];
-
-		if (FlxG.keys.firstJustPressed() == FlxKey.fromString(eachClue[lastFound + 1])) lastGuess += eachClue[++lastFound];
-		/* else
+		if (FlxG.keys.firstJustPressed() == -1 || lastFoundEgg.length > 0) return;
+		var eachClue:Array<String> = clues.split("");
+		function resetProgress()
 		{
-			lastFound = -1;
-			lastGuess = "";
-		} */
+			eggsLastClues[eggId] = -1;
+			eggsLastGuesses[eggId] = "";
+		}
 
-		if (lastGuess == clues.toLowerCase())
+		if (FlxG.keys.firstJustPressed() == FlxKey.fromString(eachClue[eggsLastClues[eggId] + 1])) eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
+		else resetProgress();
+
+		if (eggsLastGuesses[eggId] == clues.toLowerCase())
 		{
 			lastFoundEgg = clues.toLowerCase();
-			lastFound = -1;
-			lastGuess = "";
+			// Cleanup
+			resetProgress();
+			eachClue.resize(0);
 
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.5);
 			egg();
+
+			lastFoundEgg = "";
+			for (c in eggsLastClues) c = -1;
+			for (g in eggsLastGuesses) g = "";
 		}
 	}
 
-	function spawnAbels()
-	{
-		final posX:Float = FlxG.random.float(40, FlxG.width - 40);
-		final posY:Float = FlxG.random.float(40, FlxG.height - 40);
-	}
-
+	// "Easter Hunt" cleanup
 	override function destroy()
 	{
+		for (hunt in eggHunts) FlxG.signals.preUpdate.remove(hunt);
 		eggHunts.resize(0);
+		easterEggs.clear();
+		eggsLastClues.resize(0);
+		eggsLastGuesses.resize(0);
+
+		FlxG.signals.postUpdate.remove(EasterEggs.onUpdate);
+		EasterEggs.onDestroy();
 		super.destroy();
 	}
 
@@ -315,86 +352,144 @@ class MainMenuState extends MusicBeatState
 		menuItems.members[curSelected].animation.play("selected");
 
 		renderSprs[curSelected].visible = true;
-		bgGrad.color = menuColors[curSelected];
+		if (menuColors.length != 0) bgGrad.color = menuColors[curSelected];
 	}
 
-	function selectItem(choice:String)
+	function chooseItem()
 	{
-		var instant:Bool = false;
-		var sound:String = "confirmMenu";
-		var needsPreload:Bool = false;
-		var preloadPrep:Void->Void = null;
-
-		switch (choice)
+		function unchooseItem()
 		{
-			#if DEMO
-			case "story":
-				WeekData.reloadWeekFiles(true); // WeekData.weeksList doesn't get set until we do this
-				PlayState.storyPlaylist = [for (s in WeekData.getCurrentWeek().songs) s[0]]; // Make sure to set PlayState.currentWeek beforehand or it'll grab the first week
-				PlayState.isStoryMode = true;
-
-				Song.loadFromJson(PlayState.storyPlaylist[0]);
-				PlayState.campaignScore = 0;
-				PlayState.campaignMisses = 0;
-
-				needsPreload = true;
-				preloadPrep = LoadingState.prepareToSong;
-			#end
-			case "exit":
-				sound = "cancelMenu";
-				instant = true;
-		}
-
-		final state:NextState = switch (choice)
-		{
-			#if DEMO
-			case "story": () -> new PlayState();
-			#else
-			case "story": () -> new FreeplayState();
-			#end
-			case "credits": () -> new CoolCreditsState();
-			case "settings": () -> new OptionsState();
-			case "achieves": () -> new AchievementsMenuState();
-			case "exit": () -> new TitleState();
-			default: null;
-		};
-
-		if (state == null)
-		{
-			FlxG.log.warn('"$choice" doesn\'t do anything');
-
 			FlxG.sound.play(Paths.sound("cancelMenu"));
-			return;
+			FlxG.log.warn('"${optionShit[curSelected]}" doesn\'t do anything');
 		}
 
-		selectedSomethin = true;
-		if (instant)
+		if (!selectionShit.exists(curSelected))
 		{
-			FlxG.sound.play(Paths.sound(sound));
-
-			__getToNextState(state, needsPreload, preloadPrep);
+			unchooseItem();
 			return;
 		}
 
-		FlxG.sound.play(Paths.sound(sound));
-		FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, true, true, (_) -> __getToNextState(state, needsPreload, preloadPrep));
+		final classFromStr = Type.resolveClass(selectionShit[curSelected][0]);
+		if (classFromStr == null)
+		{
+			unchooseItem();
+			return;
+		}
+
+		final targetState = Type.createInstance(classFromStr, []);
+		selectedSomethin = true;
+		FlxG.sound.play(Paths.sound("confirmMenu"));
+
+		var stateSwitch:NextState->Void = null;
+		if (selectionShit[curSelected].length < 2)
+		{
+			stateSwitch = (s) -> __getToNextState(s);
+			__doExitAnim(() -> targetState, stateSwitch);
+			return;
+		}
+
+		stateSwitch = (s) -> __getToNextState(s, Reflect.field(this, selectionShit[curSelected][1]));	
+		__doExitAnim(() -> targetState, stateSwitch);
+	}
+
+	@:noCompletion function __doExitAnim(state:NextState, exit:NextState->Void)
+	{
+		flixel.effects.FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, true, true, (_) -> exit(state));
 		for (p=>i in menuItems)
 		{
 			if (p == curSelected) continue;
 			FlxTween.tween(i, {alpha: 0}, 0.4, {ease: FlxEase.quadOut});
-		}	
+		}
 	}
 
-	@:noCompletion
-	function __getToNextState(state:NextState, needsPreload:Bool, preloadPrep:Null<Void->Void>)
+	@:noCompletion function __getToNextState(state:NextState, ?preloadPrep:haxe.Constraints.Function)
 	{
-		if (!needsPreload)
+		if (preloadPrep == null)
 		{
 			FlxG.switchState(state);
 			return;
 		}
 
-		if (preloadPrep != null) preloadPrep();
+		Reflect.callMethod(this, preloadPrep, []);
 		LoadingState.loadAndSwitchState(state.createInstance());
+	}
+
+	#if DEMO
+	@:noCompletion function preparePlayState()
+	{
+		WeekData.reloadWeekFiles(true); // WeekData.weeksList doesn't get set until we do this
+		PlayState.storyPlaylist = [for (s in WeekData.getCurrentWeek().songs) s[0]]; // Make sure to set PlayState.currentWeek beforehand or it'll grab the first week
+		PlayState.isStoryMode = true;
+
+		Song.loadFromJson(PlayState.storyPlaylist[0]);
+		PlayState.campaignScore = 0;
+		PlayState.campaignMisses = 0;
+		LoadingState.prepareToSong();
+	}
+	#end
+}
+
+private class EasterEggs
+{
+	public static var state:flixel.FlxState;
+	static var abels:Array<FlxSprite> = [];
+
+	public static function spawnAbels()
+	{
+		#if ACHIEVEMENTS_ALLOWED Achievements.unlock("abel.webp"); #end
+		var abel:FlxSprite = new FlxSprite(0, 0, Paths.image('credits/abel'));
+		abel.scale.set(0.1, 0.1); abel.updateHitbox();
+
+		final posX:Float = FlxG.random.float(40, (FlxG.width - abel.width) - 40);
+		final posY:Float = FlxG.random.float(40, (FlxG.height - abel.height) - 40);
+		abel.setPosition(posX, posY);
+
+		abel.velocity.set(0, 280);
+		abel.drag.set(0, 15);
+		abels.push(abel);
+		state.add(abel);
+	}
+
+	public static function onUpdate()
+	{
+		if (abels.length > 0)
+		{
+			for (abel in abels)
+			{
+				var bounds:flixel.math.FlxRect = FlxG.camera.getViewMarginRect();
+				FlxG.watch.addQuick("cam bounds for abel", bounds);
+
+				final abelHeight:Float = abel.y + abel.height;
+				final abelWidth:Float = abel.y + abel.width;
+
+				if (abelHeight > (bounds.bottom * 1.1))
+				{
+					FlxTween.tween(abel, {y: abel.y - 12}, 0.23, {ease: FlxEase.backOut, type: PINGPONG});
+					abel.velocity.set(14, -0.24);
+				}
+
+				if (abelWidth >= bounds.right)
+				{
+					abel.velocity.x *= -1;
+					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut});
+					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut});
+				}
+				if (abel.x <= bounds.left)
+				{
+					abel.velocity.x *= -1;
+					FlxTween.tween(abel, {x: abel.x + 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut});
+				}
+			}
+		}
+	}
+
+	public static function onDestroy()
+	{
+		for (abel in abels)
+		{
+			state.remove(abel, true);
+			abel.destroy();
+		}
+		abels.resize(0);
 	}
 }

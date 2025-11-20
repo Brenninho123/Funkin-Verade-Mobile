@@ -18,6 +18,7 @@ pause_restart: "Restart"
 pause_options: "Options"
 pause_back: "Exit"
 images/pausescreen/info: "images/en/pausescreen_info"
+// images/titlescreen/titleEnter: "images/en/titlescreen/titleEnter"
 
 menus/introText: "en_menus/introText"
 

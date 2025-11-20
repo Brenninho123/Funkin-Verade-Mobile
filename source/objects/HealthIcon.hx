@@ -76,7 +76,6 @@ class HealthIcon extends FlxSpriteContainer
 
 		fruitSprite.loadGraphic(Paths.image(name));
 		fruitSprite.shader = fruitRGB.shader;
-		fruitSprite.scale.set(1.1, 1.1); fruitSprite.updateHitbox();
 
 		fruitSprite.flipX = isPlayer;
 		this.fruit = name.substring(name.lastIndexOf("-") + 1);

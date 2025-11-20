@@ -1,0 +1,100 @@
+{
+	"animations": [
+		{
+			"offsets": [16, -4],
+			"loop": false,
+			"fps": 24,
+			"anim": "singLEFT",
+			"indices": [],
+			"name": "left"
+		},
+		{
+			"offsets": [4, 43],
+			"loop": false,
+			"fps": 24,
+			"anim": "singLEFTmiss",
+			"indices": [],
+			"name": "lefMiss"
+		},
+		{
+			"offsets": [0, -65],
+			"loop": false,
+			"fps": 24,
+			"anim": "singDOWNmiss",
+			"indices": [],
+			"name": "dowMiss"
+		},
+		{
+			"offsets": [-4, -74],
+			"loop": false,
+			"fps": 24,
+			"anim": "singDOWN",
+			"indices": [],
+			"name": "down"
+		},
+		{
+			"offsets": [-8, 56],
+			"loop": false,
+			"fps": 24,
+			"anim": "singUPmiss",
+			"indices": [],
+			"name": "uMiss"
+		},
+		{
+			"offsets": [-4, 49],
+			"loop": false,
+			"fps": 24,
+			"anim": "singUP",
+			"indices": [],
+			"name": "up"
+		},
+		{
+			"offsets": [-39, 6],
+			"loop": false,
+			"fps": 24,
+			"anim": "singRIGHTmiss",
+			"indices": [],
+			"name": "righMiss"
+		},
+		{
+			"offsets": [-40, 4],
+			"loop": false,
+			"fps": 24,
+			"anim": "singRIGHT",
+			"indices": [],
+			"name": "right"
+		},
+		{
+			"offsets": [-12, -24],
+			"indices": [0],
+			"fps": 24,
+			"anim": "hey",
+			"loop": true,
+			"name": "Hey..?"
+		},
+		{
+			"offsets": [0, 0],
+			"indices": [],
+			"fps": 24,
+			"anim": "idle",
+			"loop": false,
+			"name": "idle"
+		}
+	],
+	"vocals_file": "",
+	"no_antialiasing": false,
+	"healthfruit": "blueberry",
+	"image": "characters/bluetooth_SO_CONFUSED_IT_FELLS_LIKE_IM_BEING_USED",
+	"position": [-278, -483],
+	"healthicon": "bf",
+	"fruit_colors": {
+		"accent": [252, 252, 124],
+		"color": [91, 105, 226]
+	},
+	"flip_x": true,
+	"healthbar_colors": [123, 210, 244],
+	"camera_position": [-220, 580],
+	"sing_duration": 4,
+	"scale": 0.363,
+	"_editor_isPlayer": true
+}

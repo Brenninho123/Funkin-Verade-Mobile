@@ -9,7 +9,7 @@
 			"name": "idle"
 		},
 		{
-			"offsets": [-568, -304],
+			"offsets": [-558, -288],
 			"loop": false,
 			"fps": 24,
 			"anim": "tchola",
@@ -52,7 +52,7 @@
 	"vocals_file": "",
 	"no_antialiasing": false,
 	"image": "characters/mojaro",
-	"position": [-560, -390],
+	"position": [-572, -442],
 	"healthicon": "morajo",
 	"healthfruit": "apple",
 	"flip_x": false,
@@ -61,7 +61,7 @@
 		"colors": [255, 105, 104],
 		"accent": [3, 248, 243]
 	},
-	"camera_position": [550, 270],
+	"camera_position": [550, 350],
 	"sing_duration": 4,
 	"scale": 0.8,
 	"_editor_isPlayer": false

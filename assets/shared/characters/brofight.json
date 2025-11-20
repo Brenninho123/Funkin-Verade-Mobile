@@ -1,0 +1,100 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [24, 7],
+			"anim": "singDOWN",
+			"fps": 24,
+			"name": "Morajo down",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [25, 7],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "Morajo up",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [25, 6],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "Morajo right",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [34, 0],
+			"anim": "singLEFT",
+			"fps": 24,
+			"name": "Morajo left",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [-14, -12],
+			"anim": "danceRight",
+			"fps": 24,
+			"name": "Dance beat",
+			"indices": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+		},
+		{
+			"loop": false,
+			"offsets": [0, 0],
+			"anim": "danceLeft",
+			"fps": 24,
+			"name": "Dance beat",
+			"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+		},
+		{
+			"loop": false,
+			"offsets": [34, 14],
+			"anim": "singLEFT-alt",
+			"fps": 24,
+			"name": "Torajo left",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [25, 8],
+			"anim": "singRIGHT-alt",
+			"fps": 24,
+			"name": "Torajo right",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [-20, 13],
+			"anim": "singUP-alt",
+			"fps": 24,
+			"name": "Torajo up",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [-19, 26],
+			"anim": "singDOWN-alt",
+			"fps": 24,
+			"name": "Torajo down",
+			"indices": []
+		}
+	],
+	"vocals_file": "",
+	"no_antialiasing": false,
+	"healthfruit": "apple",
+	"image": "characters/amorMacas",
+	"position": [-52, 140],
+	"healthicon": "morajo-grr",
+	"healthbar_colors": [250, 107, 104],
+	"fruit_colors": {
+		"colors": [255, 105, 104],
+		"accent": [3, 248, 243]
+	},
+	"flip_x": false,
+	"camera_position": [-200, -220],
+	"sing_duration": 4,
+	"scale": 2,
+	"_editor_isPlayer": false
+}

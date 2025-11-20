@@ -68,11 +68,9 @@ class CoolUtil
 		return daList;
 	}
 
-	public static function floorDecimal(value:Float, decimals:Int):Float
+	public static inline function floorDecimal(value:Float, decimals:Int):Float
 	{
-		if(decimals < 1)
-			return Math.floor(value);
-
+		if (decimals < 1) return Math.floor(value);
 		return Math.floor(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 	}
 

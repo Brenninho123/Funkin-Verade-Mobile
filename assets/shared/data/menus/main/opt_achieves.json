@@ -2,8 +2,8 @@
 	"offset": [-210, -1508],
 	"scale": 2.3,
 	"render": {
-		"imageName": "look_wereonposters",
-		"scale": 1.58,
-		"offset": [-20, 130]
+		"imageName": "awarded",
+		"scale": 0.85,
+		"offset": [-350, 0]
 	}
 }

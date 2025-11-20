@@ -63,12 +63,15 @@ class AchievementPopup extends openfl.display.Sprite {
 		}
 
 		var textX = sizeX + imgX + 15;
-		var textY = imgY + 20;
+		var textY = imgY + 10;
 
 		var text:FlxText = new FlxText(0, 0, 270, 'TEST!!!', 16);
-		text.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT);
+		text.setFormat(Paths.font("fraiche.ttf"), 16, FlxColor.WHITE, LEFT);
+		text.antialiasing = true;
 		drawTextAt(text, name, textX, textY);
-		drawTextAt(text, desc, textX, textY + 30);
+		
+		text.font = Paths.font("vcr.ttf");
+		drawTextAt(text, desc, textX, textY + 40);
 		graphics.endFill();
 
 		text.graphic.bitmap.dispose();

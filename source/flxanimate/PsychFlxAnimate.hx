@@ -73,7 +73,7 @@ class PsychFlxAnimate extends OriginalFlxAnimate
 		super.draw();
 	}
 
-	override function destroy()
+	/* override function destroy()
 	{
 		try
 		{
@@ -87,7 +87,7 @@ class PsychFlxAnimate extends OriginalFlxAnimate
 			anim.metadata.destroy();
 			anim.symbolDictionary = null;
 		}
-	}
+	} */
 
 	function _removeBOM(str:String) //Removes BOM byte order indicator
 	{

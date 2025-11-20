@@ -19,10 +19,6 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 	var textGrp:FlxTypedSpriteGroup<FlxText> = new FlxTypedSpriteGroup<FlxText>();
 	public static var music:FlxSound = new FlxSound();
 
-	// Render stuff
-	static var renderImg:flixel.graphics.FlxGraphic;
-	@:unreflective static var protectRender:Bool;
-
 	public function new(?camera:FlxCamera)
 	{
 		camera ??= FlxG.cameras.list[FlxG.cameras.list.length - 1];
@@ -40,7 +36,11 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 			{id: "back", defName: "Sair", action: function()
 			{
 				close();
+				#if DEMO
 				FlxG.switchState(() -> new states.MainMenuState());
+				#else
+				FlxG.switchState(() -> new states.FreeplayState());
+				#end
 			}}
 		];
 		
@@ -61,9 +61,8 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		weekData ??= new WeekData(cast Json.parse(Paths.getTextFromFile('weeks/mundoToras.json')), 'mundoToras'); // If PlayState week is null, we default to first week
 		if (!Paths.fileExists('music/pause/$targetSong.${Paths.SOUND_EXT}', MUSIC)) targetSong = "breakfast"; 
 
-		renderImg = Paths.image(weekData.renderPath);
-		protectRender = weekData.renderPath.startsWith('mainmenu/renders/');
 		music.loadEmbedded(Paths.music('pause/$targetSong'), true);
+		FlxG.sound.defaultMusicGroup.add(music);
 
 		__forEachUsedImg(function(img)
 		{
@@ -85,7 +84,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 			Paths.currentTrackedAssets.remove(path);
 		});
 
-		if (!protectRender) killGraphic(renderImg);
+		FlxG.sound.defaultMusicGroup.remove(music);
 		music.destroy();
 	}
 
@@ -102,11 +101,6 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		bgGrid.velocity.set(-24, 24);
 		bgGrid.alpha = 0.13;
 		add(bgGrid);
-
-		var render:FlxSprite = new FlxSprite(0, 0, renderImg);
-		render.scale.set(0.5, 0.5); render.updateHitbox();
-		render.screenCenter(Y).x = (FlxG.width - render.width) - 120;
-		add(render);
 
 		__forEachUsedImg(function(imgPath)
 		{

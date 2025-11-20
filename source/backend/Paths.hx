@@ -77,7 +77,7 @@ class Paths
 			}
 		}
 		// flags everything to be cleared out next unused memory clear
-		localTrackedAssets = [];
+		localTrackedAssets.resize(0);
 		#if !html5 openfl.Assets.cache.clear("songs"); #end
 	}
 
@@ -179,10 +179,10 @@ class Paths
 	}
 
 	inline static public function getFolderPath(file:String, folder = "shared")
-		return 'assets/$folder/$file';
+		return '${#if mobile Sys.getCwd() #else "" #end}assets/$folder/$file';
 
 	inline public static function getSharedPath(file:String = '')
-		return 'assets/shared/$file';
+		return '${#if mobile Sys.getCwd() #else "" #end}assets/shared/$file';
 
 	inline static public function txt(key:String, ?folder:String)
 		return getPath('data/$key.txt', TEXT, folder, true);
@@ -444,7 +444,7 @@ class Paths
 			{
 				trace('SOUND NOT FOUND: $key, PATH: $path');
 				FlxG.log.error('SOUND NOT FOUND: $key, PATH: $path');
-				return FlxAssets.getSound('flixel/sounds/beep');
+				return FlxAssets.getSoundAddExtension('flixel/sounds/beep');
 			}
 		}
 		localTrackedAssets.push(file);

@@ -9,7 +9,6 @@ import openfl.utils.Assets;
 import haxe.Json;
 
 import backend.Song;
-import states.stages.objects.TankmenBG;
 
 typedef CharacterFile = 
 {
@@ -48,7 +47,7 @@ class Character extends FlxSprite
 	**/
 	public static final DEFAULT_CHARACTER:String = 'bf';
 
-	public var animOffsets:Map<String, Array<Dynamic>>;
+	public var animOffsets:Map<String, Array<Float>> = [];
 	public var debugMode:Bool = false;
 	public var extraData:Map<String, Dynamic> = new Map<String, Dynamic>();
 
@@ -87,25 +86,13 @@ class Character extends FlxSprite
 	public var originalFlipX:Bool = false;
 	public var editorIsPlayer:Null<Bool> = null;
 
-	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false)
+	public function new(x:Float, y:Float, character:String = 'bf', isPlayer:Bool = false)
 	{
 		super(x, y);
-
 		animation = new PsychAnimationController(this);
-
-		animOffsets = new Map<String, Array<Dynamic>>();
 		this.isPlayer = isPlayer;
-		changeCharacter(character);
 		
-		switch(curCharacter)
-		{
-			case 'pico-speaker':
-				skipDance = true;
-				loadMappedAnims();
-				playAnim("shoot1");
-			case 'pico-blazin', 'darnell-blazin':
-				skipDance = true;
-		}
+		changeCharacter(character);
 	}
 
 	public function changeCharacter(character:String)
@@ -116,7 +103,7 @@ class Character extends FlxSprite
 		var characterPath:String = 'characters/$character.json';
 
 		var path:String = Paths.getPath(characterPath, TEXT);
-		#if MODS_ALLOWED
+		#if (MODS_ALLOWED || sys)
 		if (!FileSystem.exists(path))
 		#else
 		if (!Assets.exists(path))
@@ -130,7 +117,7 @@ class Character extends FlxSprite
 
 		try
 		{
-			#if MODS_ALLOWED
+			#if (MODS_ALLOWED || sys)
 			loadCharacterFile(Json.parse(File.getContent(path)));
 			#else
 			loadCharacterFile(Json.parse(Assets.getText(path)));
@@ -152,9 +139,8 @@ class Character extends FlxSprite
 		isAnimateAtlas = false;
 
 		#if flxanimate
-		var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT);
-		if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind))
-			isAnimateAtlas = true;
+		final animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT);
+		isAnimateAtlas = #if (MODS_ALLOWED || sys) FileSystem.exists(animToFind) || #end Assets.exists(animToFind);
 		#end
 
 		scale.set(1, 1);
@@ -275,39 +261,16 @@ class Character extends FlxSprite
 			specialAnim = false;
 			dance();
 		}
-		else if (getAnimationName().endsWith('miss') && isAnimationFinished())
-		{
-			dance();
-			finishAnimation();
-		}
-
-		switch(curCharacter)
-		{
-			case 'pico-speaker':
-				if(animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
-				{
-					var noteData:Int = 1;
-					if(animationNotes[0][1] > 2) noteData = 3;
-
-					noteData += FlxG.random.int(0, 1);
-					playAnim('shoot' + noteData, true);
-					animationNotes.shift();
-				}
-				if(isAnimationFinished()) playAnim(getAnimationName(), false, false, animation.curAnim.frames.length - 3);
-		}
 
 		if (getAnimationName().startsWith('sing')) holdTimer += elapsed;
-		else if(isPlayer) holdTimer = 0;
-
-		if (!isPlayer && holdTimer >= Conductor.stepCrochet * (0.0011 #if FLX_PITCH / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1) #end) * singDuration)
+		if (holdTimer >= Conductor.stepCrochet * (0.0011 #if FLX_PITCH / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1) #end) * singDuration)
 		{
 			dance();
 			holdTimer = 0;
 		}
 
-		var name:String = getAnimationName();
-		if(isAnimationFinished() && hasAnimation('$name-loop'))
-			playAnim('$name-loop');
+		final name:String = getAnimationName();
+		if (isAnimationFinished() && hasAnimation('$name-loop')) playAnim('$name-loop');
 
 		super.update(elapsed);
 	}
@@ -390,52 +353,26 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
+		if (!hasAnimation(AnimName)) return;
 		specialAnim = false;
-		if(!isAnimateAtlas)
-		{
-			animation.play(AnimName, Force, Reversed, Frame);
-		}
-		else
+		
+		#if flxanimate
+		if (isAnimateAtlas)
 		{
 			atlas.anim.play(AnimName, Force, Reversed, Frame);
 			atlas.update(0);
 		}
+		else
+		#end
+			animation.play(AnimName, Force, Reversed, Frame);
 		_lastPlayedAnimation = AnimName;
 
-		if (hasAnimation(AnimName))
+		if (!animOffsets.exists(AnimName))
 		{
-			var daOffset = animOffsets.get(AnimName);
-			offset.set(daOffset[0], daOffset[1]);
+			offset.set();
+			return;
 		}
-		//else offset.set(0, 0);
-
-		if (curCharacter.startsWith('gf-') || curCharacter == 'gf')
-		{
-			if (AnimName == 'singLEFT')
-				danced = true;
-
-			else if (AnimName == 'singRIGHT')
-				danced = false;
-
-			if (AnimName == 'singUP' || AnimName == 'singDOWN')
-				danced = !danced;
-		}
-	}
-
-	function loadMappedAnims():Void
-	{
-		try
-		{
-			var songData:SwagSong = Song.getChart('picospeaker', Paths.formatToSongPath(Song.loadedSongName));
-			if(songData != null)
-				for (section in songData.notes)
-					for (songNotes in section.sectionNotes)
-						animationNotes.push(songNotes);
-
-			TankmenBG.animationNotes = animationNotes;
-			animationNotes.sort(sortAnims);
-		}
-		catch(e:Dynamic) {}
+		offset.set(animOffsets[AnimName][0], animOffsets[AnimName][1]);
 	}
 
 	function sortAnims(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int

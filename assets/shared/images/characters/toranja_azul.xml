@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Torajocheer.png">
+	<!-- Created using the Spritesheet and XML generator -->
+	<!-- https://uncertainprod.github.io/FNF-Spritesheet-XML-generator-Web -->
+	<SubTexture name="toranja_azul0000" x="0" y="0" width="1108" height="1186" frameX="-82" frameY="-49" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0001" x="0" y="0" width="1108" height="1186" frameX="-82" frameY="-49" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0002" x="1108" y="0" width="878" height="1089" frameX="-197" frameY="-119" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0003" x="1108" y="0" width="878" height="1089" frameX="-197" frameY="-119" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0004" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0005" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0006" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0007" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0008" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0009" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0010" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0011" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0012" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0013" x="1986" y="0" width="860" height="1079" frameX="-206" frameY="-124" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0014" x="0" y="1186" width="544" height="1069" frameX="-364" frameY="-129" frameWidth="1280" frameHeight="1280"/>
+	<SubTexture name="toranja_azul0015" x="0" y="1186" width="544" height="1069" frameX="-364" frameY="-129" frameWidth="1280" frameHeight="1280"/>
+</TextureAtlas>

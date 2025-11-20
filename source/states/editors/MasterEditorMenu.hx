@@ -15,15 +15,18 @@ class MasterEditorMenu extends flixel.FlxSubState
 		'Dialogue Portrait Editor',
 		'Note Splash Editor'
 	];
-	var directories:Array<String> = [null];
-	final mouseLastVis:Bool;
-
 	static var curSelected = 0;
-	static var curDirectory = 0;
+	
+	final mouseLastVis:Bool;
 	var blockInput:Bool = false;
 
-	var grpTexts:FlxTypedGroup<Alphabet>;
+	#if MODS_ALLOWED
+	var directories:Array<String> = [null];
+	static var curDirectory = 0;
+
 	var directoryTxt:FlxText;
+	#end
+	var grpTexts:FlxTypedGroup<Alphabet>;
 
 	public function new()
 	{

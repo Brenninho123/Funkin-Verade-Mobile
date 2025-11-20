@@ -1,49 +1,57 @@
 {
 	"animations": [
 		{
+			"loop": false,
 			"offsets": [-120, -100],
-			"loop": false,
-			"fps": 24,
 			"anim": "idle",
-			"indices": [],
-			"name": "torajo idle"
+			"fps": 24,
+			"name": "torajo idle",
+			"indices": []
 		},
 		{
-			"offsets": [-10, 0],
 			"loop": false,
-			"fps": 24,
+			"offsets": [-10, 0],
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "torajo down"
+			"fps": 24,
+			"name": "torajo down",
+			"indices": []
 		},
 		{
-			"offsets": [-10, 0],
 			"loop": false,
-			"fps": 24,
+			"offsets": [-10, 0],
 			"anim": "singUP",
-			"indices": [],
-			"name": "torajo up"
+			"fps": 24,
+			"name": "torajo up",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-10, 0],
-			"indices": [],
-			"fps": 24,
 			"anim": "singLEFT",
-			"loop": false,
-			"name": "torajo right"
+			"fps": 24,
+			"name": "torajo right",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-10, 0],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "torajo left",
+			"indices": []
+		},
+		{
+			"offsets": [-99, -91],
 			"indices": [],
 			"fps": 24,
-			"anim": "singRIGHT",
+			"anim": "hey",
 			"loop": false,
-			"name": "torajo left"
+			"name": "toranja_azul"
 		}
 	],
 	"vocals_file": "",
 	"no_antialiasing": false,
-	"image": "characters/torajo",
+	"image": "characters/torajo, characters/toranja_azul",
 	"position": [-560, -390],
 	"healthicon": "torajo",
 	"healthfruit": "apple",

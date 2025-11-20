@@ -52,26 +52,35 @@ class TitleState extends MusicBeatState
 
 	function initSprites()
 	{
-		final bmp:BitmapData = Paths.image('veradeBG', false).bitmap; // Separate var just to avoid applying the filter on this
-		var bmpClone:BitmapData = bmp.clone();
-		bmpClone.applyFilter(bmpClone, bmp.rect, new openfl.geom.Point(), new openfl.filters.BlurFilter(1.5, 1.5, 2));
-		bmpClone = FlxGradient.overlayGradientOnBitmapData(bmpClone, bmp.width, bmp.height, [0xA84BF57B, 0xA8BD5AE8]);
+		var bg:FlxSprite = new FlxSprite();
 
-		var bg:FlxSprite = new FlxSprite(0, 0, bmpClone);
+		final bmp:BitmapData = Paths.image('veradeBG', ClientPrefs.data.lowQuality).bitmap; // Separate var just to avoid applying the filter on this
+		if (!ClientPrefs.data.lowQuality)
+		{
+			var bmpClone:BitmapData = bmp.clone();
+			bmpClone.applyFilter(bmpClone, bmp.rect, new openfl.geom.Point(), new openfl.filters.BlurFilter(1.5, 1.5, 2));
+			bmpClone = FlxGradient.overlayGradientOnBitmapData(bmpClone, bmp.width, bmp.height, [0xA84BF57B, 0xA8BD5AE8]);
+			bg.loadGraphic(bmpClone);
+		}
+		else bg.loadGraphic(bmp);
+
 		bg.screenCenter();
 		bg.active = false;
 		bg.antialiasing = false;
 		add(bg);
 
-		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
-		bgGrid.scale.set(1.85, 1.85); bgGrid.updateHitbox();
-		bgGrid.velocity.set(-24, 24);
-		bgGrid.alpha = 0.13;
-		add(bgGrid);
+		if (!ClientPrefs.data.lowQuality)
+		{
+			var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
+			bgGrid.scale.set(1.85, 1.85); bgGrid.updateHitbox();
+			bgGrid.velocity.set(-24, 24);
+			bgGrid.alpha = 0.13;
+			add(bgGrid);
+		}
 
 		// Since they're the same frame length, we can reuse the same array and save some mem and some typing	
-		final leftBopAnim:Array<Int> = CoolUtil.numberArray(14);
-		final rightBopAnim:Array<Int> = CoolUtil.numberArray(30, 15);
+		var leftBopAnim:Array<Int> = CoolUtil.numberArray(14);
+		var rightBopAnim:Array<Int> = CoolUtil.numberArray(30, 15);
 
 		var blueyBop:FlxSprite = new FlxSprite(385, 405);
 		blueyBop.frames = Paths.getSparrowAtlas('titlescreen/chars/blfi');
@@ -107,6 +116,9 @@ class TitleState extends MusicBeatState
 		logo.antialiasing = ClientPrefs.data.antialiasing;
 
 		for (s in chars) add(s);
+		leftBopAnim.resize(0);
+		rightBopAnim.resize(0);
+
 		add(logo);
 
 		titleText = new FlxSprite();
@@ -181,7 +193,7 @@ class TitleState extends MusicBeatState
 			case false: spr.loadGraphic(Paths.image(image));
 			case true:
 				spr.frames = Paths.getAtlas(image);
-				spr.animation.addByPrefix('anim', image, 24, false);
+				spr.animation.addByPrefix('anim', haxe.io.Path.withoutDirectory(image), 24);
 				spr.animation.play('anim');
 		}
 		spr.antialiasing = ClientPrefs.data.antialiasing;

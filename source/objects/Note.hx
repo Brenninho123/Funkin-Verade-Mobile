@@ -477,31 +477,10 @@ class Note extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		canBeHit = (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * lateHitMult) && strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult));
 
-		if (mustPress)
-		{
-			canBeHit = (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * lateHitMult) &&
-						strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult));
-
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
-				tooLate = true;
-		}
-		else
-		{
-			canBeHit = false;
-
-			if (!wasGoodHit && strumTime <= Conductor.songPosition)
-			{
-				if(!isSustainNote || (prevNote.wasGoodHit && !ignoreNote))
-					wasGoodHit = true;
-			}
-		}
-
-		if (tooLate && !inEditor)
-		{
-			if (alpha > 0.3)
-				alpha = 0.3;
-		}
+		tooLate = (strumTime < (Conductor.songPosition - Conductor.safeZoneOffset) && !wasGoodHit);
+		if ((tooLate && !inEditor) && alpha > 0.3) alpha = 0.3;
 	}
 
 	override public function destroy()

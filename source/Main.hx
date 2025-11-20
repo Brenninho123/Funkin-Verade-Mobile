@@ -2,7 +2,7 @@ package;
 
 import flixel.util.typeLimit.NextState.InitialState;
 #if android
-import android.content.Context;
+import extension.androidtools.content.Context;
 #end
 
 import debug.FPSCounter;
@@ -140,8 +140,8 @@ class Main extends Sprite
 		var initialState:InitialState = states.editors.ChartingState;
 		#else
 		var initialState:InitialState = FlxG.save.data.flashing != null ? states.TitleState : () -> new states.FlashingState(states.TitleState);
-		FlxTransitionableState.skipNextTransIn = true;
 		#end
+		FlxTransitionableState.skipNextTransIn = true;
 		addChild(new FlxGame(0, 0, initialState, 60, 60, true, FlxG.save.data.fullscreen));
 
 		fpsVar = new FPSCounter(10, 3);
@@ -151,7 +151,7 @@ class Main extends Sprite
 		fpsVar.visible = ClientPrefs.data.showFPS;
 		
 		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
-		FlxG.signals.preGameReset.add(Paths.freeGraphicsFromMemory); // "Cannot render destroyed graphic" fix
+		FlxG.signals.preGameReset.add(Paths.clearStoredMemory); // "Cannot render destroyed graphic" fix
 		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour
 
 		#if (linux || mac) // fix the app icon not showing up on the Linux Panel / Mac Dock
@@ -165,7 +165,8 @@ class Main extends Sprite
 
 		FlxG.fixedTimestep = false;
 		FlxG.game.focusLostFramerate = 60;
-		FlxG.keys.preventDefaultKeys = [TAB #if android, FlxG.android.BACK #end];
+		FlxG.keys.preventDefaultKeys = [TAB];
+		#if android FlxG.android.preventDefaultKeys = [BACK]; #end
 		FlxG.cameras.bgColor = FlxColor.BLACK;
 
 		FlxTransitionableState.defaultTransIn = new flixel.addons.transition.TransitionData(FADE, FlxColor.BLACK, 0.5, FlxPoint.weak(0, -1));
@@ -200,38 +201,28 @@ class Main extends Sprite
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
 		var errMsg:String = "";
-		var path:String;
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		var dateNow:String = Date.now().toString();
 
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
-
-		path = "./crash/" + "PsychEngine_" + dateNow + ".txt";
+		final path:String = './crash/$dateNow.txt';
 
 		for (stackItem in callStack)
 		{
 			switch (stackItem)
 			{
-				case FilePos(s, file, line, column):
-					errMsg += file + " (line " + line + ")\n";
-				default:
-					Sys.println(stackItem);
+				case FilePos(_, file, line, column): errMsg += '$file (line $line at $column)\n';
+				default: Sys.println(stackItem);
 			}
 		}
 
-		errMsg += "\nUncaught Error: " + e.error;
-		// remove if you're modding and want the crash log message to contain the link
-		// please remember to actually modify the link for the github page to report the issues to.
-		#if officialBuild
-		errMsg += "\nPlease report this error to the GitHub page: https://github.com/ShadowMario/FNF-PsychEngine";
-		#end
-		errMsg += "\n\n> Crash Handler written by: sqirra-rng";
+		errMsg += '\nAn uncaught error occured: ${e.error}!';
+		errMsg += "\nPlease report it to here if possible: https://github.com/BernardoGP4504/Funkin-Verade";
+		errMsg += "\r\n> Crash Handler written by: sqirra-rng";
 
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
-
-		File.saveContent(path, errMsg + "\n");
+		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
+		File.saveContent(path, '${errMsg}\n');
 
 		Sys.println(errMsg);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
@@ -240,6 +231,7 @@ class Main extends Sprite
 		#if DISCORD_ALLOWED
 		DiscordClient.shutdown();
 		#end
+		#if DISCORD_ALLOWED DiscordClient.shutdown(); #end
 		Sys.exit(1);
 	}
 	#end
