@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="abel.png">
+	<!-- Created with Adobe Animate version 20.5.0.29329 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="abelAPARECE0000" x="1" y="1" width="1824" height="1583" frameX="-503" frameY="-1522" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0001" x="1" y="1" width="1824" height="1583" frameX="-503" frameY="-1522" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0002" x="1826" y="1" width="1552" height="1757" frameX="-885" frameY="-603" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0003" x="1826" y="1" width="1552" height="1757" frameX="-885" frameY="-603" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0004" x="3379" y="1" width="1461" height="1775" frameX="-926" frameY="-437" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0005" x="3379" y="1" width="1461" height="1775" frameX="-926" frameY="-437" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0006" x="4841" y="1" width="1382" height="1780" frameX="-941" frameY="-468" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0007" x="4841" y="1" width="1382" height="1780" frameX="-941" frameY="-468" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0008" x="4841" y="1" width="1382" height="1780" frameX="-941" frameY="-468" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0009" x="6224" y="1" width="1388" height="1780" frameX="-943" frameY="-533" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0010" x="6224" y="1" width="1388" height="1780" frameX="-943" frameY="-533" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0011" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-551" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0012" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-551" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0013" x="1398" y="1782" width="1404" height="1780" frameX="-935" frameY="-547" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0014" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0015" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0016" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0017" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0018" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0019" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0020" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0021" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0022" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0023" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0024" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0025" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0026" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0027" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0028" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0029" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0030" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0031" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0032" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0033" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0034" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0035" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0036" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0037" x="1" y="1782" width="1396" height="1780" frameX="-939" frameY="-545" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0038" x="2803" y="1782" width="1414" height="1779" frameX="-913" frameY="-551" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0039" x="2803" y="1782" width="1414" height="1779" frameX="-913" frameY="-551" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0040" x="2803" y="1782" width="1414" height="1779" frameX="-913" frameY="-551" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0041" x="2803" y="1782" width="1414" height="1779" frameX="-913" frameY="-551" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0042" x="4218" y="1782" width="1402" height="1780" frameX="-875" frameY="-500" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0043" x="4218" y="1782" width="1402" height="1780" frameX="-875" frameY="-500" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0044" x="5621" y="1782" width="1376" height="1779" frameX="-797" frameY="-383" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0045" x="5621" y="1782" width="1376" height="1779" frameX="-797" frameY="-383" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0046" x="5621" y="1782" width="1376" height="1779" frameX="-797" frameY="-383" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0047" x="1" y="3563" width="1363" height="1701" frameX="0" frameY="0" frameWidth="2437" frameHeight="3105"/>
+	<SubTexture name="abelAPARECE0048" x="1" y="3563" width="1363" height="1701" frameX="0" frameY="0" frameWidth="2437" frameHeight="3105"/>
+</TextureAtlas>

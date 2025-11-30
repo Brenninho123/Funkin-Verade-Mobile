@@ -1,91 +1,91 @@
 {
 	"animations": [
 		{
+			"loop": false,
 			"offsets": [16, -4],
-			"loop": false,
-			"fps": 24,
 			"anim": "singLEFT",
-			"indices": [],
-			"name": "left"
+			"fps": 24,
+			"name": "left",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [4, 43],
-			"loop": false,
-			"fps": 24,
 			"anim": "singLEFTmiss",
-			"indices": [],
-			"name": "lefMiss"
+			"fps": 24,
+			"name": "lefMiss",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [0, -65],
-			"loop": false,
-			"fps": 24,
 			"anim": "singDOWNmiss",
-			"indices": [],
-			"name": "dowMiss"
+			"fps": 24,
+			"name": "dowMiss",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-4, -74],
-			"loop": false,
-			"fps": 24,
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "down"
+			"fps": 24,
+			"name": "down",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-8, 56],
-			"loop": false,
-			"fps": 24,
 			"anim": "singUPmiss",
-			"indices": [],
-			"name": "uMiss"
+			"fps": 24,
+			"name": "uMiss",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-4, 49],
-			"loop": false,
-			"fps": 24,
 			"anim": "singUP",
-			"indices": [],
-			"name": "up"
+			"fps": 24,
+			"name": "up",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-39, 6],
-			"loop": false,
-			"fps": 24,
 			"anim": "singRIGHTmiss",
-			"indices": [],
-			"name": "righMiss"
+			"fps": 24,
+			"name": "righMiss",
+			"indices": []
 		},
 		{
+			"loop": false,
 			"offsets": [-40, 4],
-			"loop": false,
-			"fps": 24,
 			"anim": "singRIGHT",
-			"indices": [],
-			"name": "right"
+			"fps": 24,
+			"name": "right",
+			"indices": []
 		},
 		{
-			"offsets": [-12, -24],
-			"indices": [0],
-			"fps": 24,
-			"anim": "hey",
 			"loop": true,
-			"name": "Hey..?"
+			"offsets": [-12, -24],
+			"anim": "hey",
+			"fps": 24,
+			"name": "Hey..?",
+			"indices": [0]
 		},
 		{
-			"offsets": [0, 0],
-			"indices": [],
-			"fps": 24,
-			"anim": "idle",
 			"loop": false,
-			"name": "idle"
+			"offsets": [0, 0],
+			"anim": "idle",
+			"fps": 24,
+			"name": "idle",
+			"indices": []
 		}
 	],
 	"vocals_file": "",
 	"no_antialiasing": false,
 	"healthfruit": "blueberry",
 	"image": "characters/bluetooth_SO_CONFUSED_IT_FELLS_LIKE_IM_BEING_USED",
-	"position": [-278, -483],
+	"position": [-248, -536],
 	"healthicon": "bf",
 	"fruit_colors": {
 		"accent": [252, 252, 124],
@@ -93,7 +93,7 @@
 	},
 	"flip_x": true,
 	"healthbar_colors": [123, 210, 244],
-	"camera_position": [-220, 580],
+	"camera_position": [-207, 609],
 	"sing_duration": 4,
 	"scale": 0.363,
 	"_editor_isPlayer": true

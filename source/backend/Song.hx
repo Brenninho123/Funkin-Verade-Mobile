@@ -9,7 +9,7 @@ typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
-	var events:Array<Dynamic>;
+	var events:Array<Array<Dynamic>>;
 	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;
@@ -138,7 +138,7 @@ class Song
 	static var _lastPath:String;
 	public static function getChart(jsonInput:String, ?folder:String):SwagSong
 	{
-		if(folder == null) folder = jsonInput;
+		folder ??= 'songs/$jsonInput';
 		var rawData:String = null;
 		
 		var formattedFolder:String = Paths.formatToSongPath(folder);

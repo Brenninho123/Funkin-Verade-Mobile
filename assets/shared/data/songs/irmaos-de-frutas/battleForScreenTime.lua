@@ -1,5 +1,3 @@
-luaDebugMode = true
-
 tcholaMoment = false -- toggle this script
 isPlayer = false
 iconSpr = "" -- which original icon to do the swapping
@@ -144,6 +142,8 @@ end
 function onEvent(n, v1, v2)
 	v1 = stringTrim(v1:lower())
 	if n == 'Change Character' then
+		if getVar('paIconShi') then setProperty(iconSpr..'.fruitSprite.visible', true) end -- Revert the used icon back to its og state
+
 		local charTag = 'boyfriend'
 		if v1 == 'gf' or v1 == 'girlfriend' then
 			charTag = 'gf'
@@ -159,7 +159,7 @@ function onEvent(n, v1, v2)
 
 		iconSpr = 'iconP'..(isPlayer and '1' or '2')
 		if getVar('paIconShi') then
-			setProperty('iconP2.fruitSprite.visible', false)
+			setProperty(iconSpr..'.fruitSprite.visible', false)
 			setProperty('iconP3.visible', true)
 		end
 

@@ -1,3 +1,15 @@
+local function getPath(path)
+	local currentLevel = getPropertyFromClass("backend.Paths", 'currentLevel')
+	return currentLevel and callMethodFromClass("backend.Paths", 'getFolderPath', {path, currentLevel}) or callMethodFromClass("backend.Paths", 'getSharedPath', {})
+end
+
+local function precacheFolderImages(folder, allowGPU)
+	allowGPU = allowGPU or true
+	for _, f in pairs(directoryFileList( getPath(folder) )) do
+		if string.find(f, ".png", 1, true) then precacheImage(string.gsub(folder, "images/", "")..string.gsub(f, ".png", ""), allowGPU) end
+	end
+end
+
 function onCreate()
 	makeLuaSprite('Fundo1', "Fundo1", -520, 0)
 	setGraphicSize('Fundo1', (getProperty('Fundo1.width') + 1124) * 1.2, (getProperty('Fundo1.height') + 700) * 1.2)
@@ -16,26 +28,73 @@ function onCreate()
 	addLuaSprite('Fundo1', false)
 	addLuaSprite('Fundo2', true)
 	addLuaSprite('Fundo3', true)
-	precacheImage('Torajo_modo_seriu')
+	precacheFolderImages("images/tojoBG/")
 end
 
-local cachedEvent = ""
-local cachedEventV1 = ""
-local cachedEventV2 = ""
-local cachedEventTime = 0
+local cachedEvents = {}
+local cachedEventV1s = {}
+local cachedEventV2s = {}
+local cachedEventTimes = {}
+local curIndex = 1
+
+local altTojoIdle = false
+
 function onEvent(n, v1, v2, t)
+	table.insert(cachedEvents, n)
+	table.insert(cachedEventV1s, #cachedEventV1s + 1, v1)
+	table.insert(cachedEventV2s, #cachedEventV2s + 1, v2)
+	table.insert(cachedEventTimes, #cachedEventTimes + 1, t)
 	runTimer(n..'_delayedCallback_'..t, 0.4)
-	cachedEvent, cachedEventV1, cachedEventV2, cachedEventTime = n, v1, v2, t
+
+	if n == 'Change Character' then
+		setProperty('Fundo2.visible', not stringStartsWith(v2, 'argument'))
+		setProperty('Fundo3.visible', not stringStartsWith(v2, 'argument'))
+	end
+end
+
+function onStepHit()
+	if curStep == 1335 then
+		altTojoIdle = true
+	end
 end
 
 function onTimerCompleted(tag, loops, loopsLeft)
-	if tag ~= cachedEvent..'_delayedCallback_'..cachedEventTime then return end
+	if not string.find(tag, '_delayedCallback_', 1, true) then return end
+	local cachedEvent = cachedEvents[curIndex]
+	local cachedEventV1 = cachedEventV1s[curIndex]
+	local cachedEventV2 = cachedEventV2s[curIndex]
+	local cachedEventTime = cachedEventTimes[curIndex]
 
-	if cachedEvent == 'Transitions' then	
+	curIndex = curIndex + 1
+	if luaDebugMode then
+		debugPrint('event: '..cachedEvent..' at '..cachedEventTime)
+		debugPrint('event.value1: '..cachedEventV1)
+		debugPrint('event.value2: '..cachedEventV2)
+	end
+
+	if cachedEvent == 'Transitions' then
 		if cachedEventV1 == 'stealAMic' then
-			makeAnimatedLuaSprite('tonho-irritado', 'Torajo_modo_seriu', -1061, -150)
-			addAnimationByPrefix('tonho-irritado', 'idle', 'idle', 16, false)
+			makeLuaSprite('tonho-irritado', nil, -1061, -150)
+			runHaxeCode("getVar('tonho-irritado').frames = Paths.getMultiAtlas(['tojoBG/Torajo_modo_seriu', 'tojoBG/eviltorjo']);")
+			addAnimationByPrefix('tonho-irritado', 'idle', 'idle0', 16, false)
+			addAnimationByPrefix('tonho-irritado', 'idle-pissed', 'idleeviltorajo', 24, false)
 			scaleObject('tonho-irritado', 0.42, 0.42)
+			runHaxeCode([[
+				using StringTools;
+				var originalScaling:Array<Float> = [getVar('tonho-irritado').scale.x, getVar('tonho-irritado').scale.y];
+
+				getVar('tonho-irritado').animation.onFrameChange.add((n, f, _) -> 
+				{
+					if (f != 0) return;
+
+					if (n.endsWith('-pissed'))
+						getVar('tonho-irritado').scale.set(originalScaling[0] + 0.09, originalScaling[1] + 0.09);
+					else
+						getVar('tonho-irritado').scale.set(originalScaling[0], originalScaling[1]);
+					getVar('tonho-irritado').updateHitbox();
+				});
+			]])
+			addOffset('tonho-irritado', 'idle-pissed', 24, 296)
 			addToGroup('gfGroup', 'tonho-irritado', 0)
 		else removeLuaSprite('tonho-irritado', true, 'gfGroup') end
 	end
@@ -43,5 +102,5 @@ end
 
 function onBeatHit()
 	if not luaSpriteExists('tonho-irritado') or curBeat % 2 ~= 0 then return end
-	playAnim('tonho-irritado', 'idle', true)
+	playAnim('tonho-irritado', 'idle'..(altTojoIdle and '-pissed' or ""), true)
 end

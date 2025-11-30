@@ -149,7 +149,7 @@ class Main extends Sprite
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		fpsVar.visible = ClientPrefs.data.showFPS;
-		
+
 		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
 		FlxG.signals.preGameReset.add(Paths.clearStoredMemory); // "Cannot render destroyed graphic" fix
 		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour

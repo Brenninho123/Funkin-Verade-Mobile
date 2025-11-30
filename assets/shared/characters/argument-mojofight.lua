@@ -1,4 +1,3 @@
-luaDebugMode = true
 local this = ""
 local charCheck = ""
 local prevCamZoom = 1
@@ -101,14 +100,21 @@ function opponentNoteHitPre(i, d, t)
 	setProperty('tojoGrr.holdTimer', 0)
 end
 
+function onTweenCompleted(tag)
+	if tag == 'mojoBGDisappear' then removeLuaSprite('mojoBG', true, 'gfGroup') end
+	if tag == 'tojoBGDisappear' then
+		removeLuaSprite('tojoBG', true, 'gfGroup')
+		close()
+	end
+end
+
 function onDestroy()
 	removeLuaSprite('tojoGrr', true, 'dadGroup')
-	removeLuaSprite('mojoBG', true, 'gfGroup')
-	removeLuaSprite('tojoBG', true, 'gfGroup')
+	doTweenX('mojoBGDisappear', 'mojoBG', -screenWidth * 2, 0.45, 'cubeOut')
+	doTweenX('tojoBGDisappear', 'tojoBG', screenWidth * 2, 0.45, 'cubeOut')
 
 	setProperty('defaultCamZoom', prevCamZoom)
 	setProperty('isCameraOnForcedPos', prevCamControlled)
-	close()
 end
 
 local function tagFromNumV1(v1)
@@ -123,7 +129,7 @@ local function tagFromNumV1(v1)
 	return tag
 end
 
-function onEvent(n)
+function onEvent(n, v1)
 	if n ~= 'Change Character' then return end
 
 	local changedCharCheck = 'boyfriend'

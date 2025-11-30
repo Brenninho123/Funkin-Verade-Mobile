@@ -403,12 +403,12 @@ class Character extends FlxSprite
 		settingCharacterUp = false;
 	}
 
-	public function addOffset(name:String, x:Float = 0, y:Float = 0)
+	public inline function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{
 		animOffsets[name] = [x, y];
 	}
 
-	public function quickAnimAdd(name:String, anim:String)
+	public inline function quickAnimAdd(name:String, anim:String)
 	{
 		animation.addByPrefix(name, anim, 24, false);
 	}

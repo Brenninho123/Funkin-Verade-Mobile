@@ -14,7 +14,7 @@ function onEvent(n, v1, v2)
 
 	makeAnimatedLuaSprite('trans', 'transitions/'..v1)
 	addAnimationByPrefix('trans', 'anim', 'frame', 12, false)
-	setGraphicSize('trans', screenWidth, screenHeight)
+	setGraphicSize('trans', screenWidth * 1.3, screenHeight * 1.3)
 	screenCenter('trans')
 	setObjectCamera('trans', 'hud')
 	addLuaSprite('trans', true)

@@ -226,7 +226,7 @@ class LoadingState extends MusicBeatState
 
 		if (weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
 
-		Paths.setCurrentLevel(directory);
+		Paths.currentLevel = directory;
 		trace('Setting asset folder to ' + directory);
 	}
 
@@ -319,7 +319,7 @@ class LoadingState extends MusicBeatState
 		}
 
 		var song:SwagSong = PlayState.SONG;
-		var folder:String = Paths.formatToSongPath(Song.loadedSongName);
+		var folder:String = 'songs/${Paths.formatToSongPath(Song.loadedSongName)}';
 		new Future<Bool>(() -> {
 			// LOAD NOTE IMAGE
 			var noteSkin:String = Note.defaultNoteSkin;
@@ -342,12 +342,10 @@ class LoadingState extends MusicBeatState
 				var json:Dynamic = null;
 
 				#if MODS_ALLOWED
-				var moddyFile:String = Paths.modsJson('$folder/preload');
-				if (FileSystem.exists(moddyFile)) json = Json.parse(File.getContent(moddyFile));
-				else json = Json.parse(File.getContent(path));
-				#else
-				json = Json.parse(Assets.getText(path));
+				final moddyFile:String = Paths.modsJson('$folder/preload');
+				if (Paths.fileExists(moddyFile)) path = moddyFile;
 				#end
+				json = Json.parse(Paths.getTextFromFile(path));
 
 				if (json != null)
 				{

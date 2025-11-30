@@ -3199,10 +3199,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			var diff = false;
 			var loadedChart:SwagSong = try {
 				diff = true;
-				Song.getChart(curdiff, cur);
+				Song.getChart(curdiff, 'songs/$cur');
 			} catch (e) {
 				diff = false;
-				Song.getChart(cur, cur);
+				Song.getChart(cur);
 			}
 			if(loadedChart == null || !Reflect.hasField(loadedChart, 'song')) //Check if chart is ACTUALLY a chart and valid
 			{

@@ -35,7 +35,7 @@ class FlashingState extends flixel.FlxState
 		warnText.active = false;
 		texts.add(warnText);
 
-		final keys:Array<String> = ["Yes", "No"];
+		var keys:Array<String> = ["Yes", "No"];
 		for (i in 0...keys.length)
 		{
 			var button = new FlxText(0, (warnText.y + warnText.height) + 24, 0, keys[i]);
@@ -45,6 +45,7 @@ class FlashingState extends flixel.FlxState
 			button.active = false;
 			texts.add(button);
 		}
+		keys.resize(0);
 
 		changeSelection(0);
 	}

@@ -1,4 +1,3 @@
-luaDebugMode = true
 local this = ""
 local charCheck = ""
 local weExistin = false
@@ -67,13 +66,13 @@ function goodNoteHit(_, _, _, s)
 	cinemaIntrodid = true
 end
 
-function onDestroy()
+function onTweenCompleted(tag)
+	if tag ~= 'cinemaBGout' then return end
 	removeLuaSprite('blufiBG', true, 'gfGroup')
-
-	setProperty(charCheck..'.x', prevX)
-	setProperty(charCheck..'.y', prevY)
 	close()
 end
+
+function onDestroy() doTweenY('cinemaBGout', 'blufiBG', screenHeight * 2, 0.45, 'cubeOut') end
 
 local function tagFromNumV1(v1)
 	if tonumber(v1) == nil then return 'boyfriend' end
@@ -87,7 +86,7 @@ local function tagFromNumV1(v1)
 	return tag
 end
 
-function onEvent(n)
+function onEvent(n, v1)
 	if n ~= 'Change Character' then return end
 
 	local changedCharCheck = 'boyfriend'

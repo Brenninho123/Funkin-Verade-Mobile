@@ -29,19 +29,12 @@ class AttachedSprite extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		if (sprTracker != null) {
-			setPosition(sprTracker.x + xAdd, sprTracker.y + yAdd);
-			scrollFactor.set(sprTracker.scrollFactor.x, sprTracker.scrollFactor.y);
-
-			if(copyAngle)
-				angle = sprTracker.angle + angleAdd;
-
-			if(copyAlpha)
-				alpha = sprTracker.alpha * alphaMult;
-
-			if(copyVisible) 
-				visible = sprTracker.visible;
-		}
+		if (sprTracker == null) return;
+		
+		setPosition(sprTracker.x + xAdd, sprTracker.y + yAdd);
+		scrollFactor.copyFrom(sprTracker.scrollFactor);
+		if (copyAlpha) alpha = sprTracker.alpha * alphaMult;
+		if (copyVisible) visible = sprTracker.visible;
+		if (copyAngle) angle = sprTracker.angle + angleAdd;
 	}
 }

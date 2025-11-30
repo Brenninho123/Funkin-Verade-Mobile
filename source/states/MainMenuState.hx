@@ -395,7 +395,7 @@ class MainMenuState extends MusicBeatState
 	@:noCompletion function __doExitAnim(state:NextState, exit:NextState->Void)
 	{
 		flixel.effects.FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, true, true, (_) -> exit(state));
-		for (p=>i in menuItems)
+		for (p=>i in menuItems.members)
 		{
 			if (p == curSelected) continue;
 			FlxTween.tween(i, {alpha: 0}, 0.4, {ease: FlxEase.quadOut});

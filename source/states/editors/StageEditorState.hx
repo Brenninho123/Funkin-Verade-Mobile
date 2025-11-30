@@ -120,7 +120,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEventHandler.Psy
 		var weekDir:String = stageJson.directory;
 		if (weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
 
-		Paths.setCurrentLevel(directory);
+		Paths.currentLevel = directory;
 		trace('Setting asset folder to ' + directory);
 	}
 

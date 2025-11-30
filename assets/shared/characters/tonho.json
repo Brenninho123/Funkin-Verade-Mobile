@@ -1,48 +1,48 @@
 {
 	"animations": [
 		{
-			"loop": false,
 			"offsets": [-120, -100],
+			"loop": false,
+			"fps": 24,
 			"anim": "idle",
-			"fps": 24,
-			"name": "torajo idle",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offsets": [-10, 0],
-			"anim": "singDOWN",
-			"fps": 24,
-			"name": "torajo down",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offsets": [-10, 0],
-			"anim": "singUP",
-			"fps": 24,
-			"name": "torajo up",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offsets": [-10, 0],
-			"anim": "singLEFT",
-			"fps": 24,
-			"name": "torajo right",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offsets": [-10, 0],
-			"anim": "singRIGHT",
-			"fps": 24,
-			"name": "torajo left",
-			"indices": []
-		},
-		{
-			"offsets": [-99, -91],
 			"indices": [],
+			"name": "torajo idle"
+		},
+		{
+			"offsets": [-10, 0],
+			"loop": false,
+			"fps": 24,
+			"anim": "singDOWN",
+			"indices": [],
+			"name": "torajo down"
+		},
+		{
+			"offsets": [-10, 0],
+			"loop": false,
+			"fps": 24,
+			"anim": "singUP",
+			"indices": [],
+			"name": "torajo up"
+		},
+		{
+			"offsets": [-10, 0],
+			"loop": false,
+			"fps": 24,
+			"anim": "singLEFT",
+			"indices": [],
+			"name": "torajo right"
+		},
+		{
+			"offsets": [-10, 0],
+			"loop": false,
+			"fps": 24,
+			"anim": "singRIGHT",
+			"indices": [],
+			"name": "torajo left"
+		},
+		{
+			"offsets": [-98, -88],
+			"indices": [14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
 			"fps": 24,
 			"anim": "hey",
 			"loop": false,
@@ -51,16 +51,16 @@
 	],
 	"vocals_file": "",
 	"no_antialiasing": false,
+	"healthfruit": "apple",
 	"image": "characters/torajo, characters/toranja_azul",
 	"position": [-560, -390],
 	"healthicon": "torajo",
-	"healthfruit": "apple",
+	"fruit_colors": {
+		"accent": [220, 91, 235],
+		"color": [0, 244, 113]
+	},
 	"flip_x": false,
 	"healthbar_colors": [20, 209, 116],
-	"fruit_colors": {
-		"color": [0, 244, 113],
-		"accent": [220, 91, 235]
-	},
 	"camera_position": [300, 240],
 	"sing_duration": 4,
 	"scale": 0.7,

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="eviltorjo.png">
+	<!-- Created with Adobe Animate version 20.5.0.29329 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="idleeviltorajo0000" x="1" y="1" width="663" height="1612" frameX="-11" frameY="-4" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0001" x="1" y="1" width="663" height="1612" frameX="-11" frameY="-4" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0002" x="665" y="1" width="685" height="1593" frameX="0" frameY="-22" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0003" x="665" y="1" width="685" height="1593" frameX="0" frameY="-22" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0004" x="1351" y="1" width="659" height="1602" frameX="-13" frameY="-14" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0005" x="1351" y="1" width="659" height="1602" frameX="-13" frameY="-14" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0006" x="2011" y="1" width="655" height="1609" frameX="-15" frameY="-7" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0007" x="2667" y="1" width="655" height="1609" frameX="-15" frameY="-7" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0008" x="3323" y="1" width="655" height="1613" frameX="-15" frameY="-3" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0009" x="3323" y="1" width="655" height="1613" frameX="-15" frameY="-3" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0010" x="1" y="1615" width="655" height="1616" frameX="-15" frameY="0" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0011" x="1" y="1615" width="655" height="1616" frameX="-15" frameY="0" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0012" x="657" y="1615" width="655" height="1616" frameX="-15" frameY="0" frameWidth="685" frameHeight="1616"/>
+	<SubTexture name="idleeviltorajo0013" x="657" y="1615" width="655" height="1616" frameX="-15" frameY="0" frameWidth="685" frameHeight="1616"/>
+</TextureAtlas>
