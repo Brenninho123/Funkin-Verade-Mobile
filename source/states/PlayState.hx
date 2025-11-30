@@ -3424,20 +3424,21 @@ class PlayState extends MusicBeatState
 	#if ACHIEVEMENTS_ALLOWED
 	@:noCompletion @:unreflective private function __shouldUnlockAchieve(achieve:String):Bool
 	{
-		final usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice') || ClientPrefs.getGameplaySetting('botplay'));
+		final usedPractice:Bool = ClientPrefs.getGameplaySetting('practice') || ClientPrefs.getGameplaySetting('botplay');
+		final accuracy:Float = CoolUtil.floorDecimal(ratingPercent, 2);
 
 		if (achieve.startsWith('${WeekData.getWeekFileName()}_complete')) // Relacionados a Week
 		{
 			final beatWeek:Bool = (isStoryMode && storyPlaylist.length <= 1) && !usedPractice;
+			final completeSuffix:String = achieve.substring(achieve.indexOf('complete'));
 
-			trace(achieve.substring(achieve.indexOf('complete')));
-			return switch (achieve.substring(achieve.indexOf('complete')))
+			return switch (completeSuffix.replace('complete', "").toLowerCase())
 			{
-				case 'FC': beatWeek && (campaignMisses + songMisses == 0); // Campeão Perfeito
-				case 'Pain':
+				case 'fc': beatWeek && (campaignMisses + songMisses == 0); // Campeão Perfeito
+				case 'pain':
 					final missHistory:Float = campaignMisses + songMisses;
 					beatWeek && (missHistory > 0 && missHistory < 3); // Dor Sem Palavras
-				case 'Sucks': beatWeek && ratingPercent <= 0.15; // Beira da Morte
+				case 'sucks': beatWeek && ratingPercent <= 0.15; // Beira da Morte
 				default: beatWeek; // Campeão
 			};
 		}
@@ -3445,11 +3446,11 @@ class PlayState extends MusicBeatState
 		return switch (achieve)
 		{
 			case 'appleBrothers': Lambda.count(Highscore.songScores) == 0 && !usedPractice; // Campeão (DEMO)
-			case 'mojaroGameplay': ratingPercent <= 0.15 && !usedPractice; // Beira da Morte (DEMO)
-			case 'OSUPlayer': ratingPercent >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
+			case 'mojaroGameplay': accuracy <= 0.15 && !usedPractice; // Beira da Morte (DEMO)
+			case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
 			case 'almostThere': (songMisses > 0 && songMisses < 3) && !usedPractice; // Dor Sem Palavras (DEMO)
 			case 'BFLevel': songMisses == 0 && !usedPractice; // Perfeição
-			case 'niceJob': ratingPercent >= 0.69 && !usedPractice; // Nice
+			case 'niceJob': accuracy == 0.69 && !usedPractice; // Nice
 			case 'totem': songMisses == 30 && !usedPractice;
 			default: false;
 		};

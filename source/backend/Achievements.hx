@@ -16,6 +16,7 @@ typedef Achievement =
 	@:optional var hidden:Bool;
 	@:optional var maxScore:Float;
 	@:optional var maxDecimals:Int;
+	@:optional var icon:String;
 
 	//handled automatically, ignore these two
 	@:optional var mod:String;
@@ -33,24 +34,24 @@ class Achievements {
 	public static function init()
 	{
 		#if DEMO
-		createAchievement('appleBrothers', 		{name: "Campeão", description: "Zere \"Irmãos de Frutas\"."});
-		createAchievement('mojaroGameplay', 	{name: "Beira da Morte", description: "Zere \"Irmãos de Frutas\" com 15% de precisão."});
-		createAchievement('OSUPlayer', 				{name: "Campeão Perfeito", description: "Zere \"Irmãos de Frutas\" de PFC."});
-		createAchievement('almostThere', 			{name: "Dor Sem Palavras", description: "Zere \"Irmãos de Frutas\" QUASE sem erros."});
+		createAchievement('appleBrothers', 		{name: "Campeão", description: "Zere uma música pela primeira vez.", icon: "mic"});
+		createAchievement('mojaroGameplay', 	{name: "Beira da Morte", description: "Zere qualquer música com 15% de precisão.", icon: "shittyMic"});
+		createAchievement('OSUPlayer', 				{name: "Campeão Perfeito", description: "Zere qualquer música com um PFC.", icon: "goldenMic"});
+		createAchievement('almostThere', 			{name: "Dor Sem Palavras", description: "Zere qualquer música QUASE sem erros.", icon: "silverMic"});
 		#else
-		createAchievement('mundoToras_complete', 				{name: "Campeão", description: "Zere a Primeira Week."});
-		createAchievement('mundoToras_completeSucks', 	{name: "Beira da Morte", description: "Zere a Primeira Week com 15% de precisão."});
-		createAchievement('mundoToras_completeFC', 			{name: "Campeão Perfeito", description: "Zere a Primeira Week sem erros."});
-		createAchievement('mundoToras_completePain', 		{name: "Dor Sem Palavras", description: "Zere a Primeira Week QUASE sem erros."});
+		createAchievement('mundoToras_complete', 				{name: "Campeão", description: "Zere a Primeira Week.", icon: "mic"});
+		createAchievement('mundoToras_completeSucks', 	{name: "Beira da Morte", description: "Zere a Primeira Week com 15% de precisão na última música.", icon: "shittyMic"});
+		createAchievement('mundoToras_completeFC', 			{name: "Campeão Perfeito", description: "Zere a Primeira Week sem erros.", icon: "goldenMic"});
+		createAchievement('mundoToras_completePain', 		{name: "Dor Sem Palavras", description: "Zere a Primeira Week QUASE sem erros.", icon: "silverMic"});
 		#end
 
 		createAchievement('abel.webp', {name: "Como Pegar Abel Atualizado Sem Vírus APK gama baja", description: "Spawne Abels no menu principal.", hidden: true});
-		createAchievement('deivCameo', {name: "Tripulação Reunida", description: "Clique no Deiv no menu principal."});
+		createAchievement('deivCameo', {name: "Tripulação Reunida", description: "Clique no Deiv no menu principal.", icon: "deiv"});
 		createAchievement('niceJob', {name: "Nice..", description: "Vença uma música com 69% de precisão."});
 		createAchievement('learner', {name: "Aprendizagem", description: "Morra 5 vezes.", maxScore: 5, maxDecimals: 0});
 
-		createAchievement('sillyDoodles', {name: "Arte", description: "Confira a Galeria do mod."});
-		createAchievement('persistence', {name: "Capa! Pera, Jogo Errado", description: "Torajo, é você jogando??\n(Morra 50 vezes)", maxScore: 50, maxDecimals: 0});
+		createAchievement('sillyDoodles', {name: "Arte", description: "Confira a Galeria do mod.", icon: "art"});
+		createAchievement('persistence', {name: "Capa! Pera, Jogo Errado", description: "Morajo sai da alt.\n(Morra 50 vezes)", maxScore: 50, maxDecimals: 0});
 		createAchievement('totem', {name: "Imortalidade", description: "Erre 30 notas, mas zere uma música mesmo assim."});
 		createAchievement('walktrough', {name: "E isso.. foi Funkin' Em Verade.", description: "Zere o mod 100%", hidden: true});
 
@@ -132,7 +133,7 @@ class Achievements {
 			}
 			variables.set(name, val);
 
-			Achievements.save();
+			save();
 			if(saveIfNotUnlocked || val >= achievement.maxScore) FlxG.save.flush();
 			return val;
 		}
@@ -197,6 +198,7 @@ class Achievements {
 	{
 		data.ID = _sortID;
 		data.mod = mod;
+		data.icon ??= name;
 		achievements.set(name, data);
 		_sortID++;
 	}
