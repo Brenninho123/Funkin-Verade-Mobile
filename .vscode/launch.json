@@ -5,6 +5,13 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "HXCPP (debug)",
+			"type": "hxcpp",
+			"request": "launch",
+			"program": "${workspaceFolder}/export/debug/windows/bin/TonhoFunkin.exe",
+			"preLaunchTask": "Build Debug"
+		},
+		{
 			"name": "HXCPP (demo debug)",
 			"type": "hxcpp",
 			"request": "launch",
@@ -12,7 +19,7 @@
 			"preLaunchTask": "Build DEMO Debug"
 		},
 		{
-			"name": "HXCPP base",
+			"name": "HXCPP precompiled (debug)",
 			"type": "hxcpp",
 			"request": "launch",
 			"program": "${workspaceFolder}/export/debug/windows/bin/TonhoFunkin.exe"
