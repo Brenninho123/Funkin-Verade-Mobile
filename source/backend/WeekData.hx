@@ -38,7 +38,7 @@ class WeekData {
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
-	public var renderPath:String = "mainmenu/renders/fnfToras";
+	public var renderPath:String = "pausescreen/renders/2Tcholas";
 
 	public var fileName:String;
 

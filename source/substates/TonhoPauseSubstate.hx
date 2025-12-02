@@ -1,5 +1,7 @@
 package substates;
 
+import flixel.util.typeLimit.OneOfTwo;
+import flixel.group.FlxContainer.FlxTypedContainer;
 import haxe.Json;
 import options.OptionsState;
 import backend.WeekData;
@@ -11,12 +13,25 @@ private typedef TextOpt =
 	action:Void->Void
 }
 
+private typedef RenderData = 
+{
+	scale:Float,
+	offsets:Array<Float>
+}
+
 class TonhoPauseSubstate extends MusicBeatSubstate
 {
 	var options:Array<TextOpt> = [];
-	var curSelected:Int = 0;
+	static var renderData:RenderData;
+	static var curSelected:Int = 0;
 
-	var textGrp:FlxTypedSpriteGroup<FlxText> = new FlxTypedSpriteGroup<FlxText>();
+	// Maybe saves up on memory
+	@:allow(states.PlayState)
+	static var textMembers:Array<FlxText> = [];
+	static var gridGph:openfl.display.BitmapData;
+	static var renderGph:flixel.graphics.FlxGraphic;
+
+	var textGrp:FlxTypedContainer<FlxText>;
 	public static var music:FlxSound = new FlxSound();
 
 	public function new(?camera:FlxCamera)
@@ -26,7 +41,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 
 		options = 
 		[
-			{id: "resume", defName: "Resumir", action: () -> getTFOut()},
+			{id: "resume", defName: "Resumir", action: () -> getTFOut(close)},
 			{id: "restart", defName: "Reiniciar", action: FlxG.resetState},
 			{id: "options", defName: "Opções", action: function()
 			{
@@ -35,7 +50,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 			}},
 			{id: "back", defName: "Sair", action: function()
 			{
-				close();
+				music.stop();
 				#if DEMO
 				FlxG.switchState(() -> new states.MainMenuState());
 				#else
@@ -43,49 +58,28 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 				#end
 			}}
 		];
-		
+		curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
 		super(0xB0000000);
-	}
-
-	@:unreflective
-	@:noCompletion
-	static inline function __forEachUsedImg(func:(imgPath:String)->Void)
-	{
-		for (i in ['images/pausescreen/bg.png', '${Language.getFileTranslation('images/pausescreen/info')}.png'])
-			func(i);
 	}
 
 	public static function cacheStuff(targetSong:String, ?weekData:WeekData)
 	{		
 		weekData ??= WeekData.getCurrentWeek();
-		weekData ??= new WeekData(cast Json.parse(Paths.getTextFromFile('weeks/mundoToras.json')), 'mundoToras'); // If PlayState week is null, we default to first week
+		weekData ??= WeekData.weeksLoaded[WeekData.weeksList[0]]; // If PlayState week is null, we default to first week
+
 		if (!Paths.fileExists('music/pause/$targetSong.${Paths.SOUND_EXT}', MUSIC)) targetSong = "breakfast"; 
-
 		music.loadEmbedded(Paths.music('pause/$targetSong'), true);
-		FlxG.sound.defaultMusicGroup.add(music);
+		FlxG.sound.list.add(music);
 
-		__forEachUsedImg(function(img)
-		{
-			Paths.cacheBitmap(img);
-			Paths.avoidDumping(img); // Just incase of someone using Paths.clearStoredMemory();
-		});
-	}
+		Paths.cacheBitmap('images/pausescreen/bg.png');
+		Paths.cacheBitmap(Language.getFileTranslation('images/pausescreen/info.png'));
 
-	public static function clearCache()
-	{
-		@:privateAccess final killGraphic:flixel.graphics.FlxGraphic->Void = Paths.destroyGraphic;
+		renderGph = Paths.cacheBitmap('images/${weekData.renderPath}.png');
+		final imgName:String = weekData.renderPath.substr(weekData.renderPath.lastIndexOf("/") + 1);
+		renderData = Json.parse(Paths.getTextFromFile( Paths.json('menus/pause_renderDatas/$imgName') ));
+		renderData ??= {scale: 1, offsets: [0, 0]};
 
-		__forEachUsedImg(function(img)
-		{
-			final path:String = Paths.getSharedPath(img);
-			Paths.dumpExclusions.remove(path);
-
-			killGraphic(Paths.currentTrackedAssets[path]);
-			Paths.currentTrackedAssets.remove(path);
-		});
-
-		FlxG.sound.defaultMusicGroup.remove(music);
-		music.destroy();
+		gridGph = flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT);
 	}
 
 	override function create()
@@ -95,51 +89,82 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 
 		music.play(true, FlxG.random.float(0, (music.length / 2)));
 		music.fadeIn(1.2, 0, 0.5);
+		final scaling:Float = 0.67;
 
-		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT));
+		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(gridGph.clone());
 		bgGrid.scale.set(2.5, 2.5); bgGrid.updateHitbox();
 		bgGrid.velocity.set(-24, 24);
 		bgGrid.alpha = 0.13;
 		add(bgGrid);
 
-		__forEachUsedImg(function(imgPath)
+		if (renderGph != null)
 		{
-			var spr:FlxSprite = new FlxSprite(0, 0, Paths.getSharedPath(imgPath));
-			spr.scale.set(0.67, 0.67); spr.updateHitbox();
-			spr.screenCenter(Y);
-			add(spr);
-		});
+			var render:FlxSprite = new FlxSprite((FlxG.width / 2) + renderData.offsets[0], renderData.offsets[1], renderGph);
+			render.scale.set(renderData.scale, renderData.scale); render.updateHitbox();
+			render.antialiasing = ClientPrefs.data.antialiasing;
+			render.active = false;
+			add(render);
+		}
+		
+		var bg:FlxSprite = new FlxSprite(0, 0, Paths.image('pausescreen/bg'));
+		bg.scale.set(scaling, scaling); bg.updateHitbox();
+		bg.screenCenter(Y);
+		bg.active = false;
+		add(bg);
 
-		for (i=>o in options) _createText(i, o);
-		textGrp.screenCenter(Y).x = 235;
+		textGrp = new FlxTypedContainer<FlxText>(options.length);
+		if (textMembers.length != 0) createTextsFrom(textMembers);
+		if (options.length > textMembers.length) createTextsFrom(options);
 		add(textGrp);
+
+		var pauseTxt:FlxSprite = new FlxSprite(0, 0, Paths.image('pausescreen/info'));
+		pauseTxt.scale.set(scaling, scaling); pauseTxt.updateHitbox();
+		pauseTxt.screenCenter(Y);
+		pauseTxt.active = false;
+		add(pauseTxt);
 
 		changeSelection(0);
 	}	
 
-	function _createText(pos:Int, opt:TextOpt)
+	inline function createTextsFrom(options:Array<OneOfTwo<TextOpt, FlxText>>)
 	{
-		// Damn border getting cutoff
-		var text:FlxText = new FlxText(0, 0, (FlxG.width / 2), ' ${Language.getPhrase('pause_${opt.id}', opt.defName)}', 76);
-		text.font = Paths.font("fraiche.ttf");
-		text.antialiasing = true;
-		text.setBorderStyle(OUTLINE, FlxColor.BLACK, 4.2);
-		text.y += (text.height + 12) * pos;
-		text.active = false;
-		textGrp.add(text);
+		function makeNewTxt(pos:Int, data:TextOpt):FlxText
+		{
+			var text:FlxText = new FlxText(240, 120, (FlxG.width / 2), ' ${Language.getPhrase('pause_${data.id}', data.defName)}', 76);
+			text.font = Paths.font("fraiche.ttf");
+			text.setBorderStyle(OUTLINE, FlxColor.BLACK, 4.2);
+			text.y += (text.height + 12) * pos;
+			text.active = false;
+			text.antialiasing = true;
+
+			textGrp.add(text);
+			return text;
+		};
+
+		for (p=>i in options)
+		{
+			if (i is FlxText)
+			{
+				final txt:FlxText = cast i;
+				txt.revive();
+				
+				textGrp.add(txt);
+				continue;
+			}
+
+			textMembers.push(makeNewTxt(p, i));
+		}
 	}
 
 	override function update(elapsed:Float)
 	{
-		final up_p:Bool = controls.UI_UP_P;
-		if (up_p || controls.UI_DOWN_P) changeSelection(1 * (up_p ? -1 : 1));
-
+		if (controls.UI_UP_P || controls.UI_DOWN_P) changeSelection(1 * (controls.UI_UP_P ? -1 : 1));
 		if (controls.ACCEPT) options[curSelected].action();
 
 		super.update(elapsed);
 	}
 
-	function changeSelection(change:Int)
+	inline function changeSelection(change:Int)
 	{
 		textGrp.members[curSelected].color = FlxColor.WHITE;
 
@@ -148,17 +173,41 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		textGrp.members[curSelected].color = FlxColor.YELLOW;
 	}
 
-	function getTFOut(?finishFunc:Void->Void)
+	inline function setBGColAlpha(alpha:Float)
 	{
-		finishFunc ??= close;
-		final twnEase = FlxEase.expoOut;
-		music.fadeOut(0.4, 0, (_) -> music.pause());
+		bgColor.alphaFloat = alpha;
+		bgColor = bgColor;
+	}
 
-		for (i=>s in members) FlxTween.tween(s, {alpha: 0}, 0.2, {ease: twnEase});
-		FlxTween.num(bgColor.alphaFloat, 0, 0.2, {ease: twnEase, onComplete: (_) -> finishFunc()}, function(a)
+	function getTFOut(finishFunc:Void->Void)
+	{
+		music.stop();
+		final twnEase:EaseFunction = FlxEase.expoOut;
+
+		for (t in textGrp.members) FlxTween.tween(t, {alpha: 0}, 0.2, {ease: twnEase});
+		for (s in members)
 		{
-			bgColor.alphaFloat = a;
-			bgColor = bgColor;
-		});
+			if (Reflect.getProperty(s, 'alpha') == null) continue;
+			FlxTween.tween(s, {alpha: 0}, 0.2, {ease: twnEase});
+		}
+
+		FlxTween.num(bgColor.alphaFloat, 0, 0.2, {ease: twnEase, onComplete: (_) -> finishFunc()}, setBGColAlpha);
+	}
+
+	override function destroy()
+	{
+		if (textMembers.length == 0)
+		{
+			super.destroy();
+			return;
+		}
+
+		for (t in textGrp.members)
+		{
+			FlxTween.cancelTweensOf(t); t.alpha = 1;
+			t.kill();
+			textGrp.remove(t);
+		}
+		super.destroy();
 	}
 }

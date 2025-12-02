@@ -27,7 +27,6 @@ import states.MainMenuState;
 import states.StoryMenuState;
 import states.FreeplayState;
 
-import substates.PauseSubState;
 import substates.GameOverSubstate;
 
 import psychlua.LuaUtils;
@@ -738,9 +737,20 @@ class FunkinLua {
 			return true;
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(?skipTransition:Bool = false) {
+			if (skipTransition)
+			{
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+			}
+
 			game.persistentUpdate = false;
 			FlxG.camera.followLerp = 0;
-			PauseSubState.restartSong(skipTransition);
+			game.paused = true;
+
+			FlxG.sound.music.volume = 0;
+			game.vocals.volume = 0;
+
+			FlxG.resetState();
 			return true;
 		});
 		Lua_helper.add_callback(lua, "exitSong", function(?skipTransition:Bool = false) {

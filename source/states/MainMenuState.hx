@@ -31,15 +31,13 @@ private typedef MenuOpt =
 
 class MainMenuState extends MusicBeatState
 {
-	public static final psychEngineVersion:String = '1.0.4';
-	static var showOutdatedWarning:Bool = true;
-
-	public static var curSelected:Int = 0;
-	var selectedSomethin:Bool = false;
 	var optionShit:Array<String> = [];
+	static final datasPath:String = Paths.getSharedPath('data/menus/main/');
+	static var curSelected:Int = 0;
+
+	var selectedSomethin:Bool = false;
 	var selectionShit:Map<Int, Array<String>> = [];
 
-	final datasPath:String = 'data/menus/main/';
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	var menuColors:Array<FlxColor> = [];
@@ -104,7 +102,7 @@ class MainMenuState extends MusicBeatState
 			FlxG.switchState(function() 
 			{
 				return new ErrorState(
-					'No menu items were found!! Try making sure options are added correctly in "assets/${datasPath}options.xml".\nPress ACCEPT to Reload | Press BACK to Leave this Menu',
+					'No menu items were found!! Try making sure options are added correctly in "${datasPath}options.xml".\nPress ACCEPT to Reload | Press BACK to Leave this Menu',
 					() -> FlxG.switchState(() -> new MainMenuState()),
 					() -> FlxG.switchState(() -> new TitleState())
 				);
@@ -179,7 +177,7 @@ class MainMenuState extends MusicBeatState
 		add(overlay);
 		add(menuItems);
 
-		var psychVer:FlxText = new FlxText(0, 0, 0, 'Funkin\' Verade V${lime.app.Application.current.meta["version"]}\nPsych V$psychEngineVersion');
+		var psychVer:FlxText = new FlxText(0, 0, 0, 'Funkin\' Verade V${lime.app.Application.current.meta["version"]}\nPsych V1.0.4');
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		psychVer.setPosition(
 			(FlxG.width - psychVer.width) - psychVer.size, 
@@ -189,14 +187,7 @@ class MainMenuState extends MusicBeatState
 		add(psychVer);
 
 		changeItem(0);
-
-		#if CHECK_FOR_UPDATES
-		if (showOutdatedWarning && ClientPrefs.data.checkForUpdates && substates.OutdatedSubState.updateVersion != psychEngineVersion) {
-			persistentUpdate = false;
-			showOutdatedWarning = false;
-			openSubState(new substates.OutdatedSubState());
-		}
-		#end
+		if (!ClientPrefs.data.lowQuality) beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 -@BernardoGP4504
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float, data:MenuOpt):FlxSprite

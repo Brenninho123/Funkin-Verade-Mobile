@@ -134,12 +134,38 @@ class Main extends Sprite
 		#if VIDEOS_ALLOWED hxvlc.util.Handle.init(#if (hxvlc >= "1.8.0")  ['--no-lua'] #end); #end
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
+		var updateWarn:Bool = false;
+		#if CHECK_FOR_UPDATES
+		if (ClientPrefs.data.checkForUpdates)
+		{
+			trace('[UPDATE CHECK] Checking...');
+			final version:String = lime.app.Application.current.meta['version'];
+
+			var http:haxe.Http = new haxe.Http("https://raw.githubusercontent.com/BernardoGP4504/Funkin-Verade/main/gitVersion.txt");
+			http.onData = (data:String) -> 
+			{
+				final onlineVersion:String = data.split('\n')[0].trim();
+				trace('[UPDATE CHECK] Online: $onlineVersion | Local: $version');
+
+				if (onlineVersion != version)
+				{
+					trace('[UPDATE CHECK] Version dismatch!! Please update if there\'s a newer version.');
+					states.OutdatedState.updateVersion = onlineVersion;
+					updateWarn = true;
+				}
+			};
+			http.onError = (error) -> trace('error: $error');
+			http.request();
+		}
+		#end
+
 		#if FREEPLAY
 		var initialState:InitialState = states.FreeplayState;
 		#elseif CHARTING
 		var initialState:InitialState = states.editors.ChartingState;
 		#else
 		var initialState:InitialState = FlxG.save.data.flashing != null ? states.TitleState : () -> new states.FlashingState(states.TitleState);
+		if (updateWarn) initialState = () -> new states.OutdatedState(initialState);
 		#end
 		FlxTransitionableState.skipNextTransIn = true;
 		addChild(new FlxGame(0, 0, initialState, 60, 60, true, FlxG.save.data.fullscreen));
