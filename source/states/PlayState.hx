@@ -998,7 +998,6 @@ class PlayState extends MusicBeatState
 			setSongTime(0);
 			return;
 		}
-		moveCameraSection();
 
 		startTimer = new FlxTimer().start((Conductor.crochet / 1000) / playbackRate, function(tmr:FlxTimer)
 		{
@@ -1038,6 +1037,7 @@ class PlayState extends MusicBeatState
 					if (countImage != "NONE") countdownGo = createCountdownSprite(countImage, antialias);
 					tick = GO;
 				case 4:
+					if (!isCameraOnForcedPos) moveCameraSection();
 					tick = START;
 			}
 
