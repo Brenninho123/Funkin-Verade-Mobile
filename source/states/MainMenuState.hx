@@ -112,11 +112,13 @@ class MainMenuState extends MusicBeatState
 
 		// Easter eggs são assinalados aqui pq não se pode acessar funções locais no declarar de variáveis
 		EasterEggs.state = this;
+		EasterEggs.precacheStuff();
 		FlxG.signals.postUpdate.add(EasterEggs.onUpdate);
 		easterEggs = 
 		[
 			"abel" => EasterEggs.spawnAbels/* ,
-			"algorithomus" => FlxG.resetGame */
+			"algorithomus" => FlxG.resetGame */,
+			"azedaria" => EasterEggs.broGotBaited
 		];
 
 		var eggId:Int = 0;
@@ -360,37 +362,22 @@ class MainMenuState extends MusicBeatState
 			return;
 		}
 
-		final classFromStr = Type.resolveClass(selectionShit[curSelected][0]);
+		final classFromStr:Class<flixel.FlxState> = cast Type.resolveClass(selectionShit[curSelected][0]);
 		if (classFromStr == null)
 		{
 			unchooseItem();
 			return;
 		}
 
-		final targetState = Type.createInstance(classFromStr, []);
 		selectedSomethin = true;
 		FlxG.sound.play(Paths.sound("confirmMenu"));
 
-		var stateSwitch:NextState->Void = null;
-		if (selectionShit[curSelected].length < 2)
-		{
-			stateSwitch = (s) -> __getToNextState(s);
-			__doExitAnim(() -> targetState, stateSwitch);
-			return;
-		}
+		flixel.effects.FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, true, true, (_) -> 
+			__getToNextState(() -> Type.createInstance(classFromStr, []), (selectionShit[curSelected].length > 1) ? Reflect.field(this, selectionShit[curSelected][1]) : null)
+		);
 
-		stateSwitch = (s) -> __getToNextState(s, Reflect.field(this, selectionShit[curSelected][1]));	
-		__doExitAnim(() -> targetState, stateSwitch);
-	}
-
-	@:noCompletion function __doExitAnim(state:NextState, exit:NextState->Void)
-	{
-		flixel.effects.FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, true, true, (_) -> exit(state));
-		for (p=>i in menuItems.members)
-		{
-			if (p == curSelected) continue;
-			FlxTween.tween(i, {alpha: 0}, 0.4, {ease: FlxEase.quadOut});
-		}
+		FlxTween.num(1, 0, 0.4, {ease: FlxEase.quadOut}, function(a) for (i in 0...menuItems.members.length)
+			if (i != curSelected) menuItems.members[i].alpha = a);
 	}
 
 	@:noCompletion function __getToNextState(state:NextState, ?preloadPrep:haxe.Constraints.Function)
@@ -420,55 +407,85 @@ class MainMenuState extends MusicBeatState
 	#end
 }
 
+@:access(states.MainMenuState)
 private class EasterEggs
 {
-	public static var state:flixel.FlxState;
+	public static var state:MainMenuState;
 	static var abels:Array<FlxSprite> = [];
+	static var abelVelocities:Array<Array<Float>> = [];
+
+	public static function precacheStuff()
+	{
+		Paths.cacheBitmap('images/credits/abel.png');
+
+		Paths.image('TROUXACAIUNOPAPO');
+		Paths.returnSound('music/secret', null, true, false);
+	}
 
 	public static function spawnAbels()
 	{
 		#if ACHIEVEMENTS_ALLOWED Achievements.unlock("abel.webp"); #end
+		abelVelocities.push([0, 280, 28, -0.24]); // Pares de X, Y tlgd
+
 		var abel:FlxSprite = new FlxSprite(0, 0, Paths.image('credits/abel'));
 		abel.scale.set(0.1, 0.1); abel.updateHitbox();
 
 		final posX:Float = FlxG.random.float(40, (FlxG.width - abel.width) - 40);
 		final posY:Float = FlxG.random.float(40, (FlxG.height - abel.height) - 40);
 		abel.setPosition(posX, posY);
-
-		abel.velocity.set(0, 280);
-		abel.drag.set(0, 15);
 		abels.push(abel);
+
+		abel.velocity.set(abelVelocities[abels.indexOf(abel)][0], abelVelocities[abels.indexOf(abel)][1]);
+		abel.drag.set(0, 15);
 		state.add(abel);
+	}
+
+	public static function broGotBaited()
+	{
+		state.selectedSomethin = true; // Desabilitar qualquer input que pode quebrar tudo
+
+		var azedou:FlxSprite = new FlxSprite(0, 0, Paths.image('TROUXACAIUNOPAPO'));
+		azedou.setGraphicSize(FlxG.width * 1.4, FlxG.height); azedou.updateHitbox();
+		azedou.screenCenter();
+		state.add(azedou);
+
+		var bestSong:FlxSound = FlxG.sound.play(Paths.music('secret'), 0.85);
+		FlxG.sound.music.pause();
+
+		FlxTimer.wait(20, () -> 
+		{
+			state.selectedSomethin = false;
+			state.remove(azedou, true);
+			bestSong.stop();
+			FlxG.sound.music.resume();
+		});
 	}
 
 	public static function onUpdate()
 	{
 		if (abels.length > 0)
 		{
-			for (abel in abels)
+			for (i=>abel in abels)
 			{
 				var bounds:flixel.math.FlxRect = FlxG.camera.getViewMarginRect();
 				FlxG.watch.addQuick("cam bounds for abel", bounds);
 
 				final abelHeight:Float = abel.y + abel.height;
-				final abelWidth:Float = abel.y + abel.width;
+				final abelWidth:Float = abel.x + abel.width;
 
-				if (abelHeight > (bounds.bottom * 1.1))
+				if (abelHeight >= bounds.bottom)
 				{
 					FlxTween.tween(abel, {y: abel.y - 12}, 0.23, {ease: FlxEase.backOut, type: PINGPONG});
-					abel.velocity.set(14, -0.24);
+					abel.velocity.set(abelVelocities[i][2], abelVelocities[i][3]);
 				}
 
 				if (abelWidth >= bounds.right)
 				{
-					abel.velocity.x *= -1;
-					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut});
-					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut});
+					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut, onStart: (_) -> abelVelocities[i][2] *= -1});
 				}
 				if (abel.x <= bounds.left)
 				{
-					abel.velocity.x *= -1;
-					FlxTween.tween(abel, {x: abel.x + 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut});
+					FlxTween.tween(abel, {x: abel.x + 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut, onStart: (_) -> abelVelocities[i][2] *= -1});
 				}
 			}
 		}
@@ -482,5 +499,6 @@ private class EasterEggs
 			abel.destroy();
 		}
 		abels.resize(0);
+		abelVelocities.resize(0);
 	}
 }

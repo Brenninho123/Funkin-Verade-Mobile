@@ -71,6 +71,7 @@ class LoadingState extends MusicBeatState
 
 	override function create()
 	{
+		FlxTransitionableState.skipNextTransIn = true;
 		persistentUpdate = true;
 		bar = new Bar(0, FlxG.height - 60, "loading_screen/loadingBar", () -> curPercent, 0, loadMax);
 		bar.screenCenter(X);
@@ -199,7 +200,6 @@ class LoadingState extends MusicBeatState
 		initialThreadCompleted = true;
 		isIntrusive = false;
 
-		FlxTransitionableState.skipNextTransIn = true;
 		if (threadPool != null) threadPool.shutdown(); // kill all workers safely
 		threadPool = null;
 		mutex = null;

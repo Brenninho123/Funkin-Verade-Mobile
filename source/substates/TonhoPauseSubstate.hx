@@ -1,5 +1,6 @@
 package substates;
 
+import flixel.addons.display.FlxBackdrop;
 import flixel.util.typeLimit.OneOfTwo;
 import flixel.group.FlxContainer.FlxTypedContainer;
 import haxe.Json;
@@ -23,7 +24,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 {
 	var options:Array<TextOpt> = [];
 	static var renderData:RenderData;
-	static var curSelected:Int = 0;
+	var curSelected:Int = 0;
 
 	// Maybe saves up on memory
 	@:allow(states.PlayState)
@@ -32,6 +33,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 	static var renderGph:flixel.graphics.FlxGraphic;
 
 	var textGrp:FlxTypedContainer<FlxText>;
+	var bgGrid:FlxBackdrop;
 	public static var music:FlxSound = new FlxSound();
 
 	public function new(?camera:FlxCamera)
@@ -91,7 +93,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		music.fadeIn(1.2, 0, 0.5);
 		final scaling:Float = 0.67;
 
-		var bgGrid:flixel.addons.display.FlxBackdrop = new flixel.addons.display.FlxBackdrop(gridGph.clone());
+		bgGrid = new FlxBackdrop(gridGph);
 		bgGrid.scale.set(2.5, 2.5); bgGrid.updateHitbox();
 		bgGrid.velocity.set(-24, 24);
 		bgGrid.alpha = 0.13;
@@ -196,6 +198,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 
 	override function destroy()
 	{
+		remove(bgGrid, true); // Impede o gráfico de ser destruído
 		if (textMembers.length == 0)
 		{
 			super.destroy();

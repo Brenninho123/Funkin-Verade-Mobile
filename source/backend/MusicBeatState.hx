@@ -146,7 +146,7 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 	override function transitionIn()
 	{
 		var cls:Class<FlxSubState> = cast Type.resolveClass(customTransClass);
-		if (hasTransIn || cls == null) // Uses the TILE or FADE transition (base FlxTransitionableState transitions)
+		if (cls == null && hasTransIn) // Uses the TILE or FADE transition (base FlxTransitionableState transitions)
 		{
 			super.transitionIn();
 			return;
@@ -165,7 +165,7 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 			return;
 		}
 
-		var trans:FlxSubState = Type.createInstance(cls, [transIn]);
+		var trans:FlxSubState = Type.createInstance(cls, [transIn, true]);
 		trans.closeCallback = finishTransIn;
 		openSubState(trans);
 	}
@@ -173,7 +173,7 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 	override function transitionOut(?OnExit:Void->Void)
 	{
 		var cls:Class<FlxSubState> = cast Type.resolveClass(customTransClass);
-		if (hasTransOut || cls == null) // Uses the TILE or FADE transition (base FlxTransitionableState transitions)
+		if (cls == null && hasTransOut) // Uses the TILE or FADE transition (base FlxTransitionableState transitions)
 		{
 			super.transitionOut(OnExit);
 			return;
@@ -186,7 +186,7 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 			return;
 		}
 
-		var trans:FlxSubState = Type.createInstance(cls, [transOut]);
+		var trans:FlxSubState = Type.createInstance(cls, [transOut, false]);
 		trans.closeCallback = finishTransOut;
 		openSubState(trans);
 	}

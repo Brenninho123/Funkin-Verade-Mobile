@@ -94,6 +94,7 @@ class PlayState extends MusicBeatState
 
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
+	private var abelSign:FlxSprite;
 
 	public var boyfriendMap:Map<String, Character> = new Map<String, Character>();
 	public var dadMap:Map<String, Character> = new Map<String, Character>();
@@ -164,7 +165,6 @@ class PlayState extends MusicBeatState
 	public var eventNotes:Array<EventNote> = [];
 
 	public var camFollow:FlxObject;
-	private static var prevCamFollow:FlxObject;
 
 	public var strumLineNotes:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 	public var opponentStrums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
@@ -307,6 +307,9 @@ class PlayState extends MusicBeatState
 		guitarHeroSustains = ClientPrefs.data.guitarHeroSustains;
 
 		camGame = initPsychCamera();
+		camFollow = new FlxObject();
+		add(camFollow);
+		camGame.follow(camFollow, LOCKON, 0);
 
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
@@ -341,6 +344,7 @@ class PlayState extends MusicBeatState
 
 		stageData = StageData.getStageFile(curStage);
 		defaultCamZoom = stageData.defaultZoom;
+		camGame.zoom = defaultCamZoom;
 
 		stageUI = "normal";
 		if (stageData.stageUI != null && stageData.stageUI.trim().length > 0)
@@ -438,11 +442,14 @@ class PlayState extends MusicBeatState
 		#end
 			
 		var camPos:FlxPoint = FlxPoint.get(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
-		if(gf != null)
+		if (gf != null)
 		{
 			camPos.x += gf.getGraphicMidpoint().x + gf.cameraPosition[0];
 			camPos.y += gf.getGraphicMidpoint().y + gf.cameraPosition[1];
 		}
+		camFollow.setPosition(camPos.x, camPos.y);
+		FlxG.camera.snapToTarget();
+		camPos.put();
 
 		if(dad.curCharacter.startsWith('gf')) {
 			dad.setPosition(GF_X, GF_Y);
@@ -470,14 +477,19 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
 		var showTime:Bool = (ClientPrefs.data.timeBarType != 'Disabled');
-		timeTxt = new FlxText(STRUM_X + (FlxG.width / 2) - 248, 19, 400, "", 32);
+		timeTxt = new FlxText(0, !ClientPrefs.data.downScroll ? 19 : FlxG.height - 44, 400, "", 32);
 		timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		timeTxt.scrollFactor.set();
 		timeTxt.alpha = 0;
 		timeTxt.borderSize = 2;
 		timeTxt.visible = updateTime = showTime;
-		if(ClientPrefs.data.downScroll) timeTxt.y = FlxG.height - 44;
-		if(ClientPrefs.data.timeBarType == 'Song Name') timeTxt.text = SONG.song;
+		if (ClientPrefs.data.timeBarType == 'Song Name')
+		{
+			timeTxt.text = SONG.song;
+			timeTxt.size = 24;
+			timeTxt.y += 3;
+		}
+		timeTxt.screenCenter(X);
 
 		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'timeBar', function() return songPercent, 0, 1);
 		timeBar.scrollFactor.set();
@@ -488,34 +500,8 @@ class PlayState extends MusicBeatState
 		uiGroup.add(timeTxt);
 
 		noteGroup.add(strumLineNotes);
-
-		if(ClientPrefs.data.timeBarType == 'Song Name')
-		{
-			timeTxt.size = 24;
-			timeTxt.y += 3;
-		}
-
-		generateSong();
-
 		noteGroup.add(grpNoteSplashes);
-
-		camFollow = new FlxObject();
-		camFollow.setPosition(camPos.x, camPos.y);
-		camPos.put();
-
-		if (prevCamFollow != null)
-		{
-			camFollow = prevCamFollow;
-			prevCamFollow = null;
-		}
-		add(camFollow);
-
-		FlxG.camera.follow(camFollow, LOCKON, 0);
-		FlxG.camera.zoom = defaultCamZoom;
-		FlxG.camera.snapToTarget();
-
-		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
-		moveCameraSection();
+		generateSong();
 
 		healthBar = new Bar(0, FlxG.height * (!ClientPrefs.data.downScroll ? 0.89 : 0.11), 'healthBar', () -> health, 0, 2);
 		healthBar.screenCenter(X);
@@ -548,8 +534,14 @@ class PlayState extends MusicBeatState
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.visible = cpuControlled;
 		uiGroup.add(botplayTxt);
-		if(ClientPrefs.data.downScroll)
-			botplayTxt.y = healthBar.y + 70;
+		if (ClientPrefs.data.downScroll) botplayTxt.y = healthBar.y + 70;
+
+		abelSign = new FlxSprite();
+		abelSign.camera = camOther;
+		abelSign.animation.onFinish.add((_) -> abelSign.kill());
+		abelSign.antialiasing = ClientPrefs.data.antialiasing;
+		abelSign.kill();
+		add(abelSign);
 
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
@@ -573,7 +565,7 @@ class PlayState extends MusicBeatState
 
 		// SONG SPECIFIC SCRIPTS
 		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
-		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'data/$songName/'))
+		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'data/songs/$songName/'))
 			for (file in FileSystem.readDirectory(folder))
 			{
 				#if LUA_ALLOWED
@@ -602,7 +594,7 @@ class PlayState extends MusicBeatState
 
 			preEvents.resize(0);
 		}
-		checkEventNote();
+		// checkEventNote();
 
 		startingSong = true;
 		startCallback();
@@ -612,11 +604,10 @@ class PlayState extends MusicBeatState
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 
 		//PRECACHING THINGS THAT GET USED FREQUENTLY TO AVOID LAGSPIKES
-		if(ClientPrefs.data.hitsoundVolume > 0) Paths.sound('hitsound');
-		if(!ClientPrefs.data.ghostTapping) for (i in 1...4) Paths.sound('missnote$i');
+		if (ClientPrefs.data.hitsoundVolume > 0) Paths.sound('hitsound');
+		if (!ClientPrefs.data.ghostTapping) for (i in 1...4) Paths.sound('missnote$i');
 		Paths.image('alphabet');
 		TonhoPauseSubstate.cacheStuff(curSong);
-
 		resetRPC();
 
 		stagesFunc(function(stage:BaseStage) stage.createPost());
@@ -1504,6 +1495,8 @@ class PlayState extends MusicBeatState
 
 			case 'Play Sound':
 				Paths.sound(event.value1); //Precache sound
+			case 'Title Card':
+				Paths.image('${curSong}_title${event.value1}');
 		}
 		stagesFunc(function(stage:BaseStage) stage.eventPushedUnique(event));
 	}
@@ -1594,6 +1587,7 @@ class PlayState extends MusicBeatState
 			}
 			FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if(!tmr.finished) tmr.active = false);
 			FlxTween.globalManager.forEach(function(twn:FlxTween) if(!twn.finished) twn.active = false);
+			if (!isDead) for (c in FlxG.cameras.list) c.active = false;
 		}
 
 		super.openSubState(SubState);
@@ -1613,6 +1607,7 @@ class PlayState extends MusicBeatState
 			}
 			FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if(!tmr.finished) tmr.active = true);
 			FlxTween.globalManager.forEach(function(twn:FlxTween) if(!twn.finished) twn.active = true);
+			for (c in FlxG.cameras.list) c.active = true;
 
 			paused = false;
 			callOnScripts('onResume');
@@ -1974,6 +1969,7 @@ class PlayState extends MusicBeatState
 		FlxTimer.globalManager.clear();
 		FlxTween.globalManager.clear();
 		FlxG.camera.filters = null;
+		FlxG.camera.stopFX();
 		camHUD.visible = false;
 
 		if (GameOverSubstate.deathDelay > 0)
@@ -2275,6 +2271,16 @@ class PlayState extends MusicBeatState
 				#end
 				target.fade(FlxColor.BLACK, flValue2, values[1] == "true", true);
 				values.resize(0); // No littering!
+			case 'Title Card':
+				if (!abelSign.alive) abelSign.revive();
+				abelSign.frames = Paths.getSparrowAtlas('${curSong}_title${value1}');
+				abelSign.setGraphicSize(FlxG.width / 1.875, FlxG.height * 1.125); abelSign.updateHitbox(); // São números inversamente proporcionais. Se eu diminuo um por 75, o outro tem que aumentar 25 (100 - 75 = 25)
+				// Seloko, tive que até usar site de calculadora pra mudar os valores originais por porcentagem
+				// Obrigado https://www.4devs.com.br/calculadora_porcentagem, cês salvaram em
+
+				abelSign.animation.addByPrefix('appear', 'abelAPARECE', 24, false);
+				abelSign.animation.play('appear', true);
+				abelSign.screenCenter(Y).x -= abelSign.width / 2.5;
 		}
 
 		stagesFunc(function(stage:BaseStage) stage.eventCalled(eventName, value1, value2, flValue1, flValue2, strumTime));
@@ -2322,7 +2328,7 @@ class PlayState extends MusicBeatState
 		camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
 	}
 
-	public function finishSong(?ignoreNoteOffset:Bool = false):Void
+	public function finishSong(?ignoreNoteOffset:Bool = false)
 	{
 		updateTime = false;
 		FlxG.sound.music.volume = 0;
@@ -2429,7 +2435,6 @@ class PlayState extends MusicBeatState
 
 					FlxTransitionableState.skipNextTransIn = true;
 					FlxTransitionableState.skipNextTransOut = true;
-					prevCamFollow = camFollow;
 
 					Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, 'songs/${PlayState.storyPlaylist[0]}');
 					FlxG.sound.music.stop();
@@ -2603,7 +2608,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public var strumsBlocked:Array<Bool> = [];
-	private function onKeyPress(event:KeyboardEvent):Void
+	private function onKeyPress(event:KeyboardEvent)
 	{
 		if (controls.controllerMode) return;
 		var eventKey:FlxKey = event.keyCode;
@@ -2688,7 +2693,7 @@ class PlayState extends MusicBeatState
 		return FlxSort.byValues(FlxSort.ASCENDING, a.strumTime, b.strumTime);
 	}
 
-	private function onKeyRelease(event:KeyboardEvent):Void
+	private function onKeyRelease(event:KeyboardEvent)
 	{
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(keysArray, eventKey);
@@ -2727,7 +2732,7 @@ class PlayState extends MusicBeatState
 	}
 
 	// Hold notes
-	private function keysCheck():Void
+	private function keysCheck()
 	{
 		// HOLDING
 		var holdArray:Array<Bool> = [];
@@ -2765,7 +2770,7 @@ class PlayState extends MusicBeatState
 					keyReleased(i);
 	}
 
-	function noteMiss(daNote:Note):Void { //You didn't hit the key and let it go offscreen, also used by Hurt Notes
+	function noteMiss(daNote:Note) { //You didn't hit the key and let it go offscreen, also used by Hurt Notes
 		//Dupe note remove
 		notes.forEachAlive(function(note:Note) {
 			if (daNote != note && daNote.mustPress && daNote.noteData == note.noteData && daNote.isSustainNote == note.isSustainNote && Math.abs(daNote.strumTime - note.strumTime) < 1)
@@ -2778,7 +2783,7 @@ class PlayState extends MusicBeatState
 		if(result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll) callOnHScript('noteMiss', [daNote]);
 	}
 
-	function noteMissPress(direction:Int = 1):Void //You pressed a key when there was no notes to press for this key
+	function noteMissPress(direction:Int = 1) //You pressed a key when there was no notes to press for this key
 	{
 		if(ClientPrefs.data.ghostTapping) return; //fuck it
 
@@ -3014,7 +3019,7 @@ class PlayState extends MusicBeatState
 		if(!note.isSustainNote) invalidateNote(note);
 	}
 
-	public function invalidateNote(note:Note):Void {
+	public function invalidateNote(note:Note) {
 		note.kill();
 		notes.remove(note, true);
 		note.destroy();
@@ -3117,7 +3122,7 @@ class PlayState extends MusicBeatState
 		callOnScripts('onBeatHit');
 	}
 
-	public function characterBopper(beat:Int):Void
+	public function characterBopper(beat:Int)
 	{
 		if (gf != null && beat % Math.round(gfSpeed * gf.danceEveryNumBeats) == 0 && !gf.getAnimationName().startsWith('sing') && !gf.stunned)
 			gf.dance();

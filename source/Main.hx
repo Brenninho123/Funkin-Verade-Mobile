@@ -169,6 +169,7 @@ class Main extends Sprite
 		#end
 		FlxTransitionableState.skipNextTransIn = true;
 		addChild(new FlxGame(0, 0, initialState, 60, 60, true, FlxG.save.data.fullscreen));
+		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
 		fpsVar = new FPSCounter(10, 3);
 		addChild(fpsVar);
