@@ -58,12 +58,15 @@
 		{
 			"name": "poppytheshapeshifter",
 			"role": "Artista",
-			"doings": "Fez o Torajo Sans,\nArte de fundo do Torajo encarando o Morajo,\ne o Torajo indo de encarando pra bravo."
+			"doings": "Fez o Torajo Sans,\nArte de fundo do Torajo encarando o Morajo,\ne o Torajo indo de encarando pra bravo.",
+			"frameChar": "linn",
+			"socials": [{ "link": "Poppy_sh", "social": "twitter" }]
 		},
 		{
 			"name": "rafaela_draw",
 			"role": "Artista",
 			"doings": "Fez o poster do mod e a arte do Blulfi com a Pessy (também vista na galeria).",
+			"frameChar": "morajo",
 			"socials": [
 				{
 					"display": "Rafaela_Draw",
@@ -86,28 +89,10 @@
 			]
 		},
 		{
-			"name": "yokozn",
-			"role": "Artista",
-			"doings": "Vai fazer umas coisas pro próximo update...",
-			"socials": [
-				{
-					"display": "Yokozn =3",
-					"link": "1063604643684421774",
-					"social": "dc"
-				}
-			]
-		},
-		{
 			"name": "akira_okkotsu.",
 			"role": "Artista/Animadora",
 			"doings": "Fez o conceito do Morajo roubando o mic do Torajo.",
 			"frameChar": "morajo"
-		},
-		{
-			"name": "ranypro_animations",
-			"role": "Artista/Animador",
-			"doings": "Vai também fazer coisas pro próximo update (assim esperamos).",
-			"frameChar": "zulmi"
 		},
 		{
 			"name": "bruholiverlol",
@@ -203,6 +188,7 @@
 			"name": "pipocaaventuras",
 			"role": "Animador/Charter",
 			"doings": "Fez a cutscene final da \"Irmãos de Frutas\".",
+			"frameChar": "morajo",
 			"socials": [
 				{
 					"link": "PipocaAventuras",
@@ -251,6 +237,19 @@
 					"display": "AeFelipe",
 					"link": "861659008938541116",
 					"social": "dc"
+				}
+			]
+		},
+		{
+			"name": "deathstalker_69",
+			"role": "Charter",
+			"doings": "Charteou \"Irmãos de Frutas\".",
+			"frameChar": "morajo",
+			"socials": [
+				{
+					"display": "Panelinha",
+					"link": "Gelme69",
+					"social": "yt"
 				}
 			]
 		},
@@ -345,7 +344,7 @@
 			"name": "lilimaky",
 			"role": "Voice Actor",
 			"doings": "Da vida pra Morana!",
-			"frameChar": "zulmi",
+			"frameChar": "morajo",
 			"socials": [
 				{
 					"display": "LihCandy-Dubs",
