@@ -1174,7 +1174,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public function ratingPhraseFrom(percent:Float):Array<String>
-	{
+	{		
 		var foundMatch:Array<String> = null;
 		for (d in ratingStuff)
 		{
@@ -1184,7 +1184,9 @@ class PlayState extends MusicBeatState
 				break;
 			}
 		}
-		return foundMatch ?? ["unknown", "?"];
+
+		foundMatch ??= [ratingStuff[ratingStuff.length - 1][1], ratingStuff[ratingStuff.length - 1][2]];
+		return foundMatch;
 	}
 
 	// Same bop tween as ratings, for consistency
@@ -2254,9 +2256,9 @@ class PlayState extends MusicBeatState
 				camZooming = flValue1 > 0;
 				if (camZooming) camZoomingInterval = Math.round(flValue1);
 
-			case 'Set Camera Zoom':
+			/* case 'Set Camera Zoom':
 				flValue1 ??= stageData.defaultZoom;
-				defaultCamZoom = flValue1;
+				defaultCamZoom = flValue1; */
 
 			case 'Camera Fade':
 				flValue2 ??= 1;
