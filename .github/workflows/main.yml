@@ -1,15 +1,15 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Build
+name: Build (DEMO)
 
 
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ main, experimental ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, experimental ]
+    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          haxe-version: 4.3.7
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
         run: |
@@ -40,15 +40,13 @@ jobs:
           sh ./setup/unix.sh
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
-      - name: Create Version Tag
-        run: echo "${{github.run_id}}" > VERSION
       - name: Compile
-        run: haxelib run lime build linux --app-version="4.0.0-${{github.run_id}}" -DDEMO
+        run: haxelib run lime build linux -DDEMO
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
           name: linuxBuild
-          path: 'export/release/linux/bin'
+          path: export/release/linux/bin
   Windows:
     runs-on: windows-latest
 
@@ -58,21 +56,19 @@ jobs:
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          haxe-version: 4.3.7
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
         run: |
           haxelib setup C:/haxelib
-          haxelib install hxcpp > /dev/null --quiet
+          haxelib install hxcpp > NUL --quiet
           .\"setup/windows.bat"
         shell: cmd
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> %USERPROFILE%/settings.cocoa
         shell: cmd
-      - name: Create Version Tag
-        run: echo "${{github.run_id}}" > VERSION
       - name: Compile
-        run: haxelib run lime build windows --app-version="4.0.0-${{github.run_id}}" -DDEMO
+        run: haxelib run lime build windows -DDEMO
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
@@ -87,7 +83,7 @@ jobs:
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          haxe-version: 4.3.7
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
         run: |
@@ -97,10 +93,8 @@ jobs:
           sh ./setup/unix.sh
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
-      - name: Create Version Tag
-        run: echo "${{github.run_id}}" > VERSION
       - name: Compile
-        run: haxelib run lime build mac --app-version="4.0.0-${{github.run_id}}" -DDEMO
+        run: haxelib run lime build mac -DDEMO
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
