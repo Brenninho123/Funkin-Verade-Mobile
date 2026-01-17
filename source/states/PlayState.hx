@@ -476,20 +476,21 @@ class PlayState extends MusicBeatState
 		add(noteGroup);
 
 		Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
-		var showTime:Bool = (ClientPrefs.data.timeBarType != 'Disabled');
+		var showTime:Bool = (ClientPrefs.data.timeBarType != 'Desativada');
 		timeTxt = new FlxText(0, !ClientPrefs.data.downScroll ? 19 : FlxG.height - 44, 400, "", 32);
-		timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		timeTxt.setFormat(Paths.font("fraiche.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		timeTxt.scrollFactor.set();
 		timeTxt.alpha = 0;
 		timeTxt.borderSize = 2;
 		timeTxt.visible = updateTime = showTime;
-		if (ClientPrefs.data.timeBarType == 'Song Name')
+		if (ClientPrefs.data.timeBarType == 'Nome da Música')
 		{
 			timeTxt.text = SONG.song;
 			timeTxt.size = 24;
 			timeTxt.y += 3;
 		}
 		timeTxt.screenCenter(X);
+		timeTxt.antialiasing = true;
 
 		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'timeBar', function() return songPercent, 0, 1);
 		timeBar.scrollFactor.set();
@@ -521,17 +522,19 @@ class PlayState extends MusicBeatState
 		uiGroup.add(iconP2);
 		reloadHealthBarColors();
 
-		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
-		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreTxt = new FlxText(0, healthBar.y + ((ClientPrefs.data.downScroll && ClientPrefs.data.middleScroll) ? 80 : 40), FlxG.width);
+		scoreTxt.setFormat(Paths.font("fraiche.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
+		scoreTxt.antialiasing = true;
 		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		uiGroup.add(scoreTxt);
 
-		botplayTxt = new FlxText(400, healthBar.y - 90, FlxG.width - 800, Language.getPhrase("Botplay").toUpperCase(), 32);
-		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		botplayTxt = new FlxText(400, healthBar.y - 90, FlxG.width - 800, Language.getPhrase("Botplay").toUpperCase());
+		botplayTxt.setFormat(Paths.font("fraiche.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
+		botplayTxt.antialiasing = true;
 		botplayTxt.visible = cpuControlled;
 		uiGroup.add(botplayTxt);
 		if (ClientPrefs.data.downScroll) botplayTxt.y = healthBar.y + 70;
@@ -1733,10 +1736,10 @@ class PlayState extends MusicBeatState
 			final curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.data.noteOffset);
 			songPercent = (curTime / songLength);
 
-			if (ClientPrefs.data.timeBarType != 'Song Name')
+			if (ClientPrefs.data.timeBarType != 'Nome da Música')
 			{
 				var songCalc:Float = (songLength - curTime);
-				if(ClientPrefs.data.timeBarType == 'Time Elapsed') songCalc = curTime;
+				if(ClientPrefs.data.timeBarType == 'Decorrente') songCalc = curTime;
 
 				var secondsTotal:Int = Math.floor(songCalc / 1000);
 				if (secondsTotal < 0) secondsTotal = 0;

@@ -16,38 +16,38 @@ class ControlsSubState extends MusicBeatSubstate
 	var curAlt:Bool = false;
 
 	//Show on gamepad - Display name - Save file key - Rebind display name
-	var options:Array<Dynamic> = [
-		[true, 'NOTES'],
-		[true, 'Left', 'note_left', 'Note Left'],
-		[true, 'Down', 'note_down', 'Note Down'],
-		[true, 'Up', 'note_up', 'Note Up'],
-		[true, 'Right', 'note_right', 'Note Right'],
+	var options:Array<Dynamic> = 
+	[
+		[true, 'SETAS'],
+		[true, 'Esquerda', 'note_left', 'Nota Esquerda'],
+		[true, 'Baixo', 'note_down', 'Nota pra Baixo'],
+		[true, 'Cima', 'note_up', 'Nota pra Cima'],
+		[true, 'Direita', 'note_right', 'Nota Direita'],
 		[true],
-		[true, 'UI'],
-		[true, 'Left', 'ui_left', 'UI Left'],
-		[true, 'Down', 'ui_down', 'UI Down'],
-		[true, 'Up', 'ui_up', 'UI Up'],
-		[true, 'Right', 'ui_right', 'UI Right'],
+		[true, 'INTERFACE'],
+		[true, 'Esquerda', 'ui_left', 'Ir pra Esquerda'],
+		[true, 'Baixo', 'ui_down', 'Ir pra Baixo'],
+		[true, 'Cima', 'ui_up', 'Ir pra Cima'],
+		[true, 'Direita', 'ui_right', 'Ir pra Direita'],
 		[true],
 		[true, 'Reset', 'reset', 'Reset'],
-		[true, 'Accept', 'accept', 'Accept'],
-		[true, 'Back', 'back', 'Back'],
-		[true, 'Pause', 'pause', 'Pause'],
+		[true, 'Aceitar', 'accept', 'Aceitar'],
+		[true, 'Voltar', 'back', 'Voltar'],
+		[true, 'Pausar', 'pause', 'Pause'],
 		[false],
 		[false, 'VOLUME'],
-		[false, 'Mute', 'volume_mute', 'Volume Mute'],
-		[false, 'Up', 'volume_up', 'Volume Up'],
-		[false, 'Down', 'volume_down', 'Volume Down']
-		#if debug
-		, [false],
+		[false, 'Mutar', 'volume_mute', 'Mutar Volume'],
+		[false, 'Aumentar', 'volume_up', 'Aumentar Volume'],
+		[false, 'Diminuir', 'volume_down', 'Diminuir Volume']
+		#if debug , [false],
 		[false, 'DEBUG'],
-		[false, 'Key 1', 'debug_1', 'Debug Key #1'],
-		[false, 'Key 2', 'debug_2', 'Debug Key #2']
+		[false, 'Tecla 1', 'debug_1', 'Debug #1'],
+		[false, 'Tecla 2', 'debug_2', 'Debug #2']
 		#end
 	];
 	var curOptions:Array<Int>;
 	var curOptionsValid:Array<Int>;
-	static var defaultKey:String = 'Resetar Keybinds para o Default';
+	static var defaultKey:String = 'Resetar Keybinds';
 
 	var bg:FlxSprite;
 	var grpDisplay:FlxTypedGroup<Alphabet>;
@@ -74,17 +74,11 @@ class ControlsSubState extends MusicBeatSubstate
 		options.push([true]);
 		options.push([true, defaultKey]);
 
-		bg = new FlxSprite().loadGraphic(Paths.image('menuBG'));
+		bg = new FlxSprite(0, 0, Paths.image('menuBG'));
 		bg.color = keyboardColor;
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.screenCenter();
 		add(bg);
-
-		var grid:FlxBackdrop = new FlxBackdrop(FlxGridOverlay.createGrid(80, 80, 160, 160, true, 0x33FFFFFF, 0x0));
-		grid.velocity.set(40, 40);
-		grid.alpha = 0;
-		FlxTween.tween(grid, {alpha: 1}, 0.5, {ease: FlxEase.quadOut});
-		add(grid);
 
 		grpDisplay = new FlxTypedGroup<Alphabet>();
 		add(grpDisplay);
@@ -232,7 +226,7 @@ class ControlsSubState extends MusicBeatSubstate
 		{
 			switch(alpha.text)
 			{
-				case '[', ']': //Square and Triangle respectively
+				case '[' | ']': //Square and Triangle respectively
 					letter.image = 'alphabet_playstation';
 					letter.updateHitbox();
 					
@@ -306,11 +300,11 @@ class ControlsSubState extends MusicBeatSubstate
 					FlxTween.tween(bindingBlack, {alpha: 0.6}, 0.35, {ease: FlxEase.linear});
 					add(bindingBlack);
 
-					bindingText = new Alphabet(FlxG.width / 2, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [options[curOptions[curSelected]][3]]), false);
+					bindingText = new Alphabet(FlxG.width / 2, 160, Language.getPhrase('controls_rebinding', 'Redefinindo Keybind {1}', [Language.getPhrase('keyname_${options[curOptions[curSelected]][2]}', options[curOptions[curSelected]][3])]), false);
 					bindingText.alignment = CENTERED;
 					add(bindingText);
 					
-					bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'), true);
+					bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Segure ESC pra Cancelar\nSegure BACKSPACE pra Apagar'), true);
 					bindingText2.alignment = CENTERED;
 					add(bindingText2);
 

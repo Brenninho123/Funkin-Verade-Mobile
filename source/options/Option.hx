@@ -44,7 +44,7 @@ class Option
 	public function new(name:String, description:String = '', variable:String, type:OptionType = BOOL, ?options:Array<String> = null, ?translation:String = null)
 	{
 		_name = name;
-		_translationKey = translation != null ? translation : _name;
+		_translationKey = translation != null ? translation : variable;
 		this.name = Language.getPhrase('setting_$_translationKey', name);
 		this.description = Language.getPhrase('description_$_translationKey', description);
 		this.variable = variable;

@@ -11,10 +11,11 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 	var notes:FlxTypedGroup<StrumNote>;
 	var splashes:FlxTypedGroup<NoteSplash>;
 	var noteY:Float = 90;
+
 	public function new()
 	{
-		title = Language.getPhrase('visuals_menu', 'Visuals Settings');
-		rpcTitle = 'Visuals Settings Menu'; //for Discord Rich Presence
+		title = Language.getPhrase('visuals_menu', 'Configurações Visuais e Outros');
+		rpcTitle = 'Visual and Miscellaneous Settings Menu'; //for Discord Rich Presence
 
 		// for note skins and splash skins
 		notes = new FlxTypedGroup<StrumNote>();
@@ -22,7 +23,6 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		for (i in 0...Note.colArray.length)
 		{
 			var note:StrumNote = new StrumNote(370 + (560 / Note.colArray.length) * i, -200, i, 0);
-			changeNoteSkin(note);
 			notes.add(note);
 			
 			var splash:NoteSplash = new NoteSplash(0, 0, NoteSplash.defaultNoteSplash + NoteSplash.getSplashSkinPostfix());
@@ -34,94 +34,58 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		}
 
 		// options
-		var noteSkins:Array<String> = Mods.mergeAllTextsNamed('images/noteSkins/list.txt');
-		if(noteSkins.length > 0)
-		{
-			if(!noteSkins.contains(ClientPrefs.data.noteSkin))
-				ClientPrefs.data.noteSkin = ClientPrefs.defaultData.noteSkin; //Reset to default if saved noteskin couldnt be found
-
-			noteSkins.insert(0, ClientPrefs.defaultData.noteSkin); //Default skin always comes first
-			var option:Option = new Option('Note Skins:',
-				"Select your prefered Note skin.",
-				'noteSkin',
-				STRING,
-				noteSkins);
-			addOption(option);
-			option.onChange = onChangeNoteSkin;
-			noteOptionID = optionsArray.length - 1;
-		}
-		
-		var noteSplashes:Array<String> = Mods.mergeAllTextsNamed('images/noteSplashes/list.txt');
-		if(noteSplashes.length > 0)
-		{
-			if(!noteSplashes.contains(ClientPrefs.data.splashSkin))
-				ClientPrefs.data.splashSkin = ClientPrefs.defaultData.splashSkin; //Reset to default if saved splashskin couldnt be found
-
-			noteSplashes.insert(0, ClientPrefs.defaultData.splashSkin); //Default skin always comes first
-			var option:Option = new Option('Note Splashes:',
-				"Select your prefered Note Splash variation.",
-				'splashSkin',
-				STRING,
-				noteSplashes);
-			addOption(option);
-			option.onChange = onChangeSplashSkin;
-		}
-
-		var option:Option = new Option('Note Splash Opacity',
-			'How much transparent should the Note Splashes be.',
+		var option:Option = new Option('Opacidade de Note Splash',
+			"O quão transparente devem ser os splashes das notas.",
 			'splashAlpha',
 			PERCENT);
 		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
-		option.maxValue = 1;
 		option.changeValue = 0.1;
 		option.decimals = 1;
-		addOption(option);
 		option.onChange = playNoteSplashes;
+		addOption(option);
+		noteOptionID = optionsArray.length - 1;
 
-		var option:Option = new Option('Hide HUD',
-			'If checked, hides most HUD elements.',
+		var option:Option = new Option('Esconder HUD',
+			"Se marcado, esconde a maioria da HUD.\nDeixando Dispositivos Bomba respirarem melhor na gameplay.",
 			'hideHud',
 			BOOL);
 		addOption(option);
 		
-		var option:Option = new Option('Time Bar:',
-			"What should the Time Bar display?",
+		var option:Option = new Option('Barra de Tempo:',
+			"Controla o comportamento da barra de tempo.",
 			'timeBarType',
 			STRING,
-			['Time Left', 'Time Elapsed', 'Song Name', 'Disabled']);
+			['Restante', 'Decorrente', 'Nome da Música', 'Desativada']);
 		addOption(option);
 
-		var option:Option = new Option('Flashing Lights',
-			"Uncheck this if you're sensitive to flashing lights!",
+		var option:Option = new Option('Luzes Piscantes',
+			"Desative isso se for sensível a luzes piscantes!",
 			'flashing',
 			BOOL);
 		addOption(option);
 
-		var option:Option = new Option('Camera Zooms',
-			"If unchecked, the camera won't zoom in on a beat hit.",
+		var option:Option = new Option('Zooms de Camera',
+			"Se desmarcado, a camera não vai dar zoom em batidas.",
 			'camZooms',
 			BOOL);
 		addOption(option);
 
-		var option:Option = new Option('Score Text Grow on Hit',
-			"If unchecked, disables the Score text growing\neverytime you hit a note.",
+		var option:Option = new Option('Bop de Pontuação',
+			"Controla se o texto de pontuação deve fazer um \"bop\" a cada acerto de nota.",
 			'scoreZoom',
 			BOOL);
 		addOption(option);
 		
-		#if !mobile
-		var option:Option = new Option('FPS Counter',
-			'If unchecked, hides FPS Counter.',
+		var option:Option = new Option('Contador de FPS',
+			"Se desmarcado, esconde o contador de FPS e Memória.",
 			'showFPS',
 			BOOL);
-		addOption(option);
 		option.onChange = onChangeFPSCounter;
-		#end
+		addOption(option);
 		
 		#if CHECK_FOR_UPDATES
-		var option:Option = new Option('Check for Updates',
-			'On Release builds, turn this on to check for updates when you start the game.',
+		var option:Option = new Option('Buscar Atualizações',
+			"Ligue isso para automaticamente procurar atualizações ao iniciar do jogo.",
 			'checkForUpdates',
 			BOOL);
 		addOption(option);
@@ -129,17 +93,11 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 
 		#if DISCORD_ALLOWED
 		var option:Option = new Option('Discord Rich Presence',
-			"Uncheck this to prevent accidental leaks, it will hide the Application from your \"Playing\" box on Discord",
+			"Desmarcar isso esconde o coiso de \"Jogando\" do Discord.",
 			'discordRPC',
 			BOOL);
 		addOption(option);
 		#end
-
-		var option:Option = new Option('Combo Stacking',
-			"If unchecked, Ratings and Combo won't stack, saving on System Memory and making them easier to read",
-			'comboStacking',
-			BOOL);
-		addOption(option);
 
 		super();
 		add(notes);
@@ -153,7 +111,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		
 		switch(curOption.variable)
 		{
-			case 'noteSkin', 'splashSkin', 'splashAlpha':
+			case 'splashAlpha':
 				if(!notesShown)
 				{
 					for (note in notes.members)
@@ -163,7 +121,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 					}
 				}
 				notesShown = true;
-				if(curOption.variable.startsWith('splash') && Math.abs(notes.members[0].y - noteY) < 25) playNoteSplashes();
+				if(Math.abs(notes.members[0].y - noteY) < 25) playNoteSplashes();
 
 			default:
 				if(notesShown) 
@@ -176,35 +134,6 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 				}
 				notesShown = false;
 		}
-	}
-
-	function onChangeNoteSkin()
-	{
-		notes.forEachAlive(function(note:StrumNote) {
-			changeNoteSkin(note);
-			note.centerOffsets();
-			note.centerOrigin();
-		});
-	}
-
-	function changeNoteSkin(note:StrumNote)
-	{
-		var skin:String = Note.defaultNoteSkin;
-		var customSkin:String = skin + Note.getNoteSkinPostfix();
-		if(Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
-
-		note.texture = skin; //Load texture and anims
-		note.reloadNote();
-		note.playAnim('static');
-	}
-
-	function onChangeSplashSkin()
-	{
-		var skin:String = NoteSplash.defaultNoteSplash + NoteSplash.getSplashSkinPostfix();
-		for (splash in splashes)
-			splash.loadSplash(skin);
-
-		playNoteSplashes();
 	}
 
 	function playNoteSplashes()
@@ -256,11 +185,9 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		super.destroy();
 	}
 
-	#if !mobile
 	function onChangeFPSCounter()
 	{
-		if(Main.fpsVar != null)
-			Main.fpsVar.visible = ClientPrefs.data.showFPS;
+		if (Main.fpsVar == null) return;
+		Main.fpsVar.visible = ClientPrefs.data.showFPS;
 	}
-	#end
 }
