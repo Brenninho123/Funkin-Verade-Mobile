@@ -2,19 +2,26 @@
 	<option name="story">
 		<state default="states.FreeplayState" demo="states.PlayState"/>
 		<statePrepare default="" demo="preparePlayState"/>
+		<stateTransition default="states.transitions.AppleZoomTransition" demo=""/>
 	</option>
 
 	<option name="settings">
 		<state default="options.OptionsState" demo=""/>
+		<stateTransition default="states.transitions.AppleZoomTransition" demo=""/>
 	</option>
 
 	<option name="credits">
 		<state default="states.TonhoCreditsState" demo=""/>
+		<stateTransition default="states.transitions.Stickerlings" demo=""/>
 	</option>
 
 	<option name="achieves">
 		<state default="states.TonhoAchievementsState" demo=""/>
+		<stateTransition default="states.transitions.AppleZoomTransition" demo=""/>
 	</option>
 
-	<option name="gallery"/>
+	<option name="gallery">
+		<state default="states.GalleryState" demo=""/>
+		<stateTransition default="states.transitions.Stickerlings" demo=""/>
+	</option>
 </MainMenuOptData>

@@ -1,5 +1,7 @@
 package states;
 
+import objects.GamepadCursor;
+import flixel.FlxObject;
 import flixel.input.keyboard.FlxKey;
 import backend.WeekData;
 import backend.Song;
@@ -34,12 +36,13 @@ class MainMenuState extends MusicBeatState
 	var optionShit:Array<String> = [];
 	static final datasPath:String = Paths.getSharedPath('data/menus/main/');
 	static var curSelected:Int = 0;
+	static var prevTransition:String;
 
 	var selectedSomethin:Bool = false;
 	var selectionShit:Map<Int, Array<String>> = [];
+	var controllerCursor:GamepadCursor;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
-
 	var menuColors:Array<FlxColor> = [];
 	var bgGrad:FlxSprite;
 
@@ -54,6 +57,7 @@ class MainMenuState extends MusicBeatState
 	var eggsLastGuesses:Array<String> = [];
 	var eggHunts:Array<Void->Void> = [];
 	var lastFoundEgg:String = "";
+	var deivHitbox:FlxObject;
 
 	@:noCompletion inline function __selectionDataFromNode(element:Xml):Array<String>
 	{
@@ -68,7 +72,11 @@ class MainMenuState extends MusicBeatState
 				#end);
 		}
 
-		if (selectionData[selectionData.length - 1].length == 0) selectionData.resize(1);
+		for (d in selectionData.copy())
+		{
+			if (d.length != 0) continue;
+			selectionData.remove(d);
+		}
 		return selectionData;
 	}
 
@@ -85,6 +93,7 @@ class MainMenuState extends MusicBeatState
 			selectionShit[i++] = __selectionDataFromNode(e);
 		}
 
+		prevTransition ??= MusicBeatState.customTransClass;
 		super();
 	}
 
@@ -113,7 +122,6 @@ class MainMenuState extends MusicBeatState
 		// Easter eggs são assinalados aqui pq não se pode acessar funções locais no declarar de variáveis
 		EasterEggs.state = this;
 		EasterEggs.precacheStuff();
-		FlxG.signals.postUpdate.add(EasterEggs.onUpdate);
 		easterEggs = 
 		[
 			"abel" => EasterEggs.spawnAbels/* ,
@@ -129,9 +137,10 @@ class MainMenuState extends MusicBeatState
 			final huntTask:Void->Void = huntForEgg.bind(egg, eggId, clues);
 
 			eggHunts.push(huntTask);
-			FlxG.signals.preUpdate.add(huntTask);
+			FlxG.signals.postUpdate.add(huntTask);
 			++eggId;
 		}
+		FlxG.signals.postUpdate.add(EasterEggs.onUpdate);
 
 		super.create();
 		#if DISCORD_ALLOWED DiscordClient.changePresence("In the Menus"); #end
@@ -180,16 +189,21 @@ class MainMenuState extends MusicBeatState
 		add(menuItems);
 
 		var psychVer:FlxText = new FlxText(0, 0, 0, 'Funkin\' Verade V${lime.app.Application.current.meta["version"]}\nPsych V1.0.4');
-		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		psychVer.setFormat(Paths.font("fraiche.ttf"), 24, FlxColor.WHITE, RIGHT);
+		psychVer.setBorderStyle(OUTLINE_FAST, FlxColor.BLACK, 1.5);
 		psychVer.setPosition(
 			(FlxG.width - psychVer.width) - psychVer.size, 
-			(FlxG.height - psychVer.height) - psychVer.size
+			(FlxG.height - psychVer.height) - (psychVer.size / 2)
 		);
 		psychVer.active = false;
+		psychVer.antialiasing = true;
 		add(psychVer);
 
+		controllerCursor = new GamepadCursor();
+		add(controllerCursor);
+
 		changeItem(0);
-		if (!ClientPrefs.data.lowQuality) beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 -@BernardoGP4504
+		if (!ClientPrefs.data.lowQuality) beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 	-@BernardoGP4504
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float, data:MenuOpt):FlxSprite
@@ -205,7 +219,7 @@ class MainMenuState extends MusicBeatState
 		spr.scale.set(defScale * data.scale, defScale * data.scale); spr.updateHitbox();
 		spr.y += ((spr.height * spr.scale.y) * optionShit.indexOf(name)) + 90;
 		spr.offset.add(-data.offset[0], -data.offset[1]);
-		
+
 		spr.antialiasing = ClientPrefs.data.antialiasing;
 		menuItems.add(spr);
 		return spr;
@@ -233,6 +247,16 @@ class MainMenuState extends MusicBeatState
 		spr.origin.set(spr.frameWidth * originOffsets[0], spr.frameHeight * originOffsets[1]);
 		spr.offset.set(-data.offset[0], -data.offset[1]);
 
+		if (data.imageName == 'ohwow_theymadethis')
+		{
+			deivHitbox = new FlxObject(spr.x, spr.y, 147 * data.scale, 206 * data.scale);
+			deivHitbox.x -= (data.offset[0] * 1.5);
+			deivHitbox.y += (spr.height - deivHitbox.height) + data.offset[1];
+			deivHitbox.active = false;
+			deivHitbox.visible = false;
+			add(deivHitbox);
+		}
+
 		renderSprs.push(spr);
 		if (!ClientPrefs.data.lowQuality) renderScales.push(data.scale);
 		add(spr);
@@ -247,24 +271,32 @@ class MainMenuState extends MusicBeatState
 		}
 		if (FlxG.sound.music?.playing) Conductor.songPosition = FlxG.sound.music.time;
 
-		final up_p:Bool = controls.UI_UP_P;
-		if (up_p || controls.UI_DOWN_P)
+		if (FlxG.keys.justPressed.ANY || (FlxG.mouse.justMoved || FlxG.mouse.justPressed)) controls.controllerMode = false;
+		else if (FlxG.gamepads.anyInput()) controls.controllerMode = true;
+
+		controllerCursor.visible = deivHitbox.visible && controls.controllerMode;
+		FlxG.mouse.visible = deivHitbox.visible && !controls.controllerMode;
+		var deivMouseCheck:Bool = !controls.controllerMode ? (FlxG.mouse.overlaps(deivHitbox) && FlxG.mouse.justPressed) : (controllerCursor.overlaps(deivHitbox) && controls.ACCEPT);
+
+		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
+		var down_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
+		if (up_p || down_p)
 		{
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-			changeItem(1 * (up_p ? -1 : 1));
+			changeItem(up_p ? -1 : 1);
 		}
 
 		if (controls.BACK)
 		{
 			FlxG.sound.play(Paths.sound("cancelMenu"));
+			MusicBeatState.customTransClass = prevTransition;
 			FlxG.switchState(() -> new TitleState());
 		}
-		if (controls.ACCEPT) chooseItem();
+		if (controls.ACCEPT && (!controls.controllerMode || !deivMouseCheck)) chooseItem();
 
 		#if debug
 		if (FlxG.keys.justPressed.F5) FlxG.resetState();
 		#end
-
 		#if EDITORS_ALLOWED
 		if (controls.justPressed('debug_1'))
 		{
@@ -276,6 +308,11 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
+		if ((deivHitbox != null && renderSprs[2].visible) && deivMouseCheck)
+		{
+			if (!Achievements.achievementsUnlocked.contains('deivCameo')) Achievements.unlock('deivCameo');
+			else FlxG.sound.play(Paths.sound('plushie'));
+		}
 		super.update(elapsed);
 		FlxG.watch.addQuick("lastPressedEaster", eggsLastClues);
 		FlxG.watch.addQuick("lastTypedEaster", eggsLastGuesses);
@@ -306,7 +343,7 @@ class MainMenuState extends MusicBeatState
 		if (FlxG.keys.firstJustPressed() == FlxKey.fromString(eachClue[eggsLastClues[eggId] + 1])) eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
 		else resetProgress();
 
-		if (eggsLastGuesses[eggId] == clues.toLowerCase())
+		if (eggsLastGuesses[eggId] == clues.toLowerCase() && lastFoundEgg.length == 0)
 		{
 			lastFoundEgg = clues.toLowerCase();
 			// Cleanup
@@ -346,11 +383,12 @@ class MainMenuState extends MusicBeatState
 
 		renderSprs[curSelected].visible = true;
 		if (menuColors.length != 0) bgGrad.color = menuColors[curSelected];
+		deivHitbox.visible = curSelected == 2;
 	}
 
 	function chooseItem()
 	{
-		function unchooseItem()
+		inline function unchooseItem()
 		{
 			FlxG.sound.play(Paths.sound("cancelMenu"));
 			FlxG.log.warn('"${optionShit[curSelected]}" doesn\'t do anything');
@@ -373,15 +411,16 @@ class MainMenuState extends MusicBeatState
 		FlxG.sound.play(Paths.sound("confirmMenu"));
 
 		flixel.effects.FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.06, true, true, (_) -> 
-			__getToNextState(() -> Type.createInstance(classFromStr, []), (selectionShit[curSelected].length > 1) ? Reflect.field(this, selectionShit[curSelected][1]) : null)
+			__getToNextState(() -> Type.createInstance(classFromStr, []), (selectionShit[curSelected].length % 2 != 0) ? Reflect.field(this, selectionShit[curSelected][1]) : null, selectionShit[curSelected][selectionShit[curSelected].length - 1])
 		);
 
 		FlxTween.num(1, 0, 0.4, {ease: FlxEase.quadOut}, function(a) for (i in 0...menuItems.members.length)
 			if (i != curSelected) menuItems.members[i].alpha = a);
 	}
 
-	@:noCompletion function __getToNextState(state:NextState, ?preloadPrep:haxe.Constraints.Function)
+	@:noCompletion function __getToNextState(state:NextState, ?preloadPrep:haxe.Constraints.Function, transition:String)
 	{
+		MusicBeatState.customTransClass = transition;
 		if (preloadPrep == null)
 		{
 			FlxG.switchState(state);
@@ -389,7 +428,7 @@ class MainMenuState extends MusicBeatState
 		}
 
 		Reflect.callMethod(this, preloadPrep, []);
-		LoadingState.loadAndSwitchState(state.createInstance());
+		LoadingState.loadAndSwitchState(state.createInstance(), true);
 	}
 
 	#if DEMO
@@ -399,7 +438,7 @@ class MainMenuState extends MusicBeatState
 		PlayState.storyPlaylist = [for (s in WeekData.getCurrentWeek().songs) s[0]]; // Make sure to set PlayState.currentWeek beforehand or it'll grab the first week
 		PlayState.isStoryMode = true;
 
-		Song.loadFromJson(PlayState.storyPlaylist[0]);
+		Song.loadFromJson(PlayState.storyPlaylist[0], 'songs/${PlayState.storyPlaylist[0]}');
 		PlayState.campaignScore = 0;
 		PlayState.campaignMisses = 0;
 		LoadingState.prepareToSong();

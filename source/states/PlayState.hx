@@ -1682,6 +1682,7 @@ class PlayState extends MusicBeatState
 		setOnScripts('curDecStep', curDecStep);
 		setOnScripts('curDecBeat', curDecBeat);
 
+		if (botplayTxt != null) botplayTxt.visible = cpuControlled;
 		if (botplayTxt?.visible)
 		{
 			botplaySine += 180 * elapsed;
@@ -2381,7 +2382,7 @@ class PlayState extends MusicBeatState
 
 		#if ACHIEVEMENTS_ALLOWED
 		final weekComplete:String = '${WeekData.getWeekFileName()}_complete';
-		checkForAchievement([weekComplete, '${weekComplete}FC', '${weekComplete}Pain', '${weekComplete}Sucks', 'appleBrothers', 'mojaroGameplay', 'OSUPlayer', 'almostThere', 'BFLevel', 'niceJob', 'totem']);
+		checkForAchievement([weekComplete, '${weekComplete}FC', '${weekComplete}Pain', '${weekComplete}Sucks', 'appleBrothers', 'mojaroGameplay',/*  'OSUPlayer',  */'almostThere', 'BFLevel', 'niceJob', 'totem']);
 		#end
 
 		var ret:Dynamic = callOnScripts('onEndSong', null, true);
@@ -2526,28 +2527,24 @@ class PlayState extends MusicBeatState
 		return (add / values.length);
 	}
 
-	private function popUpScore(note:Note)
+	private function popUpScore(note:Note):Rating
 	{
-		if (ClientPrefs.data.hideHud) return;
+		final noteDiff:Float = Math.abs(note.strumTime - (Conductor.songPosition + ClientPrefs.data.ratingOffset));
+
+		final daRating:Rating = Conductor.judgeNote(ratingsData, noteDiff / playbackRate);
+		if (!note.ratingDisabled)
+		{
+			note.rating = daRating.name;
+			note.ratingMod = daRating.ratingMod;
+			daRating.hits++;
+		}
+		if (ClientPrefs.data.hideHud) return daRating;
 
 		if (comboGroup.length > 0)
 		{
 			for (s in comboGroup) FlxTween.completeTweensOf(s, ["alpha"]);
 			comboGroup.clear();
 		}
-
-		final noteDiff:Float = Math.abs(note.strumTime - (Conductor.songPosition + ClientPrefs.data.ratingOffset));
-		final daRating:Rating = Conductor.judgeNote(ratingsData, noteDiff / playbackRate);
-
-		songScore += daRating.score;
-		if (!note.ratingDisabled)
-		{
-			note.rating = daRating.name;
-			note.ratingMod = daRating.ratingMod;
-			totalNotesHit += daRating.ratingMod;
-			daRating.hits++;
-		}
-		if (daRating.noteSplash && !note.noteSplashData.disabled) spawnNoteSplashOnNote(note);
 
 		var uiFolder:String = "";
 		var antialias:Bool = ClientPrefs.data.antialiasing;
@@ -2605,6 +2602,7 @@ class PlayState extends MusicBeatState
 			});
 			prevScale.put();
 		}
+		return daRating;
 	}
 
 	public var strumsBlocked:Array<Bool> = [];
@@ -2952,6 +2950,7 @@ class PlayState extends MusicBeatState
 
 		if (!cpuControlled && (note.hitsoundVolume > 0 && !note.hitsoundDisabled)) FlxG.sound.play(Paths.sound(note.hitsound), note.hitsoundVolume);
 
+		var doNotesplash:Bool = !ClientPrefs.data.hideHud && !note.isSustainNote;
 		if (!note.hitCausesMiss) //Common notes
 		{
 			if (!note.noAnimation)
@@ -2993,9 +2992,12 @@ class PlayState extends MusicBeatState
 				++combo;
 				songHits++;
 				++totalPlayed;
+				var rating:Rating = popUpScore(note);
 
+				songScore += rating.score;
+				totalNotesHit += rating.ratingMod;
+				doNotesplash = rating.noteSplash && doNotesplash;
 				RecalculateRating(false);
-				popUpScore(note);
 			}
 		}
 		else //Notes that count as a miss if you hit them (Hurt notes for example)
@@ -3010,8 +3012,8 @@ class PlayState extends MusicBeatState
 			}
 
 			noteMiss(note);
-			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
 		}
+		if (doNotesplash && !note.noteSplashData.disabled) spawnNoteSplashOnNote(note);
 
 		stagesFunc(function(stage:BaseStage) stage.goodNoteHit(note));
 		var result:Dynamic = callOnLuas('goodNoteHit', [leId, leData, leType, isSus]);
@@ -3366,7 +3368,6 @@ class PlayState extends MusicBeatState
 		var ret:Dynamic = callOnScripts('onRecalculateRating', null, true);
 		if(ret != LuaUtils.Function_Stop)
 		{
-			ratingName = '?';
 			if(totalPlayed != 0) //Prevent divide by 0
 			{
 				// Rating Percent
@@ -3414,9 +3415,9 @@ class PlayState extends MusicBeatState
 		{
 			case 'appleBrothers': Lambda.count(Highscore.songScores) == 0 && !usedPractice; // Campeão (DEMO)
 			case 'mojaroGameplay': accuracy <= 0.15 && !usedPractice; // Beira da Morte (DEMO)
-			case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
+			case 'BFLevel': songMisses == 0 && !usedPractice; // Campeão Perfeito (DEMO)
+			// case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
 			case 'almostThere': (songMisses > 0 && songMisses < 3) && !usedPractice; // Dor Sem Palavras (DEMO)
-			case 'BFLevel': songMisses == 0 && !usedPractice; // Perfeição
 			case 'niceJob': accuracy == 0.69 && !usedPractice; // Nice
 			case 'totem': songMisses == 30 && !usedPractice;
 			default: false;

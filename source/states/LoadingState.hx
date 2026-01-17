@@ -220,14 +220,14 @@ class LoadingState extends MusicBeatState
 
 	public static function loadNextDirectory()
 	{
-		var directory:String = 'shared';
 		var weekDir:String = StageData.forceNextDirectory;
 		StageData.forceNextDirectory = null;
 
-		if (weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
+		var directory:String = 'shared';
+		if (weekDir != null && weekDir.length > 0) directory = weekDir;
 
 		Paths.currentLevel = directory;
-		trace('Setting asset folder to ' + directory);
+		trace('Setting asset folder to $directory');
 	}
 
 	static var isIntrusive:Bool = false;
@@ -239,7 +239,7 @@ class LoadingState extends MusicBeatState
 
 		LoadingState.isIntrusive = intrusive;
 		_startPool();
-		loadNextDirectory();
+		if (Paths.currentLevel.length == 0) loadNextDirectory();
 
 		if (intrusive)
 			return new LoadingState(target, stopMusic);
@@ -294,11 +294,13 @@ class LoadingState extends MusicBeatState
 			loaded = 0;
 			loadMax = 0;
 			initialThreadCompleted = true;
+
 			isIntrusive = false;
 			return;
 		}
 
 		_startPool();
+		loadNextDirectory(); // Fixes stage images not loading when they exist
 		imagesToPrepare = [];
 		soundsToPrepare = [];
 		musicToPrepare = [];
@@ -343,9 +345,9 @@ class LoadingState extends MusicBeatState
 
 				#if MODS_ALLOWED
 				final moddyFile:String = Paths.modsJson('$folder/preload');
-				if (Paths.fileExists(moddyFile)) path = moddyFile;
+				if (Paths.fileExists(moddyFile, TEXT)) path = moddyFile;
 				#end
-				json = Json.parse(Paths.getTextFromFile(path));
+				if (Paths.fileExists(path, TEXT)) json = Json.parse(Paths.getTextFromFile(path)); // Should fix LoadingState softlock
 
 				if (json != null)
 				{
@@ -472,9 +474,13 @@ class LoadingState extends MusicBeatState
 		clearInvalidFrom(musicToPrepare, 'music',' .${Paths.SOUND_EXT}', SOUND);
 		clearInvalidFrom(songsToPrepare, 'songs', '.${Paths.SOUND_EXT}', SOUND, 'songs');
 
-		for (arr in [imagesToPrepare, soundsToPrepare, musicToPrepare, songsToPrepare])
-			while (arr.contains(null))
-				arr.remove(null);
+		var prepareStuff:Array<Array<String>> = [imagesToPrepare, soundsToPrepare, musicToPrepare, songsToPrepare];
+		for (i in 0...prepareStuff.length)
+		{
+			if (!prepareStuff[i].contains(null)) continue;
+			prepareStuff[i] = prepareStuff[i].filter((f) -> f != null);
+		}
+		prepareStuff.resize(0);
 	}
 
 	static function clearInvalidFrom(arr:Array<String>, prefix:String, ext:String, type:AssetType, ?parentFolder:String = null)
@@ -503,17 +509,15 @@ class LoadingState extends MusicBeatState
 		var i:Int = 0;
 		while(i < arr.length)
 		{
-
 			var member:String = arr[i];
 			var myKey = '$prefix/$member$ext';
-			if (parentFolder == 'songs') myKey = '$member$ext';
+			if (parentFolder != null) myKey = '$member$ext';
 
 			//trace('attempting on $prefix: $myKey');
-			var doTrace:Bool = false;
-			if (member.endsWith('/') || (!Paths.fileExists(myKey, type, false, parentFolder) && (doTrace = true)))
+			if (member.endsWith('/') || !Paths.fileExists(myKey, type, false, parentFolder))
 			{
 				arr.remove(member);
-				if (doTrace) trace('Removed invalid $prefix: $member');
+				trace('Removed invalid $prefix: $member');
 			}
 			else i++;
 		}
@@ -628,7 +632,7 @@ class LoadingState extends MusicBeatState
 		//trace('precaching sound: $file');
 		if (!Paths.currentTrackedSounds.exists(file))
 		{
-			if (#if sys FileSystem.exists(file) || #end OpenFlAssets.exists(file, SOUND))
+			if (Paths.fileExists(file, SOUND, !modsAllowed, path))
 			{
 				var sound:Sound = #if sys Sound.fromFile(file) #else OpenFlAssets.getSound(file, false) #end;
 				mutex.acquire();

@@ -62,9 +62,9 @@ class Main extends Sprite
 		super();
 		// Credits to MAJigsaw77 (he's the og author for this code)
 		#if android
-		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		Sys.setCwd('${Context.getExternalFilesDir()}/.VeradeFunkin/');
 		#elseif ios
-		Sys.setCwd(lime.system.System.applicationStorageDirectory);
+		Sys.setCwd('${lime.system.System.applicationStorageDirectory}.VeradeFunkin/');
 		#end
 		#if (cpp && windows) backend.Native.fixScaling(); #end
 
@@ -198,6 +198,7 @@ class Main extends Sprite
 
 		FlxTransitionableState.defaultTransIn = new flixel.addons.transition.TransitionData(FADE, FlxColor.BLACK, 0.5, FlxPoint.weak(0, -1));
 		FlxTransitionableState.defaultTransOut = new flixel.addons.transition.TransitionData(FADE, FlxColor.BLACK, 0.5, FlxPoint.weak(0, 1));
+		MusicBeatState.customTransClass = "states.transitions.AppleZoomTransition";
 	}
 
 	function resizeFix()

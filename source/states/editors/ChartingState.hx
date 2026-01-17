@@ -525,6 +525,22 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		].join('\n');
 		fullTipText.screenCenter();
 		add(fullTipText);
+
+		PlayState.chartingMode = true;
+		substates.TonhoPauseSubstate.extraOptions = 
+		[
+			{
+				id: "charting_bot",
+				defName: "{1}ar Botplay",
+				action: () -> PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled,
+				translateValues: [() -> PlayState.instance.cpuControlled ? 'Deslig' : 'Lig']
+			},
+			{id: "inCharting", defName: "{1}ar Modo Charter", action: () -> 
+			{
+				PlayState.chartingMode = !PlayState.chartingMode;
+				// if (!PlayState.chartingMode) substates.TonhoPauseSubstate.extraOptions.resize(0);
+			}, translateValues: [() -> PlayState.chartingMode ? 'Deslig' : 'Lig']}
+		];
 		super.create();
 	}
 
@@ -639,6 +655,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		girlfriendDropDown.selectedLabel = PlayState.SONG.gfVersion;
 		stageDropDown.selectedLabel = PlayState.SONG.stage;
 		StageData.loadDirectory(PlayState.SONG);
+		Paths.currentLevel = "";
 
 		// DATA TAB
 		gameOverCharDropDown.selectedLabel = PlayState.SONG.gameOverChar;
@@ -3269,7 +3286,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		stageDropDown = new PsychUIDropDownMenu(objX + 140, objY, [''], function(id:Int, stage:String)
 		{
 			PlayState.SONG.stage = stage;
-			StageData.loadDirectory(PlayState.SONG);
 			trace('selected $stage');
 		});
 		
@@ -4805,7 +4821,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		setSongPlaying(false);
 		updateChartData();
 		StageData.loadDirectory(PlayState.SONG);
-		LoadingState.loadAndSwitchState(new PlayState());
+		LoadingState.loadAndSwitchState(new PlayState(), false, false);
 		ClientPrefs.toggleVolumeKeys(true);
 	}
 	

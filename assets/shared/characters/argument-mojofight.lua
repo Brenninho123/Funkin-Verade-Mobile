@@ -3,47 +3,11 @@ local charCheck = ""
 local prevCamZoom = 1
 local prevCamControlled = false
 local weExistin = false
+local prevX = 0
 
 local function instantZoomSet(zoom)
 	setProperty('defaultCamZoom', zoom)
 	setProperty('camGame.zoom', zoom)
-end
-
-function onCreatePost()
-	if _G[charCheck..'Name'] ~= this or weExistin then return end
-	prevCamZoom = getProperty('defaultCamZoom')
-	prevCamControlled = getProperty('isCameraOnForcedPos')
-	weExistin = true
-
-	createInstance('tojoGrr', 'objects.Character', {0, 0, 'argument-tojofight'})
-	setProperty('tojoGrr.x', getProperty('tojoGrr.positionArray[0]'))
-	setProperty('tojoGrr.y', getProperty('tojoGrr.positionArray[1]'))
-	addToGroup('dadGroup', 'tojoGrr')
-
-	setProperty('tojoGrr.x', getProperty('tojoGrr.x') + 1000)
-	instantZoomSet(0.7)
-	cameraSetTarget('dad')
-	setProperty('isCameraOnForcedPos', true)
-
-	makeLuaSprite('mojoBG', nil, 0, 0)
-	makeGraphic('mojoBG', 1, 1)
-	scaleObject('mojoBG', (screenWidth / 2) * 2, screenHeight * 2)
-	setScrollFactor('mojoBG', 0, 0)
-	setProperty('mojoBG.color', FlxColor("#FF0176"))
-
-	makeLuaSprite('tojoBG', nil, screenWidth * 2, 0)
-	makeGraphic('tojoBG', 1, 1)
-	scaleObject('tojoBG', (screenWidth / 2) * 2, screenHeight * 2)
-	setScrollFactor('tojoBG', 0, 0)
-	setProperty('tojoBG.color', FlxColor("#00FF6E"))
-
-	addToGroup('gfGroup', 'mojoBG', getObjectOrder('blufiBG', 'gfGroup'))
-	addToGroup('gfGroup', 'tojoBG', getObjectOrder('blufiBG', 'gfGroup'))
-	
-	setProperty('mojoBG.y', getProperty('mojoBG.y') - (getProperty('mojoBG.height') / 2))
-	setProperty('tojoBG.y', getProperty('tojoBG.y') - (getProperty('tojoBG.height') / 2))
-	doTweenX('mojoBGAppear', 'mojoBG', (-screenWidth + 300) + (getProperty('mojoBG.width') / 2), 0.45, 'cubeOut')
-	doTweenX('tojoBGAppear', 'tojoBG', ((-screenWidth + 300) + getProperty('mojoBG.width')) + (getProperty('tojoBG.width') / 2), 0.45, 'cubeOut')
 end
 
 function onCreate()
@@ -84,6 +48,50 @@ function onCreate()
 	addCharacterToList('argument-tojofight', "dad")
 end
 
+function onCreatePost()
+	if weExistin or _G[charCheck..'Name'] ~= this then return end
+	weExistin = true
+	prevCamZoom = getProperty('defaultCamZoom')
+	prevCamControlled = getProperty('isCameraOnForcedPos')
+	prevX = getProperty(charCheck..'.x')
+
+	createInstance('tojoGrr', 'objects.Character', {0, 0, 'argument-tojofight'})
+	setProperty('tojoGrr.x', getProperty('tojoGrr.positionArray[0]'))
+	setProperty('tojoGrr.y', getProperty('tojoGrr.positionArray[1]'))
+	addToGroup('dadGroup', 'tojoGrr')
+
+	local tojoX = getProperty('tojoGrr.x') + 1000
+	setProperty('tojoGrr.x', screenWidth * 2)
+	setProperty(charCheck..'.x', -screenWidth * 2)
+
+	instantZoomSet(0.7)
+	setProperty('camFollow.x', 935) callMethod('camGame.snapToTarget', {})
+	setProperty('isCameraOnForcedPos', true)
+	doTweenY('doCamMiddle', "camFollow", 680, 0.35, 'quartOut')
+
+	makeLuaSprite('mojoBG', nil, -screenWidth * 2, 0)
+	makeGraphic('mojoBG', 1, 1)
+	scaleObject('mojoBG', (screenWidth / 2) * 2, screenHeight * 2)
+	setScrollFactor('mojoBG', 0, 0)
+	setProperty('mojoBG.color', FlxColor("#FF0176"))
+
+	makeLuaSprite('tojoBG', nil, screenWidth * 2, 0)
+	makeGraphic('tojoBG', 1, 1)
+	scaleObject('tojoBG', (screenWidth / 2) * 2, screenHeight * 2)
+	setScrollFactor('tojoBG', 0, 0)
+	setProperty('tojoBG.color', FlxColor("#00FF6E"))
+
+	addToGroup('gfGroup', 'mojoBG', getObjectOrder('blufiBG', 'gfGroup'))
+	addToGroup('gfGroup', 'tojoBG', getObjectOrder('blufiBG', 'gfGroup'))
+	
+	setProperty('mojoBG.y', getProperty('mojoBG.y') - (getProperty('mojoBG.height') / 2))
+	setProperty('tojoBG.y', getProperty('tojoBG.y') - (getProperty('tojoBG.height') / 2))
+	doTweenX('mojoBGAppear', 'mojoBG', (-screenWidth + 300) + (getProperty('mojoBG.width') / 2), 0.45, 'cubeOut')
+	doTweenX('tojoBGAppear', 'tojoBG', ((-screenWidth + 300) + getProperty('mojoBG.width')) + (getProperty('tojoBG.width') / 2), 0.45, 'cubeOut')
+	doTweenX('mojoAppear', charCheck, prevX, 0.4, 'cubeOut')
+	doTweenX('tojoAppear', 'tojoGrr', tojoX, 0.4, 'cubeOut')
+end
+
 function onBeatHit()
 	if not weExistin then return end
 
@@ -102,13 +110,12 @@ end
 
 function onTweenCompleted(tag)
 	if tag == 'mojoBGDisappear' then removeLuaSprite('mojoBG', true, 'gfGroup') end
-	if tag == 'tojoBGDisappear' then
-		removeLuaSprite('tojoBG', true, 'gfGroup')
-		close()
-	end
+	if tag == 'tojoBGDisappear' then removeLuaSprite('tojoBG', true, 'gfGroup') end
 end
 
 function onDestroy()
+	if not weExistin then return end
+
 	removeLuaSprite('tojoGrr', true, 'dadGroup')
 	doTweenX('mojoBGDisappear', 'mojoBG', -screenWidth * 2, 0.45, 'cubeOut')
 	doTweenX('tojoBGDisappear', 'tojoBG', screenWidth * 2, 0.45, 'cubeOut')
@@ -143,7 +150,7 @@ function onEvent(n, v1)
 	
 	if _G[charCheck..'Name'] == this then
 		onCreatePost()
-	elseif weExistin and changedCharCheck == charCheck then
+	elseif changedCharCheck == charCheck then
 		onDestroy()
 	end
 end

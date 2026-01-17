@@ -38,6 +38,7 @@ class DiscordClient
 	public dynamic static function shutdown()
 	{
 		isInitialized = false;
+		__thread = null;
 		Discord.Shutdown();
 	}
 	
@@ -80,19 +81,14 @@ class DiscordClient
 		{
 			__thread = Thread.create(() ->
 			{
-				while (true)
+				// Wait 1 second until the next loop...
+				FlxTimer.loop(1, (_) -> 
 				{
-					if (isInitialized)
-					{
-						#if DISCORD_DISABLE_IO_THREAD
-						Discord.UpdateConnection();
-						#end
-						Discord.RunCallbacks();
-					}
+					if (!isInitialized) return;
 
-					// Wait 1 second until the next loop...
-					Sys.sleep(1.0);
-				}
+					#if DISCORD_DISABLE_IO_THREAD Discord.UpdateConnection(); #end
+					Discord.RunCallbacks();
+				}, 0);
 			});
 		}
 		isInitialized = true;

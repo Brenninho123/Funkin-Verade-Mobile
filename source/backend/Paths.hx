@@ -35,7 +35,7 @@ class Paths
 		dumpExclusions.push(key);
 	}
 
-	public static var dumpExclusions:Array<String> = ['assets/shared/images/alphabet.png', 'assets/shared/music/freakyMenu.$SOUND_EXT', 'assets/shared/sounds/scrollMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT', 'assets/shared/sounds/cancelMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT'];
+	public static var dumpExclusions:Array<String> = ['assets/shared/images/alphabet.png', 'assets/shared/music/freakyMenu.$SOUND_EXT', 'assets/shared/sounds/scrollMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT', 'assets/shared/sounds/cancelMenu.$SOUND_EXT', 'assets/shared/sounds/confirmMenu.$SOUND_EXT', 'assets/shared/images/transitions/appleTrans.png'];
 	// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory()
 	{
@@ -166,7 +166,11 @@ class Paths
 		}
 		#end
 
-		if (parentfolder != null) return getFolderPath(file, parentfolder);
+		if (parentfolder != null)
+		{
+			if (file.startsWith('$parentfolder/')) file = file.replace('$parentfolder/', "");
+			return getFolderPath(file, parentfolder);
+		}
 
 		if (currentLevel != null && currentLevel != 'shared')
 		{

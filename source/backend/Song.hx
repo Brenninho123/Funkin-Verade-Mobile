@@ -125,7 +125,7 @@ class Song
 	{
 		if(folder == null) folder = jsonInput;
 		PlayState.SONG = getChart(jsonInput, folder);
-		loadedSongName = folder;
+		loadedSongName = PlayState.SONG?.song ?? jsonInput;
 		chartPath = _lastPath;
 		#if windows
 		// prevent any saving errors by fixing the path on Windows (being the only OS to ever use backslashes instead of forward slashes for paths)

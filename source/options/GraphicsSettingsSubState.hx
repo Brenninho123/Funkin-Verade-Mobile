@@ -5,18 +5,18 @@ import objects.Character;
 class GraphicsSettingsSubState extends BaseOptionsMenu
 {
 	var antialiasingOption:Int;
-	var boyfriend:Character = null;
+	var bruno:FlxSprite;
+
 	public function new()
 	{
 		title = Language.getPhrase('graphics_menu', 'Graphics Settings');
 		rpcTitle = 'Graphics Settings Menu'; //for Discord Rich Presence
 
-		boyfriend = new Character(840, 170, 'bf', true);
-		boyfriend.setGraphicSize(Std.int(boyfriend.width * 0.75));
-		boyfriend.updateHitbox();
-		boyfriend.dance();
-		boyfriend.animation.finishCallback = function (name:String) boyfriend.dance();
-		boyfriend.visible = false;
+		bruno = new FlxSprite(900, 0, Paths.image('titlescreen/bruno'));
+		bruno.scale.set(0.2, 0.2); bruno.updateHitbox();
+		bruno.screenCenter(Y).y -= 50;
+		bruno.active = false;
+		bruno.antialiasing = ClientPrefs.data.antialiasing;
 
 		//I'd suggest using "Low Quality" as an example for making your own option since it is the simplest here
 		var option:Option = new Option('Low Quality', //Name
@@ -61,7 +61,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		#end
 
 		super();
-		insert(1, boyfriend);
+		insert(1, bruno);
 	}
 
 	function onChangeAntiAliasing()
@@ -77,7 +77,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 
 	function onChangeFramerate()
 	{
-		if(ClientPrefs.data.framerate > FlxG.drawFramerate)
+		if (ClientPrefs.data.framerate > FlxG.drawFramerate)
 		{
 			FlxG.updateFramerate = ClientPrefs.data.framerate;
 			FlxG.drawFramerate = ClientPrefs.data.framerate;
@@ -92,6 +92,6 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 	override function changeSelection(change:Int = 0)
 	{
 		super.changeSelection(change);
-		boyfriend.visible = (antialiasingOption == curSelected);
+		bruno.visible = antialiasingOption == curSelected;
 	}
 }

@@ -6,5 +6,11 @@
 	"boyfriend": [1300, 610],
 	"girlfriend": [720, 600],
 	"opponent": [307, 613],
-	"hide_girlfriend": false
+	"hide_girlfriend": false,
+
+	"preload": {
+		"images/Fundo1": -1,
+		"images/Fundo2": -1,
+		"images/Fundo3": -1
+	}
 }

@@ -36,7 +36,7 @@ class Achievements {
 		#if DEMO
 		createAchievement('appleBrothers', 		{name: "Campeão", description: "Zere uma música pela primeira vez.", icon: "mic"});
 		createAchievement('mojaroGameplay', 	{name: "Beira da Morte", description: "Zere qualquer música com 15% de precisão.", icon: "shittyMic"});
-		createAchievement('OSUPlayer', 				{name: "Campeão Perfeito", description: "Zere qualquer música com um PFC.", icon: "goldenMic"});
+		createAchievement('BFLevel', 				{name: "Campeão Perfeito", description: "Zere qualquer música sem erros.", icon: "goldenMic"});
 		createAchievement('almostThere', 			{name: "Dor Sem Palavras", description: "Zere qualquer música QUASE sem erros.", icon: "silverMic"});
 		#else
 		createAchievement('mundoToras_complete', 				{name: "Campeão", description: "Zere a Primeira Week.", icon: "mic"});

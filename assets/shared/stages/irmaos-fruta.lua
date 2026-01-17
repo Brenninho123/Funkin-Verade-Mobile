@@ -1,11 +1,6 @@
-local function getPath(path)
-	local currentLevel = getPropertyFromClass("backend.Paths", 'currentLevel')
-	return currentLevel and callMethodFromClass("backend.Paths", 'getFolderPath', {path, currentLevel}) or callMethodFromClass("backend.Paths", 'getSharedPath', {})
-end
-
 local function precacheFolderImages(folder, allowGPU)
 	allowGPU = allowGPU or true
-	for _, f in pairs(directoryFileList( getPath(folder) )) do
+	for _, f in pairs(directoryFileList( callMethodFromClass("backend.Paths", 'getPath', {folder}) )) do
 		if string.find(f, ".png", 1, true) then precacheImage(string.gsub(folder, "images/", "")..string.gsub(f, ".png", ""), allowGPU) end
 	end
 end
@@ -28,23 +23,26 @@ function onCreate()
 	addLuaSprite('Fundo1', false)
 	addLuaSprite('Fundo2', true)
 	addLuaSprite('Fundo3', true)
+	if songName ~= 'irmaos-de-frutas' then
+		close()
+		return
+	end
+	
 	precacheFolderImages("images/tojoBG/")
 end
 
-local cachedEvents = {}
-local cachedEventV1s = {}
-local cachedEventV2s = {}
-local cachedEventTimes = {}
-local curIndex = 1
+local delayedEvent = "" -- Just incase of other events needing delayed callbacks
+local cachedEventV1, cachedEventV2 = "", ""
+local cachedEventTime = -1
 
 local altTojoIdle = false
 
 function onEvent(n, v1, v2, t)
-	table.insert(cachedEvents, n)
-	table.insert(cachedEventV1s, #cachedEventV1s + 1, v1)
-	table.insert(cachedEventV2s, #cachedEventV2s + 1, v2)
-	table.insert(cachedEventTimes, #cachedEventTimes + 1, t)
-	runTimer(n..'_delayedCallback_'..t, 0.4)
+	if n == 'Transitions' then
+		delayedEvent = n
+		cachedEventV1, cachedEventV2, cachedEventTime = v1, v2, t
+		runTimer(n..'_delayedCallback_'..t, 0.4)
+	end
 
 	if n == 'Change Character' then
 		setProperty('Fundo2.visible', not stringStartsWith(v2, 'argument'))
@@ -60,19 +58,14 @@ end
 
 function onTimerCompleted(tag, loops, loopsLeft)
 	if not string.find(tag, '_delayedCallback_', 1, true) then return end
-	local cachedEvent = cachedEvents[curIndex]
-	local cachedEventV1 = cachedEventV1s[curIndex]
-	local cachedEventV2 = cachedEventV2s[curIndex]
-	local cachedEventTime = cachedEventTimes[curIndex]
 
-	curIndex = curIndex + 1
 	if luaDebugMode then
-		debugPrint('event: '..cachedEvent..' at '..cachedEventTime)
+		debugPrint('event: '..delayedEvent..' at '..cachedEventTime)
 		debugPrint('event.value1: '..cachedEventV1)
 		debugPrint('event.value2: '..cachedEventV2)
 	end
 
-	if cachedEvent == 'Transitions' then
+	if delayedEvent == 'Transitions' then
 		if cachedEventV1 == 'stealAMic' then
 			makeLuaSprite('tonho-irritado', nil, -1061, -150)
 			runHaxeCode("getVar('tonho-irritado').frames = Paths.getMultiAtlas(['tojoBG/Torajo_modo_seriu', 'tojoBG/eviltorjo']);")

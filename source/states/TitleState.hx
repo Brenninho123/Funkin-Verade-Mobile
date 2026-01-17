@@ -138,7 +138,6 @@ class TitleState extends MusicBeatState
 		FlxG.cameras.add(credCam, false);
 		
 		credGroup.camera = credCam;
-		credGroup.visible = false;
 		add(credGroup);
 
 		textGroup.camera = credCam;
@@ -274,12 +273,11 @@ class TitleState extends MusicBeatState
 			return;
 		}
 
-		var hasWackyImage:Bool = curWacky[0].startsWith(":png:") || curWacky[1].startsWith(":png:");
-		var secondWacky:Bool = hasWackyImage && !curWacky[0].startsWith(":png:");
+		var hasWackyImage:Bool = curWacky[1].startsWith(":png:") || (curWacky.length > 2 && curWacky[2].startsWith(":png:"));
+		var secondWacky:Bool = hasWackyImage && !curWacky[1].startsWith(":png:");
 
 		switch (curBeat)
 		{
-			case 1: credGroup.visible = true;
 			case 3: addMoreText('apresenta', 270);
 			case 4:
 				deleteCoolText();
@@ -306,21 +304,20 @@ class TitleState extends MusicBeatState
 
 				if (hasWackyImage)
 				{
-					final imgStr:String = curWacky[secondWacky ? 1 : 0].substr(5);
+					final imgStr:String = curWacky[secondWacky ? 2 : 1].substr(5);
 					var wackyImage:FlxSprite = createCoolSprite(0, 0, imgStr, Paths.fileExists('images/$imgStr.xml', TEXT));
 					wackyImage.scale.set(0.35, 0.35); wackyImage.updateHitbox();
 					wackyImage.screenCenter();
-					if (!secondWacky) wackyImage.y -= 90;
-					else wackyImage.y = (FlxG.height - wackyImage.height) - 60;
+					if (secondWacky) wackyImage.y = (FlxG.height - wackyImage.height);
+					wackyImage.y -= 90;
 				}
 
-				var theWacky:String = !secondWacky ? curWacky[hasWackyImage ? 1 : 0] : curWacky[0];
-				createCoolText([theWacky]);
+				createCoolText([curWacky[0]]);
 				credGroup.visible = !secondWacky;
 			case 12:
 				if (!secondWacky) deleteCoolText(true);
 
-				var theWacky:String = secondWacky ? (curWacky[2] ?? "...isso aí, eu acho..") : curWacky[1];
+				var theWacky:String = (!secondWacky && hasWackyImage) ? (curWacky[2] ?? "...isso aí, eu acho..") : curWacky[1];
 				addMoreText(theWacky);
 				credGroup.visible = secondWacky;
 			case 13:
@@ -356,13 +353,9 @@ class TitleState extends MusicBeatState
 		textSpr.font = Paths.font("fraiche.ttf");
 		textSpr.textField.multiline = false;
 		textSpr.textField.wordWrap = false;
+		textSpr.screenCenter(X);
 		textSpr.active = false;
 		textSpr.antialiasing = ClientPrefs.data.antialiasing;
 		textGroup.add(textSpr);
-
-		final diff:Float = Math.max(textSpr.width / FlxG.width, 1);
-		final scaleToAppear:Float = diff - 1;
-		textSpr.scale.x = scaleToAppear > 0 ? scaleToAppear : 1;
-		textSpr.screenCenter(X);
 	}
 }

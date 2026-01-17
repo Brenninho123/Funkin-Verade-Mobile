@@ -29,21 +29,14 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 	/**
 	 * Set this to a class path, if you want to use a custom trans substate instead of the flixel ones
 	 */
-	private static var customTransClass:String = "";
+	public static var customTransClass:String = "";
 
-	override function create() {
+	override function create()
+	{
 		#if MODS_ALLOWED Mods.updatedOnState = false; #end
 
 		if (!_psychCameraInitialized) initPsychCamera();
 		super.create();
-		if (transIn?.cameraMode != DEFAULT) return;
-
-		if (FlxTransitionableState.skipNextTransIn)
-		{
-			camera.fade(FlxColor.TRANSPARENT, 0.01, true, false);
-			return;
-		}
-		camera.fade(transIn.color, 0.01, true, true);
 	}
 
 	public function initPsychCamera():PsychCamera
@@ -130,17 +123,8 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 
 	override function finishTransOut()
 	{
-		if (subState is flixel.addons.transition.Transition)
-		{
-			var _cam = switch (transOut?.cameraMode)
-			{
-				case TOP: FlxG.cameras.list[FlxG.cameras.list.length - 1];
-				case NEW: Reflect.field(subState, "_customCamera");
-				case DEFAULT: getDefaultCamera();
-			};
-			_cam.fade(transOut.color ?? FlxG.cameras.bgColor, 0.01, false, true);
-		}
-		super.finishTransOut();
+		transOutFinished = true;
+		if (_onExit != null) _onExit();
 	}
 
 	override function transitionIn()

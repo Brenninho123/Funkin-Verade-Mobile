@@ -54,8 +54,6 @@ function onCreate()
 		}
 		char;
 	]], {thisChar = this})
-
-	precacheImage('characters/briga_de_macas/blufi-B')
 end
 
 function goodNoteHit(_, _, _, s)

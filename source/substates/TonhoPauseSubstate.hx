@@ -7,10 +7,11 @@ import haxe.Json;
 import options.OptionsState;
 import backend.WeekData;
 
-private typedef TextOpt = 
+typedef TextOpt = 
 {
 	id:String,
 	defName:String,
+	?translateValues:Array<Void->Dynamic>,
 	action:Void->Void
 }
 
@@ -23,7 +24,9 @@ private typedef RenderData =
 class TonhoPauseSubstate extends MusicBeatSubstate
 {
 	var options:Array<TextOpt> = [];
+	public static var extraOptions:Array<TextOpt> = new Array();
 	static var renderData:RenderData;
+	static inline function translateTag(option:String):String { return 'pause_$option'; }
 	var curSelected:Int = 0;
 
 	// Maybe saves up on memory
@@ -35,6 +38,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 	var textGrp:FlxTypedContainer<FlxText>;
 	var bgGrid:FlxBackdrop;
 	public static var music:FlxSound = new FlxSound();
+	public static var musicName:String = "";
 
 	public function new(?camera:FlxCamera)
 	{
@@ -53,6 +57,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 			{id: "back", defName: "Sair", action: function()
 			{
 				music.stop();
+				if (extraOptions.length > 0) extraOptions.resize(0);
 				#if DEMO
 				FlxG.switchState(() -> new states.MainMenuState());
 				#else
@@ -60,17 +65,22 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 				#end
 			}}
 		];
+		if (extraOptions.length > 0) for (i in 0...extraOptions.length)
+			options.insert(options.length - 2, extraOptions[i]);
+
 		curSelected = FlxMath.wrap(curSelected, 0, options.length - 1);
 		super(0xB0000000);
 	}
 
 	public static function cacheStuff(targetSong:String, ?weekData:WeekData)
-	{		
+	{
+		if (WeekData.weeksList.length == 0) WeekData.reloadWeekFiles(PlayState.isStoryMode);
 		weekData ??= WeekData.getCurrentWeek();
 		weekData ??= WeekData.weeksLoaded[WeekData.weeksList[0]]; // If PlayState week is null, we default to first week
 
 		if (!Paths.fileExists('music/pause/$targetSong.${Paths.SOUND_EXT}', MUSIC)) targetSong = "breakfast"; 
 		music.loadEmbedded(Paths.music('pause/$targetSong'), true);
+		musicName = targetSong;
 		FlxG.sound.list.add(music);
 
 		Paths.cacheBitmap('images/pausescreen/bg.png');
@@ -128,18 +138,21 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		changeSelection(0);
 	}	
 
-	inline function createTextsFrom(options:Array<OneOfTwo<TextOpt, FlxText>>)
+	function createTextsFrom(options:Array<OneOfTwo<TextOpt, FlxText>>)
 	{
 		function makeNewTxt(pos:Int, data:TextOpt):FlxText
 		{
-			var text:FlxText = new FlxText(240, 120, (FlxG.width / 2), ' ${Language.getPhrase('pause_${data.id}', data.defName)}', 76);
+			var translations:Array<Dynamic> = data.translateValues != null ? [for (t in data.translateValues) t()] : null;
+
+			var text:FlxText = new FlxText(240, 120, (FlxG.width / 2), ' ${Language.getPhrase(translateTag(data.id), data.defName, translations)}', 64);
 			text.font = Paths.font("fraiche.ttf");
 			text.setBorderStyle(OUTLINE, FlxColor.BLACK, 4.2);
 			text.y += (text.height + 12) * pos;
 			text.active = false;
 			text.antialiasing = true;
-
 			textGrp.add(text);
+
+			if (translations != null) translations.resize(0);
 			return text;
 		};
 
@@ -164,6 +177,16 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		if (controls.ACCEPT) options[curSelected].action();
 
 		super.update(elapsed);
+		if (textGrp == null || textGrp.length == 0) return;
+
+		for (i=>o in options)
+		{
+			if (o.translateValues == null) continue;
+			var translations:Array<Dynamic> = [for (t in o.translateValues) Language.getPhrase('${translateTag(o.id)}-${t()}', t())];
+
+			textGrp.members[i].text = ' ${Language.getPhrase(translateTag(o.id), o.defName, translations)}'; // Trailing space so text doesn't look cutoff
+			translations.resize(0);
+		}
 	}
 
 	inline function changeSelection(change:Int)
@@ -171,7 +194,6 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		textGrp.members[curSelected].color = FlxColor.WHITE;
 
 		curSelected = FlxMath.wrap(curSelected + change, 0, options.length - 1);
-
 		textGrp.members[curSelected].color = FlxColor.YELLOW;
 	}
 

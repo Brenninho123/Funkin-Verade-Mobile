@@ -3,7 +3,7 @@
 		{
 			"name": "deivthemongus3.",
 			"role": "Diretor/Artista",
-			"doings": "Guiou o mod inteiro.\r\nEle fez as primeiras referências dos personagens,\nA arte Newgrounds da tela de título,\nA arte do Torajo roubando frase do Morajo,\ne a tela de loading.",
+			"doings": "Guiou o mod inteiro\r\nCriou tudo, fez a arte de loading, arte da newgrounds, arte do torajo falando tchola pro morajo",
 			"frameChar": "torajo",
 			"socials": [
 				{ "link": "DeivMongus0P", "social": "twitter" },
@@ -12,12 +12,13 @@
 					"link": "1198012943187591349",
 					"social": "dc"
 				}
-			]
+			],
+			"quote": "Oiii eu sou o Deiv! Sim eu sou impostor mas não esquenta que eu não mordo hehe 03"
 		},
 		{
 			"name": "nico_jack_",
 			"role": "Co-Diretora, Artista, Roteirista e Editora",
-			"doings": "Também guiou o time.\r\nEla fez os personagens na tela de título,\nFez os sprites do Blulfi,\nOs maçãs brigando,\nO Abel te dando o nome da música,\ne editou alguns shorts pro canal do mod.",
+			"doings": "Também guiou o time.\r\nFez os personagens na tela de título, fez os sprites do Blulfi, maçãs brigando, Abel mostrando nome da música, e editou alguns shorts pro canal do mod.",
 			"frameChar": "zulmi",
 			"socials": [
 				{ "link": "Nico_Jack_", "social": "twitter" },
@@ -26,19 +27,20 @@
 					"link": "FunkinVerade",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "Minhas mão só são robóticas pq eu trabalhei muito nesse mod, aqui nós temos o nosso próprio porão e eu tô nele (socorro)"
 		},
 		{
 			"name": "karoliskaak",
 			"role": "Artista",
-			"doings": "Fez o sprite do Torajo,\nA foto e banner do Twitter,\ne o conceito do sprite principal do Blulfi.",
+			"doings": "Fez o sprite do Torajo, a foto e banner do Twitter, e o conceito do sprite principal do Blulfi.",
 			"frameChar": "linn",
 			"socials": [{ "link": "KSouza_Draws", "social": "twitter" }]
 		},
 		{
 			"name": "cr1smii",
 			"role": "Artista",
-			"doings": "Fez o sprite do Tchola,\nA Morana,\ne a arte de fundo dos menus.",
+			"doings": "Fez o sprite do Tchola, a Morana, e a arte de fundo dos menus.",
 			"frameChar": "morajo",
 			"socials": [
 				{
@@ -46,19 +48,21 @@
 					"link": "miiiipha.carrd.co",
 					"social": "carrd"
 				}
-			]
+			],
+			"quote": "Opa eu sou a Miipha!! Sou um Glitch mas não hackeio ninguém não né, não sou o Morajo heh"
 		},
 		{
 			"name": "angellins_eclipse",
 			"role": "Artista",
-			"doings": "Fez a arte da opção \"Opções\" no menu principal,\nPromo art do mod,\nA fusão do Blulfi e da Morana (que tá na galeria),\ne a capa album de \"Irmãos de Frutas\".",
+			"doings": "Fez a arte da opção \"Opções\" no menu principal, promo art do mod, a fusão do Blulfi e da Morana (que tá na galeria), e a capa album de \"Irmãos de Frutas\".",
 			"frameChar": "linn",
-			"socials": [{ "link": "Zay_Angellins", "social": "twitter" }]
+			"socials": [{ "link": "Zay_Angellins", "social": "twitter" }],
+			"quote": "Apenas uma artista multifandoom tentando viver do próprio sonho"
 		},
 		{
 			"name": "poppytheshapeshifter",
 			"role": "Artista",
-			"doings": "Fez o Torajo Sans,\nArte de fundo do Torajo encarando o Morajo,\ne o Torajo indo de encarando pra bravo.",
+			"doings": "Fez o Torajo Sans, arte de fundo do Torajo encarando o Morajo, e o Torajo indo de encarando pra bravo.",
 			"frameChar": "linn",
 			"socials": [{ "link": "Poppy_sh", "social": "twitter" }]
 		},
@@ -73,12 +77,28 @@
 					"link": "rafaela_draw.oficial",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "Opa aq é a Rafa! sou meio Warden e tentei ajudar o máximo q pude :)"
+		},
+		{
+			"name": "vavaemoutraconta",
+			"role": "Artista",
+			"doings": "Vai ajudar com artes no futuro site do mod...",
+			"frameChar": "torajo",
+			"socials": [
+				{
+					"display": "vava",
+					"link": "vimaquipelob1el",
+					"social": "twitter"
+				}
+			],
+			"quote": "Mesmo meio sumida gostei de fazer parte desse projeto! :D"
 		},
 		{
 			"name": "blazynumero3",
 			"role": "Artista",
 			"doings": "Fez a arte da opção \"Conquistas\" no menu principal e fez a cutscene inicial do mod.",
+			"frameChar": "zulmi",
 			"socials": [
 				{ "link": "Blazyhok", "social": "twitter" },
 				{
@@ -86,7 +106,8 @@
 					"link": "Blazyhok",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "Eu sou o Blazy, também conhecido como BlazyHOK no TikTok, basicamente eu desenho umas coisas aí :P"
 		},
 		{
 			"name": "akira_okkotsu.",
@@ -97,12 +118,13 @@
 		{
 			"name": "bruholiverlol",
 			"role": "Artista",
-			"doings": "O humor do servidor.\r\nEle fez os botões das opções pro menu principal,\nAs barras de vida,\nToda a arte do menu de conquistas,\nO nome decorado que aparece na placa do Abel,\ne deu ideias de eventos pra \"Irmãos de Frutas\".",
+			"doings": "O humor do servidor.\r\nEle fez os botões das opções pro menu principal, barras de vida, arte do menu de conquistas, maioria das coisas em \"Irmãos de Frutas\" e deu ideas de eventos, e a logo do mod",
 			"frameChar": "azedo",
 			"socials": [
 				{ "link": "BruhOliverLol", "social": "yt" },
 				{ "link": "BruhOliverLol", "social": "twitter" }
-			]
+			],
+			"quote": "oliversays.png"
 		},
 		{
 			"name": "alyssonjac6",
@@ -110,23 +132,45 @@
 			"doings": "Fez as chromatics usadas no mod e a LEGENDÁRIA\n\"IRMÃOS DE FRUTAS\"!",
 			"frameChar": "pessy",
 			"socials": [
-				{
-					"link": "alyssonjac6",
-					"social": "yt"
-				},
+				{ "link": "alyssonjac6", "social": "yt" },
 				{ "link": "alyssonjac6", "social": "twitter" }
-			]
+			],
+			"quote": "Eu tive que fazer ALYSSON de casa"
+		},
+		{
+			"name": "oucreator__52241",
+			"role": "Compositor",
+			"doings": "Fez a música de Game Over.",
+			"frameChar": "azedo",
+			"socials": [
+				{
+					"display": "Spray Kks",
+					"link": "spray_kks",
+					"social": "yt"
+				}
+			],
+			"quote": "Bom dia — disse Spray\nde Madrugada"
 		},
 		{
 			"name": "dan_og21",
 			"role": "Compositor",
-			"doings": "Fez a música de Game Over original, e a música de créditos (a que tá tocando agora :3).",
-			"frameChar": "linn"
+			"doings": "Fez a música de Game Over antiga, a música de créditos, e a música da galeria!",
+			"frameChar": "linn",
+			"quote": "É cômico ver o criador da música que tá tocando agora, né?"
+		},
+		{
+			"name": "felipe_sucks",
+			"role": "Compositor",
+			"doings": "Vai cozinhar umas composições próximo update...",
+			"frameChar": "morajo",
+			"socials": [{ "link": "FittedBarley89", "social": "twitter" }],
+			"quote": "Sim eu que fiz aquele mod do gemaplys"
 		},
 		{
 			"name": "luanadofnf",
 			"role": "Artista/Animadora",
-			"doings": "Animou o sprite do Torajo e o da Morana, e fez os ícones dos personagens.",
+			"doings": "Animou o sprite do Torajo e o da Morana, fez os ícones dos personagens, e a transição de maçã.",
+			"frameChar": "pessy",
 			"socials": [
 				{
 					"display": "Luana owo",
@@ -138,12 +182,48 @@
 					"link": "Luanadofnf",
 					"social": "twitter"
 				}
-			]
+			],
+			"quote": "GODENOT MANDA SALVE"
+		},
+		{
+			"name": "them4rk_",
+			"role": "Artista",
+			"doings": "Ajudou com thumbnails.",
+			"frameChar": "linn",
+			"socials": [
+				{
+					"display": "M4RK",
+					"link": "THE_MarkBitCrusher",
+					"social": "yt"
+				}
+			],
+			"quote": "Socorro, tô aprisionado no porão do Deiv e agora ele tá me fazendo trabalhar"
+		},
+		{
+			"name": "hutaroz",
+			"role": "Artista/Animador/Compositor",
+			"doings": "Animou o sprite do Torajo sério, e vai fazer futuras músicas em próximos updates\r\n(se ele puder)",
+			"frameChar": "linn",
+			"quote": "Eu sou um animador só"
+		},
+		{
+			"name": "vxofc",
+			"role": "Animador",
+			"doings": "Fez a animação da briga dos maçãs pelo microfone.",
+			"frameChar": "zulmi",
+			"socials": [
+				{
+					"display": "Vx",
+					"link": "Vxofc_lol",
+					"social": "yt"
+				}
+			],
+			"quote": "Ganhar é legal. Mas ver o inimigo perder também é maneiro"
 		},
 		{
 			"name": "arturjvnpq1",
 			"role": "Animador",
-			"doings": "Usuário de PC da Xuxa.\r\nAnimou os personagens na tela de título,\nA transição do TorajoJumpscare.mp4,\nO Abel mostrando a placa,\nA tela de resultados,\ne o Blulfi morrendo.",
+			"doings": "Usuário de PC da Xuxa.\r\nAnimou os personagens na tela de título, transição do TorajoJumpscare.mp4, Abel mostrando placa, tela de resultados, e o Blulfi morrendo.",
 			"frameChar": "azedo",
 			"socials": [
 				{
@@ -155,34 +235,38 @@
 					"link": "arturjvnpq1",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "ele_e_oq.png"
 		},
 		{
 			"name": "caua_andrade1k",
 			"role": "Artista/Animador",
-			"doings": "Escapou do Porão pra tar aq, cara mt brabo.\r\nFez os sprites do Torajo, Morajo e Blulfi quando a briga fica mais intensa.",
+			"doings": "Fez os sprites do Torajo, Morajo e Blulfi quando a briga fica mais intensa.",
 			"frameChar": "morajo",
 			"socials": [
 				{
-					"display": "Cauã Andrade1k",
+					"display": "Caua Andrade1k",
 					"link": "Cauã_Andrade1k",
 					"social": "yt"
 				},
 				{
-					"display": "Cauã Andrade1k",
+					"display": "Caua Andrade1k",
 					"link": "CauanAndrade1k",
 					"social": "twitter"
 				}
-			]
+			],
+			"quote": "Meu patrão tá me procurando até hj, já que tive que sair do porão pra trampar no mod-"
 		},
 		{
 			"name": "phe8923",
 			"role": "Artista/Animador",
-			"doings": "Fez as artísticas telas de resultado.",
+			"doings": "Vai fazer artes futuras pro mod...",
+			"frameChar": "linn",
 			"socials": [
 				{ "link": "phespriter", "social": "yt" },
 				{ "link": "PheSpriter", "social": "twitter" }
-			]
+			],
+			"quote": "Bebam água porque tá MUITO calor!"
 		},
 		{
 			"name": "pipocaaventuras",
@@ -195,20 +279,22 @@
 					"social": "yt"
 				},
 				{ "link": "eobennation", "social": "twitter" }
-			]
+			],
+			"quote": "Oi eu sou o Goku sou um super sayajin"
 		},
 		{
 			"name": "jvstwastaken",
 			"role": "Artista/Compositor",
-			"doings": "Fez a música de menu principal,\nAs artes do menu de pause,\ne as outras artes de opção pro menu principal.",
-			"frameChar": "pessy",
+			"doings": "Fez a música de menu principal, artes do menu de pause, e artes de opção pro menu principal.",
+			"frameChar": "zulmi",
 			"socials": [
 				{
 					"display": "Jotave!",
 					"link": "485126932015349762",
 					"social": "dc"
 				}
-			]
+			],
+			"quote": "Um dos meus sonhos é fazer um mod popular, aqui meio que é isso ksksks"
 		},
 		{
 			"name": "bergp4504",
@@ -225,12 +311,19 @@
 					"link": "BerGP",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "Oii sou o Ber e... não sei o que coloca-"
+		},
+		{
+			"name": "haroncios",
+			"role": "Charter",
+			"doings": "Charteará músicas no próximo update.",
+			"frameChar": "pessy"
 		},
 		{
 			"name": "aefelipe",
 			"role": "Compositor",
-			"doings": "Vai cozinhar próximo update.",
+			"doings": "Vai cozinhar próximo update...",
 			"frameChar": "pessy",
 			"socials": [
 				{
@@ -238,7 +331,8 @@
 					"link": "861659008938541116",
 					"social": "dc"
 				}
-			]
+			],
+			"quote": "-... --- .-. .- / -... .. .-.. .-.."
 		},
 		{
 			"name": "deathstalker_69",
@@ -247,11 +341,12 @@
 			"frameChar": "morajo",
 			"socials": [
 				{
-					"display": "Panelinha",
-					"link": "Gelme69",
-					"social": "yt"
+					"display": "Oliver",
+					"link": "tiktok.com/@guiverme69",
+					"social": "tiktok"
 				}
-			]
+			],
+			"quote": "Gosto muito do Morajo e sou apaixonado por FNF! E pretendo melhorar minhas artes!"
 		},
 		{
 			"name": "gl_560",
@@ -269,7 +364,8 @@
 					"link": "bsky.app/profile/did:plc:6j6lariayjx4lcuhfb4qd3cn",
 					"social": "bsky"
 				}
-			]
+			],
+			"quote": "Não bata o dedo na quina de uma porta ou sofá"
 		},
 		{
 			"name": "pedrohenriqsalm",
@@ -287,7 +383,8 @@
 					"link": "pedrodubs2",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "\"May I be popular, may I be wonderful\""
 		},
 		{
 			"name": "s0fia._",
@@ -304,13 +401,27 @@
 			]
 		},
 		{
+			"name": "emanuel_antunes01_47079",
+			"role": "Coder",
+			"doings": "Fez eventos extras pra \"Irmãos de Frutas\".",
+			"frameChar": "linn",
+			"socials": [
+				{
+					"display": "Emanuel Porter",
+					"link": "emanuel.youtube1",
+					"social": "yt"
+				}
+			],
+			"quote": "Olá, sou Emanuel e gosto muito de FNF, sua comunidade, codificar esse jogo, e fazer coisas legais com oq sei!"
+		},
+		{
 			"name": "migu3lartsoficial",
 			"role": "Animador/Mensageiro",
 			"doings": "Postou as coisa no nosso Twitter.",
 			"frameChar": "morajo",
 			"socials": [
 				{
-					"display": "MiguƐlArt'sOficialඞ",
+					"display": "MiguelArt'sOficial",
 					"link": "reddit.com/user/SiteGroundbreaking43",
 					"social": "reddit"
 				},
@@ -338,7 +449,8 @@
 					"link": "BlueBoyArkan",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "Meu nome é BlueBoy! Eu sou um Raijin e tenho um irmão caçula, o RedBoy!"
 		},
 		{
 			"name": "lilimaky",
@@ -351,7 +463,8 @@
 					"link": "Lihdubs",
 					"social": "yt"
 				}
-			]
+			],
+			"quote": "VIDA LONGA A BATATA!!"
 		},
 		{
 			"name": "felix_okami",
@@ -369,7 +482,8 @@
 					"link": "felixokamiyt",
 					"social": "twitter"
 				}
-			]
+			],
+			"quote": "Acho q essa é minha primeira dub oficial e ketchup é bom d+... Pq eu to no teto?"
 		},
 		{
 			"name": "menesalgo4678",
@@ -387,7 +501,8 @@
 					"link": "864238188385533962",
 					"social": "dc"
 				}
-			]
+			],
+			"quote": "Beaichinoa NiGHTS!"
 		},
 		{
 			"name": "apollox333",
@@ -395,6 +510,20 @@
 			"doings": "Editou o trailer do mod (que tá lá no nosso YouTube)",
 			"frameChar": "pessy",
 			"socials": [{ "link": "Apollo_X3", "social": "twitter" }]
+		},
+		{
+			"name": "deiv_bruno",
+			"role": "HOMENAGEM",
+			"doings": "Em homenagem ao cara que criou este incrível Mundo de Frutas! Você é nossa inspiração e por isso fizemos todo esse mod pelo seu trabalho incrível e do porão também",
+			"frameChar": "torajo",
+			"quote": "Sou muito seu fã!\n~Deiv"
+		},
+		{
+			"name": "nico_saberaa",
+			"role": "HOMENAGEM",
+			"doings": "Uma homenagem a artista mais FOFA e querida do porão, que também foi baita inspiração pros artistas do mod! Que fez o design desses personagens carismáticos e amáveis do MDT.\r\nLogo da sabeega feita pela Sabeera",
+			"frameChar": "zulmi",
+			"quote": "Nirco i sabeega\n~Nirco"
 		}
 	]
 }

@@ -125,6 +125,7 @@ class MasterEditorMenu extends flixel.FlxSubState
 
 	function selectItem(choice:String)
 	{
+		MusicBeatState.customTransClass = "";
 		var state:flixel.util.typeLimit.NextState = switch (choice)
 		{
 			case 'charter': () -> new ChartingState();
