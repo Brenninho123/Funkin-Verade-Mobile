@@ -255,9 +255,10 @@ class Main extends Sprite
 		Sys.println(errMsg);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
+		#if !android
 		Application.current.window.alert(errMsg, "Error!");
-		#if DISCORD_ALLOWED
-		DiscordClient.shutdown();
+		#else
+		extension.androidtools.Tools.showAlertDialog("Error!", errMsg);
 		#end
 		#if DISCORD_ALLOWED DiscordClient.shutdown(); #end
 		Sys.exit(1);

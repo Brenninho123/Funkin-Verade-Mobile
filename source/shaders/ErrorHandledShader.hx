@@ -46,7 +46,12 @@ class ErrorHandledShader extends FlxShader implements IErrorHandler
 
 		var crashLogPath:String = './crash/shader_${shaderName}_${dateNow}.txt';
 		File.saveContent(crashLogPath, error);
+
+		#if !android
 		Application.current.window.alert('Error log saved at: $crashLogPath', alertTitle);
+		#else
+		extension.androidtools.Tools.showAlertDialog(alertTitle, 'Error log saved at: $crashLogPath');
+		#end
 		#else
 		Application.current.window.alert('Error logs aren\'t created on debug builds, check the trace log instead.', alertTitle);
 		#end

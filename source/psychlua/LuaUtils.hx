@@ -163,6 +163,8 @@ class LuaUtils
 					var errorMsg = 'An error occurred: $e';
 					#if windows
 					lime.app.Application.current.window.alert(errorMsg, errorTitle);
+					#elseif android
+					extension.androidtools.Tools.showAlertDialog(errorTitle, errorMsg);
 					#end
 					trace('$errorTitle - $errorMsg');
 				}
