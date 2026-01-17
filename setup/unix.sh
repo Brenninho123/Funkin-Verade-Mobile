@@ -14,5 +14,5 @@ haxelib install hxdiscord_rpc 1.2.4
 haxelib install hxvlc 2.0.1 --skip-dependencies
 haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate b8970d2e4d875c743abe28e356a15413b1774d94
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit daf0664aee99aa8b8d6bdd1eda993a1c3a399067
-read -rsn 1 -p "Press any key to continue. . ." _
+read -n 1 -p "Press any key to continue. . ." _
 exit
