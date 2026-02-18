@@ -172,4 +172,6 @@ class CoolUtil
 		if (doFade) FlxG.sound.music.fadeIn(fadeIn, 0, 0.7);
 		Conductor.bpm = 102;
 	}
+
+	public static inline function pointsAreEqual(point1:FlxPoint, point2:FlxPoint) { return (point1.x == point2.x && point1.y == point2.y); }
 }

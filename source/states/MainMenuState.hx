@@ -41,6 +41,8 @@ class MainMenuState extends MusicBeatState
 	var selectedSomethin:Bool = false;
 	var selectionShit:Map<Int, Array<String>> = [];
 	var controllerCursor:GamepadCursor;
+	var lastMousePos:FlxPoint = new FlxPoint();
+	var curMousePos:FlxPoint = new FlxPoint();
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	var menuColors:Array<FlxColor> = [];
@@ -270,9 +272,10 @@ class MainMenuState extends MusicBeatState
 			return;
 		}
 		if (FlxG.sound.music?.playing) Conductor.songPosition = FlxG.sound.music.time;
+		FlxG.mouse.getGamePosition(curMousePos);
 
-		if (FlxG.keys.justPressed.ANY || (FlxG.mouse.justMoved || FlxG.mouse.justPressed)) controls.controllerMode = false;
-		else if (FlxG.gamepads.anyInput()) controls.controllerMode = true;
+		if (FlxG.gamepads.anyInput()) controls.controllerMode = true;
+		else if (FlxG.keys.justPressed.ANY || (!CoolUtil.pointsAreEqual(curMousePos, lastMousePos) || FlxG.mouse.justPressed)) controls.controllerMode = false;
 
 		controllerCursor.visible = deivHitbox.visible && controls.controllerMode;
 		FlxG.mouse.visible = deivHitbox.visible && !controls.controllerMode;
@@ -313,11 +316,13 @@ class MainMenuState extends MusicBeatState
 			if (!Achievements.achievementsUnlocked.contains('deivCameo')) Achievements.unlock('deivCameo');
 			else FlxG.sound.play(Paths.sound('plushie'));
 		}
+
 		super.update(elapsed);
+		FlxG.mouse.getGamePosition(lastMousePos);
 		FlxG.watch.addQuick("lastPressedEaster", eggsLastClues);
 		FlxG.watch.addQuick("lastTypedEaster", eggsLastGuesses);
-		if (renderScales.length == 0) return;
 
+		if (renderScales.length == 0) return;
 		renderSprs[curSelected].scale.set(
 			FlxMath.lerp(renderScales[curSelected], renderSprs[curSelected].scale.x, Math.exp(-elapsed * lerpSpeed)),
 			FlxMath.lerp(renderScales[curSelected], renderSprs[curSelected].scale.y, Math.exp(-elapsed * lerpSpeed))
@@ -359,9 +364,9 @@ class MainMenuState extends MusicBeatState
 		}
 	}
 
-	// "Easter Hunt" cleanup
 	override function destroy()
 	{
+		// "Easter Hunt" cleanup
 		for (hunt in eggHunts) FlxG.signals.preUpdate.remove(hunt);
 		eggHunts.resize(0);
 		easterEggs.clear();
@@ -370,6 +375,9 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.signals.postUpdate.remove(EasterEggs.onUpdate);
 		EasterEggs.onDestroy();
+
+		lastMousePos.put();
+		curMousePos.put();
 		super.destroy();
 	}
 

@@ -28,6 +28,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 	static var renderData:RenderData;
 	static inline function translateTag(option:String):String { return 'pause_$option'; }
 	var curSelected:Int = 0;
+	var __secondsPaused:Float = 0;
 
 	// Maybe saves up on memory
 	@:allow(states.PlayState)
@@ -173,8 +174,9 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 
 	override function update(elapsed:Float)
 	{
+		__secondsPaused += elapsed;
 		if (controls.UI_UP_P || controls.UI_DOWN_P) changeSelection(1 * (controls.UI_UP_P ? -1 : 1));
-		if (controls.ACCEPT) options[curSelected].action();
+		if (controls.ACCEPT && __secondsPaused > 0.1) options[curSelected].action();
 
 		super.update(elapsed);
 		if (textGrp == null || textGrp.length == 0) return;

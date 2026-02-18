@@ -95,12 +95,14 @@ class TonhoCreditsState extends MusicBeatState
 		"default" => [0xFFADADAD, 0xFF3F3F3F]
 	];
 	var socialDatas:Array<Array<SocialMedia>> = [];
+	static var curSelected:Int;
 
 	var blockInput:Bool;
 	var controllerCursor:GamepadCursor;
-	static var curSelected:Int;
-	static var alreadyIntrodid:Bool;
+	var lastMousePos:FlxPoint = new FlxPoint();
+	var curMousePos:FlxPoint = new FlxPoint();
 
+	static var alreadyIntrodid:Bool;
 	static final MAGIC_MARGIN:Int = 12;
 	var portraitGroup:FlxTypedContainer<FlxSprite>;
 	var camFollow:flixel.FlxObject;
@@ -297,9 +299,12 @@ class TonhoCreditsState extends MusicBeatState
 			super.update(elapsed);
 			return;
 		}
+		FlxG.mouse.getGamePosition(curMousePos);
 
-		if (FlxG.keys.justPressed.ANY || (FlxG.mouse.justMoved || FlxG.mouse.justPressed)) controls.controllerMode = false;
-		else if (FlxG.gamepads.anyInput()) controls.controllerMode = true;
+		if (FlxG.gamepads.anyInput()) controls.controllerMode = true;
+		else if (FlxG.keys.justPressed.ANY || (!CoolUtil.pointsAreEqual(curMousePos, lastMousePos) || FlxG.mouse.justPressed)) controls.controllerMode = false;
+		// FlxG.watch.addQuick("controllerMode", controls.controllerMode);
+
 		controllerCursor.visible = controls.controllerMode;
 		FlxG.mouse.visible = !controls.controllerMode;
 
@@ -329,6 +334,7 @@ class TonhoCreditsState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+		FlxG.mouse.getGamePosition(lastMousePos);
 	}
 
 	function changeSelection(change:Int)
@@ -385,6 +391,9 @@ class TonhoCreditsState extends MusicBeatState
 		colors.clear();
 		creds.resize(0);
 		socialDatas.resize(0);
+
+		lastMousePos.put();
+		curMousePos.put();
 		super.destroy();
 	}
 
