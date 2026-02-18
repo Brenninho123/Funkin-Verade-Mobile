@@ -152,7 +152,7 @@ class LoadingState extends MusicBeatState
 				}
 				else stateChangeDelay = Math.max(0, stateChangeDelay - elapsed);
 			}
-			intendedPercent = loaded / loadMax;
+			intendedPercent = loaded/*  / loadMax */;
 		}
 
 		if (curPercent != intendedPercent)
