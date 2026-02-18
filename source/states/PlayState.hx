@@ -1,5 +1,6 @@
 package states;
 
+import options.OptionsState;
 import substates.TonhoPauseSubstate;
 import backend.Highscore;
 import backend.StageData;
@@ -3093,6 +3094,7 @@ class PlayState extends MusicBeatState
 		#if FLX_PITCH FlxG.sound.music.pitch = 1; #end
 		FlxG.animationTimeScale = 1;
 		TonhoPauseSubstate.textMembers.resize(0);
+		OptionsState.onPlayState = false;
 
 		Note.globalRgbShaders = [];
 		backend.NoteTypesConfig.clearNoteTypesData();
@@ -3418,7 +3420,7 @@ class PlayState extends MusicBeatState
 
 		return switch (achieve)
 		{
-			case 'appleBrothers': Lambda.count(Highscore.songScores) == 0 && !usedPractice; // Campeão (DEMO)
+			case 'appleBrothers': Highscore.getScore(Song.loadedSongName, storyDifficulty) > 0 && !usedPractice; // Campeão (DEMO)
 			case 'mojaroGameplay': accuracy <= 0.15 && !usedPractice; // Beira da Morte (DEMO)
 			case 'BFLevel': songMisses == 0 && !usedPractice; // Campeão Perfeito (DEMO)
 			// case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
