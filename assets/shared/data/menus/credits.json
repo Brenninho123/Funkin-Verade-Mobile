@@ -298,6 +298,13 @@
 			"quote": "Um dos meus sonhos é fazer um mod popular, aqui meio que é isso ksksks"
 		},
 		{
+			"name": "uuliam",
+			"role": "Artista",
+			"doings": "Fez o banner do youtube do mod e a arte do casal no menu principal.",
+			"frameChar": "azedo",
+			"socials": [{ "link": "Shy_Devy", "social": "twitter" }]
+		},
+		{
 			"name": "bergp4504",
 			"role": "Coder",
 			"doings": "CLT não-pago #1.\r\nProgramou maior parte do mod que cê tá jogando agora.",
@@ -367,6 +374,13 @@
 				}
 			],
 			"quote": "Não bata o dedo na quina de uma porta ou sofá"
+		},
+		{
+			"name": "arcraft9",
+			"role": "Charter",
+			"doings": "Charteará músicas no próximo update.",
+			"frameChar": "pessy",
+			"quote": "Fiz nada e tô aqui, calma mano."
 		},
 		{
 			"name": "pedrohenriqsalm",
