@@ -71,8 +71,8 @@ class Character extends FlxSprite
 	public var positionArray:Array<Float> = [0, 0];
 	public var cameraPosition:Array<Float> = [0, 0];
 	public var healthColorArray:Array<Int> = [161, 161, 161];
-	public var fruitColorArray:Array<Int> = [267, 16, 100];
-	public var fruitAccentColor:Array<Int> = [33, 65, 100];
+	public var fruitColorArray:Array<Int> = [234, 220, 243];
+	public var fruitAccentColor:Array<Int> = [27, 6, 47];
 
 	public var missingCharacter:Bool = false;
 	public var missingText:FlxText;
@@ -184,8 +184,8 @@ class Character extends FlxSprite
 		singDuration = json.sing_duration;
 		flipX = (json.flip_x != isPlayer);
 		healthColorArray = (json.healthbar_colors != null) ? json.healthbar_colors : [161, 161, 161];
-		fruitColorArray = (json.fruit_colors?.color != null) ? json.fruit_colors.color : [267, 16, 100];
-		fruitAccentColor = (json.fruit_colors?.accent != null) ? json.fruit_colors.accent : [33, 65, 100];
+		fruitColorArray = (json.fruit_colors?.color != null) ? json.fruit_colors.color : [234, 220, 243];
+		fruitAccentColor = (json.fruit_colors?.accent != null) ? json.fruit_colors.accent : [27, 6, 47];
 		vocalsFile = json.vocals_file ?? "";
 		originalFlipX = (json.flip_x == true);
 		editorIsPlayer = json._editor_isPlayer;
@@ -302,11 +302,7 @@ class Character extends FlxSprite
 
 	public function hasAnimation(anim:String):Bool
 	{
-		#if flxanimate
-		return !isAnimateAtlas ? animation.exists(anim) : @:privateAccess { atlas.anim.animsMap.exists(anim); };
-		#else
-		return animation.exists(anim);
-		#end
+		return #if flxanimate isAnimateAtlas ? atlas.anim.existsByName(anim) : #end animation.exists(anim);
 	}
 
 	public var animPaused(get, set):Bool;

@@ -108,7 +108,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 
-		healthBar = new Bar(45, FlxG.height);
+		healthBar = new Bar(45, 0, "healthBar", () -> 0.5);
 		healthBar.scrollFactor.set();
 		healthBar.cameras = [camHUD];
 
@@ -117,6 +117,8 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		healthIcon.cameras = [camHUD];
 
 		fixHealthBar();
+		// healthBar.updateBar();
+
 		add(cameraFollowPointer);
 		add(healthBar);
 		add(healthIcon);
@@ -551,28 +553,40 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		});
 
 		var removeButton:PsychUIButton = new PsychUIButton(180, animationIndicesInputText.y + 60, "Remove", function() {
-			for (anim in character.animationsArray)
-				if(animationInputText.text == anim.anim)
-				{
-					var resetAnim:Bool = false;
-					if(anim.anim == character.getAnimationName()) resetAnim = true;
-					if(character.hasAnimation(anim.anim))
-					{
-						#if flxanimate
-						@:privateAccess if (character.isAnimateAtlas) character.atlas.anim.animsMap.remove(anim.anim);
-						else #end character.animation.remove(anim.anim);
-						character.animOffsets.remove(anim.anim);
-						character.animationsArray.remove(anim);
-					}
+			if (character.animationsArray.length == 0)
+			{
+				trace('Couldn\'t remove animation: No animations found!');
+				return;
+			}
+			final animToRemove:String = animationInputText.text;
 
-					if(resetAnim && character.animationsArray.length > 0) {
-						curAnim = FlxMath.wrap(curAnim, 0, anims.length-1);
-						character.playAnim(anims[curAnim].anim, true);
-					}
-					reloadAnimList();
-					trace('Removed animation: ' + animationInputText.text);
-					break;
-				}
+			var animCheck:Array<AnimArray> = character.animationsArray.filter((f) -> f.anim == animToRemove);
+			trace(animCheck);
+			if (animCheck.length != 0)
+			{
+				character.animationsArray.remove(animCheck[0]);
+				character.animOffsets.remove(animToRemove);
+			}
+			animCheck.resize(0);
+
+			if (!character.hasAnimation(animToRemove))
+			{
+				trace('Couldn\'t remove animation: Character already doesn\'t have the "${animToRemove}" animation.');
+				return;
+			}
+
+			final resetAnim:Bool = character.getAnimationName() == animToRemove;
+			#if flxanimate
+			@:privateAccess if (character.isAnimateAtlas) character.atlas.anim.animsMap.remove(animToRemove);
+			else #end character.animation.remove(animToRemove);
+			reloadAnimList();
+
+			if (resetAnim)
+			{
+				curAnim = FlxMath.wrap(curAnim, 0, anims.length - 1);
+				character.playAnim(anims[curAnim].anim, true);
+			}
+			trace('Removed animation: $animToRemove');
 		});
 		reloadAnimList();
 		animationDropDown.selectedLabel = anims[0].anim ?? "";
@@ -1141,9 +1155,12 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		}
 		healthBar.barOffset.set(-2, -1);
 		healthBar.leftToRight = true;
+		healthBar.y = (FlxG.height - healthBar.height) - healthBar.x;
 
-		healthBar.y -= (healthBar.height + healthBar.x);
-		healthIcon.setPosition(healthBar.x, (healthBar.y + healthBar.x) - 75);
+		// Posição igual de PlayState
+		healthIcon.scale.set(1.2, 1.2);
+		healthIcon.scale.set(1, 1);
+		healthIcon.setPosition(healthBar.x, healthBar.y - 36); // 36
 	}
 
 	inline function updateHealthBar()
@@ -1151,7 +1168,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		healthColorStepperR.value = character.healthColorArray[0];
 		healthColorStepperG.value = character.healthColorArray[1];
 		healthColorStepperB.value = character.healthColorArray[2];
-		healthBar.setColors(FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]));
+		healthBar.setColors(FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]), FlxColor.BLACK);
 
 		healthIcon.changeIcon(character.healthIcon, false);
 		healthIcon.changeFruit(character.healthFruit);
