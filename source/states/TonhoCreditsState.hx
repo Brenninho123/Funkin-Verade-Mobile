@@ -139,7 +139,7 @@ class TonhoCreditsState extends MusicBeatState
 
 	override function create()
 	{
-		FlxG.mouse.visible = true;
+		#if !mobile FlxG.mouse.visible = true; #end
 		#if DISCORD_ALLOWED DiscordClient.changePresence("Looking at the team", "Credits Menu"); #end
 		playMenuSong();
 		super.create();
@@ -290,6 +290,11 @@ class TonhoCreditsState extends MusicBeatState
 		camFollow.x = FlxG.width - portraitGroup.members[0].width;
 		changeSelection(0);
 		camera.snapToTarget();
+
+		#if mobile
+		addVpad(UP_DOWN, B);
+		addVpadCam();
+		#end
 	}
 
 	override function update(elapsed:Float)
@@ -306,7 +311,7 @@ class TonhoCreditsState extends MusicBeatState
 		// FlxG.watch.addQuick("controllerMode", controls.controllerMode);
 
 		controllerCursor.visible = controls.controllerMode;
-		FlxG.mouse.visible = !controls.controllerMode;
+		#if !mobile FlxG.mouse.visible = !controls.controllerMode; #end
 
 		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
 		var down_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
