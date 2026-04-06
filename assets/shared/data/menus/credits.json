@@ -41,7 +41,7 @@
 			"name": "cr1smii",
 			"role": "Artista",
 			"doings": "Fez o sprite do Tchola, a Morana, e a arte de fundo dos menus.",
-			"frameChar": "morajo",
+			"frameChar": "torajo",
 			"socials": [
 				{
 					"display": "Portfólio",
@@ -157,14 +157,6 @@
 			"doings": "Fez a música de Game Over antiga, a música de créditos, e a música da galeria!",
 			"frameChar": "linn",
 			"quote": "É cômico ver o criador da música que tá tocando agora, né?"
-		},
-		{
-			"name": "felipe_sucks",
-			"role": "Compositor",
-			"doings": "Vai cozinhar umas composições próximo update...",
-			"frameChar": "morajo",
-			"socials": [{ "link": "FittedBarley89", "social": "twitter" }],
-			"quote": "Sim eu que fiz aquele mod do gemaplys"
 		},
 		{
 			"name": "luanadofnf",
@@ -326,7 +318,7 @@
 			"name": "haroncios",
 			"role": "Charter",
 			"doings": "Charteará músicas no próximo update.",
-			"frameChar": "pessy"
+			"frameChar": "zulmi"
 		},
 		{
 			"name": "aefelipe",
@@ -454,6 +446,13 @@
 			"frameChar": "torajo"
 		},
 		{
+			"name": "bryantechvoid.7",
+			"role": "Animador",
+			"doings": "Vai fazer futuras animações pro próximo update.",
+			"frameChar": "linn",
+			"quote": "Eletrizando na animação"
+		},
+		{
 			"name": "rhyannn2011",
 			"role": "Voice Actor",
 			"doings": "Da vida pro Blulfi!",
@@ -499,13 +498,6 @@
 				}
 			],
 			"quote": "Beaichinoa NiGHTS!"
-		},
-		{
-			"name": "apollox333",
-			"role": "Editor",
-			"doings": "Editou o trailer do mod (que tá lá no nosso YouTube)",
-			"frameChar": "pessy",
-			"socials": [{ "link": "Apollo_X3", "social": "twitter" }]
 		},
 		{
 			"name": "deiv_bruno",
