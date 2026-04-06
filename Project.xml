@@ -59,11 +59,12 @@
 	<assets path="assets/videos" 								if="VIDEOS_ALLOWED"/>
 	<assets path="assets/songs"/>
 	<assets path="assets/week_assets"   				rename="assets"/>
-	<assets path="assets/mobile"								exclude="translations/*" rename="assets" if="mobile"/>
+	<assets path="assets/mobile/merge" 					rename="assets" if="mobile"/>
 	<section if="TRANSLATIONS_ALLOWED">
 		<assets path="assets/translations" 					rename="assets" unless="mobile"/>
 		<assets path="assets/mobile/translations" 	rename="assets" if="mobile"/>
 	</section>
+	<!-- <assets path="assets/mobile"								exclude="translations/**|merge/**" if="mobile"/> -->
 
 	<!-- OpenAL config -->
 	<section if="desktop">
@@ -147,5 +148,15 @@
 	<!-- _________________________________ Other _______________________________ -->
 
 	<assets path="icon.png" if="linux || mac" />
-	<icon path="icon.png" />
+	<icon path="icon.png" 	unless="mobile"/>
+
+	<section if="mobile">
+		<template path="templates"/>
+		<icon path="icon-mobile.png" if="ios"/>
+	</section>
+	<config:android>
+		<application
+			android:icon="@mipmap/ic_launcher"
+			android:roundIcon="@mipmap/ic_launcher"/>
+	</config:android>
 </project>

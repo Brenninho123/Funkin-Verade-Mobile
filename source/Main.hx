@@ -52,6 +52,13 @@ class Main extends Sprite
 {
 	public static var fpsVar:FPSCounter;
 
+	/**
+	 * [0, 0] means honor project.xml setting, but thats only for desktop targets.
+	 * 
+	 * If you change the numbers on project.xml, also change them here
+	 */
+	private static var size:Array<Int> = #if !mobile [0, 0] #else [1280, 720] #end;
+
 	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
@@ -62,9 +69,9 @@ class Main extends Sprite
 		super();
 		// Credits to MAJigsaw77 (he's the og author for this code)
 		#if android
-		Sys.setCwd('${Context.getExternalFilesDir()}/.VeradeFunkin/');
+		Sys.setCwd(Path.addTrailingSlash( Context.getExternalFilesDir() ));
 		#elseif ios
-		Sys.setCwd('${lime.system.System.applicationStorageDirectory}.VeradeFunkin/');
+		Sys.setCwd(lime.system.System.applicationStorageDirectory);
 		#end
 		#if (cpp && windows) backend.Native.fixScaling(); #end
 
@@ -160,15 +167,15 @@ class Main extends Sprite
 		#end
 
 		#if FREEPLAY
-		var initialState:InitialState = states.FreeplayState;
+		final trueInitialState:InitialState = states.FreeplayState;
 		#elseif CHARTING
-		var initialState:InitialState = states.editors.ChartingState;
+		final trueInitialState:InitialState = states.editors.ChartingState;
 		#else
-		var initialState:InitialState = FlxG.save.data.flashing != null ? states.TitleState : () -> new states.FlashingState(states.TitleState);
-		if (updateWarn) initialState = () -> new states.OutdatedState(initialState);
+		final initialState:InitialState = FlxG.save.data.flashing != null ? states.TitleState : () -> new states.FlashingState(states.TitleState);
+		final trueInitialState:InitialState = updateWarn ? () -> new states.OutdatedState(initialState) : initialState;
 		#end
 		FlxTransitionableState.skipNextTransIn = true;
-		addChild(new FlxGame(0, 0, initialState, 60, 60, true, FlxG.save.data.fullscreen));
+		addChild(new FlxGame(size[0], size[1], trueInitialState, 60, 60, true, FlxG.save.data.fullscreen));
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
 		fpsVar = new FPSCounter(10, 3);
@@ -178,7 +185,7 @@ class Main extends Sprite
 		fpsVar.visible = ClientPrefs.data.showFPS;
 
 		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
-		FlxG.signals.preGameReset.add(Paths.clearStoredMemory); // "Cannot render destroyed graphic" fix
+		// FlxG.signals.preGameReset.add(Paths.clearStoredMemory); // "Cannot render destroyed graphic" fix
 		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour
 
 		#if (linux || mac) // fix the app icon not showing up on the Linux Panel / Mac Dock

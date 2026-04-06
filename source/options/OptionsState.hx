@@ -57,13 +57,23 @@ class OptionsState extends MusicBeatState
 		changeSelection(0);
 		ClientPrefs.saveSettings();
 		super.create();
+		#if mobile addVpad(UP_DOWN, A_B); #end
 	}
+
+	#if mobile
+	override function openSubState(SubState:flixel.FlxSubState)
+	{
+		virtualPad.exists = false; 
+		super.openSubState(SubState);
+	}
+	#end
 
 	override function closeSubState()
 	{
 		super.closeSubState();
 		ClientPrefs.saveSettings();
 		#if DISCORD_ALLOWED DiscordClient.changePresence("Options Menu"); #end
+		#if mobile virtualPad.exists = true; #end
 	}
 
 	override function update(elapsed:Float)

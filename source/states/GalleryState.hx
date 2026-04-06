@@ -176,6 +176,7 @@ class GalleryState extends MusicBeatState
 		add(arrowUp);
 
 		changeCategory(0);
+		#if mobile addVpad(NONE, B); #end
 	}
 
 	override function update(elapsed:Float)

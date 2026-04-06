@@ -1,5 +1,7 @@
 package backend;
 
+#if mobile import mobile.VirtualPadHandler; #end
+
 class MusicBeatSubstate extends flixel.FlxSubState
 {
 	private var curSection:Int = 0;
@@ -17,6 +19,46 @@ class MusicBeatSubstate extends flixel.FlxSubState
 
 	inline function get_controls():Controls
 		return Controls.instance;
+
+	#if mobile
+	public var virtualPad:VirtualPadHandler;
+	public var virtualPadCam:FlxCamera;
+	var _vpadCameraInitialized:Bool = false;
+
+	public function addVpad(dpad:DirectPadLayout, acts:ActionPadLayout)
+	{
+		virtualPad?.destroy();
+		virtualPad = new VirtualPadHandler(dpad, acts);
+		
+		if (members.contains(virtualPad)) return;
+		add(virtualPad);
+	}
+
+	public function addVpadCam()
+	{
+		if (virtualPad == null) return;
+		if (!_vpadCameraInitialized)
+		{
+			virtualPadCam = new FlxCamera(0, 0, FlxG.width, FlxG.height);
+			virtualPadCam.bgColor.alpha = 0;
+			FlxG.cameras.add(virtualPadCam, false);
+			_vpadCameraInitialized = true;
+		}
+
+		virtualPad.camera = virtualPadCam;
+	}
+
+	override function destroy()
+	{
+		if (virtualPad != null)
+		{
+			remove(virtualPad);
+			virtualPad.destroy();
+		}
+
+		super.destroy();
+	}
+	#end
 
 	override function update(elapsed:Float)
 	{

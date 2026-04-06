@@ -206,6 +206,8 @@ class MainMenuState extends MusicBeatState
 
 		changeItem(0);
 		if (!ClientPrefs.data.lowQuality) beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 	-@BernardoGP4504
+
+		#if mobile addVpad(UP_DOWN, A_B); #end
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float, data:MenuOpt):FlxSprite
@@ -278,7 +280,7 @@ class MainMenuState extends MusicBeatState
 		else if (FlxG.keys.justPressed.ANY || (!CoolUtil.pointsAreEqual(curMousePos, lastMousePos) || FlxG.mouse.justPressed)) controls.controllerMode = false;
 
 		controllerCursor.visible = deivHitbox.visible && controls.controllerMode;
-		FlxG.mouse.visible = deivHitbox.visible && !controls.controllerMode;
+		#if !mobile FlxG.mouse.visible = deivHitbox.visible && !controls.controllerMode; #end
 		var deivMouseCheck:Bool = !controls.controllerMode ? (FlxG.mouse.overlaps(deivHitbox) && FlxG.mouse.justPressed) : (controllerCursor.overlaps(deivHitbox) && controls.ACCEPT);
 
 		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);

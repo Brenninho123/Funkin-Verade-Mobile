@@ -127,6 +127,7 @@ class TonhoAchievementsState extends MusicBeatState
 		add(globalAchieveProgressTxt);
 
 		changeSelection(0);
+		#if mobile addVpad(FULL, B); #end
 	}
 
 	override function finishTransIn()

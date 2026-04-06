@@ -92,6 +92,20 @@ class NoteOffsetState extends MusicBeatState
 
 		updateNoteDelay();
 		super.create();
+		#if mobile
+		addVpad(LEFT_RIGHT, CUSTOM(["a", "back", "c"], ["accept", "back", "shift"]));
+		addVpadCam();
+
+		virtualPad.otherButtons["back"].setPosition(FlxG.width - virtualPad.otherButtons["back"].width, 0);
+		virtualPad.otherButtons["a"].setPosition(
+			(FlxG.width - virtualPad.otherButtons["a"].width) - mobile.VirtualPadHandler.NICE_OFFSET,
+			(FlxG.height - virtualPad.otherButtons["a"].height) - mobile.VirtualPadHandler.NICE_OFFSET
+		);
+		virtualPad.otherButtons["c"].setPosition(
+			(virtualPad.otherButtons["a"].x - virtualPad.otherButtons["a"].width) - mobile.VirtualPadHandler.NICE_OFFSET,
+			virtualPad.otherButtons["a"].y
+		);
+		#end
 	}
 
 	override function update(elapsed:Float)
