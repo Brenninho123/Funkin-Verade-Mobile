@@ -132,15 +132,14 @@ class TonhoAchievementsState extends MusicBeatState
 
 	override function finishTransIn()
 	{
+		fakeAchieveProgress = 0;
 		if (spotlight == null)
 		{
-			fakeAchieveProgress = 0;
-
 			super.finishTransIn();
 			return;
 		}
 
-		FlxTween.tween(spotlight, {alpha: FlxMath.remapToRange(globalAchieveProgress, 0, 100, 0, 1)}, 0.67, {ease: FlxEase.quartIn, onStart: (_) -> fakeAchieveProgress = 0});
+		FlxTween.tween(spotlight, {alpha: FlxMath.remapToRange(globalAchieveProgress, 0, 100, 0, 1)}, 0.67, {ease: FlxEase.quartIn});
 		super.finishTransIn();
 	}
 
@@ -188,8 +187,16 @@ class TonhoAchievementsState extends MusicBeatState
 			return;
 		}
 
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P) changeSelection(controls.UI_LEFT_P ? -1 : 1);
-		if (controls.UI_UP_P || controls.UI_DOWN_P) changeSelection(COLUMNS_COUNT * (controls.UI_UP_P ? -1 : 1));
+		if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
+		{
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+			changeSelection(controls.UI_LEFT_P ? -1 : 1);
+		}
+		if (controls.UI_UP_P || controls.UI_DOWN_P)
+		{
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+			changeSelection(COLUMNS_COUNT * (controls.UI_UP_P ? -1 : 1));
+		}
 
 		if (controls.BACK)
 		{

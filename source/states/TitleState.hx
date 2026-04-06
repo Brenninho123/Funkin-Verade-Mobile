@@ -53,6 +53,7 @@ class TitleState extends MusicBeatState
 	function initSprites()
 	{
 		var bg:FlxSprite = new FlxSprite();
+		Paths.currentTrackedAssets.remove('images/veradeBG.png'); // Fixes "going to TitleState after another state used this image" (destroyed bitmap) crash
 
 		final bmp:BitmapData = Paths.image('veradeBG', ClientPrefs.data.lowQuality).bitmap; // Separate var just to avoid applying the filter on this
 		if (!ClientPrefs.data.lowQuality)
