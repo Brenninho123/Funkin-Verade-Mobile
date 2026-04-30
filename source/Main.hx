@@ -1,9 +1,6 @@
 package;
 
 import flixel.util.typeLimit.NextState.InitialState;
-/*#if android
-import extension.androidtools.content.Context;
-#end*/
 
 import debug.FPSCounter;
 
@@ -67,12 +64,7 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
-		// Credits to MAJigsaw77 (he's the og author for this code)
-	/*	#if android
-		Sys.setCwd(Path.addTrailingSlash( Context.getExternalFilesDir() ));
-		#elseif ios
-		Sys.setCwd(lime.system.System.applicationStorageDirectory);
-		#end*/
+
 		#if (cpp && windows) backend.Native.fixScaling(); #end
 
 		FlxG.save.bind('funkin', CoolUtil.getSavePath());
@@ -256,8 +248,14 @@ class Main extends Sprite
 		errMsg += "\nPlease report it to here if possible: https://github.com/BernardoGP4504/Funkin-Verade";
 		errMsg += "\r\n> Crash Handler written by: sqirra-rng";
 
+<<<<<<< HEAD
 		if (!FileSystem.exists("crash/")) FileSystem.createDirectory("crash/");
+=======
+        #if desktop
+		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
+>>>>>>> 3105888f4bf19cd7b27b7cbd09041d66e6944e6a
 		File.saveContent(path, '${errMsg}\n');
+		#end
 
 		Sys.println(errMsg);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
