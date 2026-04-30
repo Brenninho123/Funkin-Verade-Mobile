@@ -37,6 +37,7 @@ class TitleState extends MusicBeatState
 	override function create()
 	{
 		FlxG.mouse.visible = false;
+		#if DISCORD_ALLOWED DiscordClient.changePresence("Watching the Title Screen", null, true); #end
 		super.create();
 
 		initSprites();

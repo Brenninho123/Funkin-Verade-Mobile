@@ -14,7 +14,8 @@
 			"label": "Test Debug Build",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			}
 		},
 		{
@@ -30,7 +31,8 @@
 			"label": "Test Release Build",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			}
 		},
 		{
@@ -46,7 +48,8 @@
 			"label": "Build Debug",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			},
 			"detail": "Compiles a new debug build without testing it."
 		},
@@ -63,7 +66,8 @@
 			"label": "Build Release",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			},
 			"detail": "Compiles a new build without testing it."
 		},
@@ -81,7 +85,8 @@
 			"label": "Test DEMO Debug Build",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			}
 		},
 		{
@@ -97,7 +102,8 @@
 			"label": "Test DEMO Release Build",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			}
 		},
 		{
@@ -113,7 +119,8 @@
 			"label": "Build DEMO Debug",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			},
 			"detail": "Compiles a new DEMO debug build without testing it."
 		},
@@ -130,7 +137,8 @@
 			"label": "Build DEMO Release",
 			"presentation": {
 				"echo": false,
-				"showReuseMessage": false
+				"showReuseMessage": false,
+				"close": true
 			},
 			"detail": "Compiles a new DEMO build without testing it."
 		}

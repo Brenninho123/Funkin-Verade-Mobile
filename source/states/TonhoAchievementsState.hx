@@ -55,7 +55,7 @@ class TonhoAchievementsState extends MusicBeatState
 	override function create()
 	{
 		FlxG.mouse.visible = false;
-		#if DISCORD_ALLOWED DiscordClient.changePresence("Checking the Achievements", "Achievements Menu"); #end
+		#if DISCORD_ALLOWED DiscordClient.changePresence("Checking Progression", "Achievements Menu"); #end
 		super.create();
 
 		var bg:FlxSprite = new FlxSprite(0, 0, Paths.image('achievements/menu/bg'));
@@ -133,14 +133,10 @@ class TonhoAchievementsState extends MusicBeatState
 	override function finishTransIn()
 	{
 		fakeAchieveProgress = 0;
-		if (spotlight == null)
-		{
-			super.finishTransIn();
-			return;
-		}
-
-		FlxTween.tween(spotlight, {alpha: FlxMath.remapToRange(globalAchieveProgress, 0, 100, 0, 1)}, 0.67, {ease: FlxEase.quartIn});
 		super.finishTransIn();
+
+		if (spotlight == null) return;
+		FlxTween.tween(spotlight, {alpha: FlxMath.remapToRange(globalAchieveProgress, 0, 100, 0, 1)}, 0.67, {ease: FlxEase.quartIn});
 	}
 
 	function createAchieveSpr(achieve:Achievement, achieveId:String, pos:Int, row:Int)

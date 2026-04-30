@@ -145,7 +145,7 @@ class MainMenuState extends MusicBeatState
 		FlxG.signals.postUpdate.add(EasterEggs.onUpdate);
 
 		super.create();
-		#if DISCORD_ALLOWED DiscordClient.changePresence("In the Menus"); #end
+		#if DISCORD_ALLOWED DiscordClient.changePresence("Choosing a Menu", "Menu Selection", true); #end
 
 		var bg:FlxSprite = new FlxSprite(0, 0, Paths.image('menuBG'));
 		bg.screenCenter();

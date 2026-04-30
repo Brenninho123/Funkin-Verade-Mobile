@@ -29,6 +29,10 @@ private enum abstract SocialMediaType(String) from String to String
 	public static final DISCORD:String = "Discord";
 	public static final YT:String = "YouTube";
 	public static final NG:String = "Newgrounds";
+	public static final BSKY:String = "BlueSky";
+	public static final REDDIT:String = "Reddit";
+	public static final TTK:String = "TikTok";
+	public static final CARRD:String = "Carrd";
 	public static final OTHER:String = "???";
 }
 
@@ -61,6 +65,10 @@ private class SocialMedia
 			case "dc": SocialMediaType.DISCORD;
 			case "yt": SocialMediaType.YT;
 			case "ng": SocialMediaType.NG;
+			case "bsky": SocialMediaType.BSKY;
+			case "reddit": SocialMediaType.REDDIT;
+			case "tiktok": SocialMediaType.TTK;
+			case "carrd": SocialMediaType.CARRD;
 			default: SocialMediaType.OTHER;
 		};
 	}
@@ -73,6 +81,10 @@ private class SocialMedia
 			case SocialMediaType.DISCORD: 'discord.com/users/${_data.link}';
 			case SocialMediaType.YT: 'youtube.com/@${_data.link}';
 			case SocialMediaType.NG: '${_data.link}.newgrounds.com';
+			case SocialMediaType.BSKY: 'bsky.app/profile/did:plc:${_data.link}';
+			case SocialMediaType.REDDIT: 'reddit.com/user/${_data.link}';
+			case SocialMediaType.TTK: 'tiktok.com/@${_data.link}';
+			case SocialMediaType.CARRD: '${_data.link}.carrd.co';
 			default: _data.link;
 		};
 	}
@@ -109,6 +121,13 @@ class TonhoCreditsState extends MusicBeatState
 	var gradColor:shaders.RGBPalette;
 	var infoBG:FlxSprite;
 
+	var arrowUp:FlxSprite; var arrowDown:FlxSprite;
+	var startUpPos:Float; var startDownPos:Float;
+	var startUpOffs:Float; var startDownOffs:Float;
+	static inline final arrowAnimDist:Float = 10;
+	static inline final arrowAnimSpeed:Float = 2;
+	var arrowFloatTime:Float = 0;
+
 	var descTxt:FlxText;
 	var separator:FlxSprite;
 	var social1Ico:AttachedSprite; var social1:FlxText;
@@ -121,7 +140,7 @@ class TonhoCreditsState extends MusicBeatState
 
 	public function new()
 	{
-		creds = haxe.Json.parse(Paths.getTextFromFile('data/menus/credits.json')).d;
+		creds = haxe.Json.parse(Paths.getTextFromFile('data/menus/credits.json'));
 		curSelected = FlxMath.wrap(curSelected, 0, creds.length - 1);
 
 		super();
@@ -133,14 +152,14 @@ class TonhoCreditsState extends MusicBeatState
 
 		FlxG.sound.playMusic(Paths.music('creditsMenu'), alreadyIntrodid ? 0.7 : 0);
 		if (!alreadyIntrodid) FlxG.sound.music.fadeIn(4, 0, 0.7);
-		Conductor.bpm = 110;
+		Conductor.bpm = 100;
 		alreadyIntrodid = true;
 	}
 
 	override function create()
 	{
 		#if !mobile FlxG.mouse.visible = true; #end
-		#if DISCORD_ALLOWED DiscordClient.changePresence("Looking at the team", "Credits Menu"); #end
+		#if DISCORD_ALLOWED DiscordClient.changePresence("Checking the Team", "Credits Menu"); #end
 		playMenuSong();
 		super.create();
 
@@ -205,6 +224,25 @@ class TonhoCreditsState extends MusicBeatState
 			}
 			socialDatas.push([for (d in e.socials) new SocialMedia(d)]);
 		}
+
+		arrowUp = new FlxSprite(0, (startUpPos = 24), Paths.image('credits/arrow'));
+		arrowUp.scale.set(0.5, 0.5); arrowUp.updateHitbox();
+		arrowUp.x = (50 + (portraitGroup.members[0].width / 2)) - (arrowUp.width / 2);
+		arrowUp.active = arrowUp.moves = false;
+		arrowUp.antialiasing = ClientPrefs.data.antialiasing;
+		arrowUp.scrollFactor.set();
+		
+		arrowDown = arrowUp.clone();
+		arrowDown.scale.copyFrom(arrowUp.scale); arrowDown.updateHitbox();
+		arrowDown.setPosition(arrowUp.x, (startDownPos = (FlxG.height - arrowDown.height) - (startUpPos * 2)));
+		arrowDown.flipX = arrowDown.flipY = true;
+		arrowDown.active = arrowUp.moves = false;
+		arrowDown.scrollFactor.set();
+		
+		startUpOffs = arrowUp.offset.y;
+		startDownOffs = arrowDown.offset.y;
+		add(arrowUp);
+		add(arrowDown);
 
 		infoBG = new FlxSprite(0, 50).makeGraphic(1, 1, FlxColor.BLACK);
 		infoBG.setGraphicSize(500, 600); infoBG.updateHitbox();
@@ -315,7 +353,14 @@ class TonhoCreditsState extends MusicBeatState
 
 		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
 		var down_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
-		if (up_p || down_p) changeSelection(up_p ? -1 : 1);
+		if (up_p || down_p)
+		{
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+			final change:Int = up_p ? -1 : 1;
+
+			changeSelection(change);
+			(up_p ? arrowUp : arrowDown).offset.y = (up_p ? startUpOffs : startDownOffs) + ((arrowAnimDist * -change) * 2);
+		}
 
 		if (controls.BACK)
 		{
@@ -340,6 +385,15 @@ class TonhoCreditsState extends MusicBeatState
 
 		super.update(elapsed);
 		FlxG.mouse.getGamePosition(lastMousePos);
+		final shoveDecay:Float = Math.exp(-elapsed * (arrowAnimSpeed * 1.5));
+		arrowFloatTime += elapsed;
+
+		arrowUp.offset.y = FlxMath.lerp(startUpOffs, arrowUp.offset.y, shoveDecay);
+		arrowDown.offset.y = FlxMath.lerp(startDownOffs, arrowDown.offset.y, shoveDecay);
+
+		final posSin:Float = !ClientPrefs.data.lowQuality ? Math.sin(arrowFloatTime * arrowAnimSpeed) : FlxMath.fastSin(arrowFloatTime * arrowAnimSpeed);
+		arrowUp.y = startUpPos + posSin * arrowAnimDist;
+		arrowDown.y = startDownPos + posSin * -arrowAnimDist;
 	}
 
 	function changeSelection(change:Int)

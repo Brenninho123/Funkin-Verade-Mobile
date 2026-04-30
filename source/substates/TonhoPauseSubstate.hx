@@ -39,7 +39,14 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 	var textGrp:FlxTypedContainer<FlxText>;
 	var bgGrid:FlxBackdrop;
 	public static var music:FlxSound = new FlxSound();
-	public static var musicName:String = "";
+	public static var musicName(default, set):String = "";
+	@:noCompletion static inline function set_musicName(m)
+	{
+		if (musicName == m) return musicName;
+
+		music.loadEmbedded(Paths.music('pause/$m'), true);
+		return musicName = m;
+	}
 
 	public function new(?camera:FlxCamera)
 	{
@@ -79,8 +86,8 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		weekData ??= WeekData.getCurrentWeek();
 		weekData ??= WeekData.weeksLoaded[WeekData.weeksList[0]]; // If PlayState week is null, we default to first week
 
-		if (!Paths.fileExists('music/pause/$targetSong.${Paths.SOUND_EXT}', MUSIC)) targetSong = "breakfast"; 
-		music.loadEmbedded(Paths.music('pause/$targetSong'), true);
+		if (!Paths.fileExists('music/pause/$targetSong.${Paths.SOUND_EXT}', MUSIC) 
+			&& !Paths.fileExists('music/pause/${targetSong = weekData.fileName}.${Paths.SOUND_EXT}', MUSIC)) targetSong = "breakfast"; 
 		musicName = targetSong;
 		FlxG.sound.list.add(music);
 
@@ -92,6 +99,7 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		renderData = Json.parse(Paths.getTextFromFile( Paths.json('menus/pause_renderDatas/$imgName') ));
 		renderData ??= {scale: 1, offsets: [0, 0]};
 
+		if (ClientPrefs.data.lowQuality) return;
 		gridGph = flixel.addons.display.FlxGridOverlay.createGrid(20, 20, 40, 40, true, FlxColor.WHITE, FlxColor.TRANSPARENT);
 	}
 
@@ -104,11 +112,14 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		music.fadeIn(1.2, 0, 0.5);
 		final scaling:Float = 0.67;
 
-		bgGrid = new FlxBackdrop(gridGph);
-		bgGrid.scale.set(2.5, 2.5); bgGrid.updateHitbox();
-		bgGrid.velocity.set(-24, 24);
-		bgGrid.alpha = 0.13;
-		add(bgGrid);
+		if (gridGph != null)
+		{
+			bgGrid = new FlxBackdrop(gridGph);
+			bgGrid.scale.set(2.5, 2.5); bgGrid.updateHitbox();
+			bgGrid.velocity.set(-24, 24);
+			bgGrid.alpha = 0.13;
+			add(bgGrid);
+		}
 
 		if (renderGph != null)
 		{

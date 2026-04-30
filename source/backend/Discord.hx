@@ -104,7 +104,7 @@ class DiscordClient
 		presence.details = details;
 		presence.smallImageKey = smallImageKey;
 		presence.largeImageKey = largeImageKey;
-		presence.largeImageText = 'Jogando a V${lime.app.Application.current.meta["version"]}';
+		presence.largeImageText = 'Playing on V${lime.app.Application.current.meta["version"]}';
 		// Obtained times are in milliseconds so they are divided so Discord can use it
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = Std.int(endTimestamp / 1000);
@@ -174,7 +174,7 @@ private final class DiscordPresence
 
 	@:noCompletion private var __presence:DiscordRichPresence;
 
-	function new()
+	inline function new()
 	{
 		__presence = DiscordRichPresence.create();
 	}
@@ -244,22 +244,22 @@ private final class DiscordPresence
 
 	@:noCompletion inline function get_startTimestamp():Int
 	{
-		return __presence.startTimestamp;
+		return __presence.startTimestamp.toInt();
 	}
 
 	@:noCompletion inline function set_startTimestamp(value:Int):Int
 	{
-		return __presence.startTimestamp = value;
+		return cast __presence.startTimestamp = value;
 	}
 
 	@:noCompletion inline function get_endTimestamp():Int
 	{
-		return __presence.endTimestamp;
+		return __presence.endTimestamp.toInt();
 	}
 
 	@:noCompletion inline function set_endTimestamp(value:Int):Int
 	{
-		return __presence.endTimestamp = value;
+		return cast __presence.endTimestamp = value;
 	}
 }
 #end
