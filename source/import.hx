@@ -46,6 +46,10 @@ import flxanimate.*;
 import flxanimate.PsychFlxAnimate as FlxAnimate;
 #end
 
+#if android
+import extension.androidtools.Tools;
+#end
+
 //Flixel
 import flixel.sound.FlxSound;
 import flixel.FlxG;

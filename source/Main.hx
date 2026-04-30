@@ -1,9 +1,9 @@
 package;
 
 import flixel.util.typeLimit.NextState.InitialState;
-#if android
+/*#if android
 import extension.androidtools.content.Context;
-#end
+#end*/
 
 import debug.FPSCounter;
 
@@ -68,11 +68,11 @@ class Main extends Sprite
 	{
 		super();
 		// Credits to MAJigsaw77 (he's the og author for this code)
-		#if android
+	/*	#if android
 		Sys.setCwd(Path.addTrailingSlash( Context.getExternalFilesDir() ));
 		#elseif ios
 		Sys.setCwd(lime.system.System.applicationStorageDirectory);
-		#end
+		#end*/
 		#if (cpp && windows) backend.Native.fixScaling(); #end
 
 		FlxG.save.bind('funkin', CoolUtil.getSavePath());
@@ -241,7 +241,7 @@ class Main extends Sprite
 
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
-		final path:String = './crash/$dateNow.txt';
+		final path:String = 'crash/$dateNow.txt';
 
 		for (stackItem in callStack)
 		{
@@ -256,16 +256,16 @@ class Main extends Sprite
 		errMsg += "\nPlease report it to here if possible: https://github.com/BernardoGP4504/Funkin-Verade";
 		errMsg += "\r\n> Crash Handler written by: sqirra-rng";
 
-		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
+		if (!FileSystem.exists("crash/")) FileSystem.createDirectory("crash/");
 		File.saveContent(path, '${errMsg}\n');
 
 		Sys.println(errMsg);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
-		#if !android
+		#if (desktop || ios)
 		Application.current.window.alert(errMsg, "Error!");
 		#else
-		extension.androidtools.Tools.showAlertDialog("Error!", errMsg);
+		Tools.showAlertDialog("Error!", errMsg);
 		#end
 		#if DISCORD_ALLOWED DiscordClient.shutdown(); #end
 		Sys.exit(1);
