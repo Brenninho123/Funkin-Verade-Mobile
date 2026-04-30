@@ -233,7 +233,7 @@ class Main extends Sprite
 
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
-		final path:String = './crash/$dateNow.txt';
+		final path:String = 'crash/$dateNow.txt';
 
 		for (stackItem in callStack)
 		{
@@ -256,10 +256,10 @@ class Main extends Sprite
 		Sys.println(errMsg);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
-		#if !android
+		#if (desktop || ios)
 		Application.current.window.alert(errMsg, "Error!");
 		#else
-		extension.androidtools.Tools.showAlertDialog("Error!", errMsg);
+		Tools.showAlertDialog("Error!", errMsg);
 		#end
 		#if DISCORD_ALLOWED DiscordClient.shutdown(); #end
 		Sys.exit(1);
