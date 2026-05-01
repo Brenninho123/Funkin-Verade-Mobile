@@ -120,7 +120,7 @@
 	<section if="android">
 		<config:android permission="android.permission.CAPTURE_AUDIO_OUTPUT" />
 	
-		<certificate path="key.keystore" password="verade" alias="verade" alias-password="verade" unless="test" />
+		<certificate path="key.keystore" password="verade" alias="verade" alias-password="verade" unless="test || debug" />
     </section>
 
 	<!--Disable the Flixel core focus lost screen-->
