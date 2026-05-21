@@ -46,14 +46,6 @@ import flxanimate.*;
 import flxanimate.PsychFlxAnimate as FlxAnimate;
 #end
 
-#if android
-import extension.androidtools.Tools;
-#end
-#if mobile
-import mobile.VirtualPadHandler;
-import mobile.objects.VirtualPad;
-#end
-
 //Flixel
 import flixel.sound.FlxSound;
 import flixel.FlxG;

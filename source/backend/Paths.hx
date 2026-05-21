@@ -250,7 +250,7 @@ class Paths
 		if (bitmap == null)
 		{
 			var file:String = getPath(key, IMAGE, parentFolder, true);
-			#if (MODS_ALLOWED || desktop)
+			#if sys
 			if (FileSystem.exists(file))
 				bitmap = BitmapData.fromFile(file);
 			else #end if (OpenFlAssets.exists(file, IMAGE))
@@ -290,7 +290,7 @@ class Paths
 	public static inline function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
 		if ((!key.startsWith('assets/') && !key.contains(':assets/')) && #if MODS_ALLOWED !key.startsWith('mods/') && #end !key.startsWith('./')) key = getPath(key, TEXT, !ignoreMods);
-		#if (MODS_ALLOWED || desktop)
+		#if sys
 		return FileSystem.exists(key) ? File.getContent(key) : null;
 		#else
 		return OpenFlAssets.exists(key, TEXT) ? Assets.getText(key) : null;
@@ -427,7 +427,7 @@ class Paths
 		if(!currentTrackedSounds.exists(file))
 		{
 			if (fileExists(file, SOUND))
-			#if (MODS_ALLOWED || desktop)
+			#if sys
 				currentTrackedSounds.set(file, Sound.fromFile(file));
 			#else
 				currentTrackedSounds.set(file, OpenFlAssets.getSound(file));

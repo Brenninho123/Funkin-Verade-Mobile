@@ -20,12 +20,6 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 		return Controls.instance;
 	}
 
-	#if mobile
-	public var virtualPad:VirtualPadHandler;
-	public var virtualPadCam:FlxCamera;
-	var _vpadCameraInitialized:Bool = false;
-	#end
-
 	var _psychCameraInitialized:Bool = false;
 
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -58,55 +52,6 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 		//trace('initialized psych camera ' + Sys.cpuTime());
 		return camera;
 	}
-
-	#if mobile
-	public function addVpad(dpad:DirectPadLayout, acts:ActionPadLayout)
-	{
-		virtualPad?.destroy();
-		virtualPad = new VirtualPadHandler(dpad, acts);
-		
-		if (members.contains(virtualPad)) return;
-		add(virtualPad);
-	}
-
-	public function addVpadCam()
-	{
-		if (virtualPad == null) return;
-		if (!_vpadCameraInitialized)
-		{
-			virtualPadCam = new FlxCamera(0, 0, FlxG.width, FlxG.height);
-			virtualPadCam.bgColor.alpha = 0;
-			FlxG.cameras.add(virtualPadCam, false);
-			_vpadCameraInitialized = true;
-		}
-
-		virtualPad.camera = virtualPadCam;
-	}
-
-	override function openSubState(SubState:FlxSubState)
-	{
-		super.openSubState(SubState);
-		if (virtualPad != null) virtualPad.exists = false;
-	}
-
-	override function closeSubState()
-	{
-		super.closeSubState();
-		if (virtualPad != null) virtualPad.exists = true;
-	}
-
-	override function destroy()
-	{
-		if (virtualPad != null)
-		{
-			remove(virtualPad);
-			virtualPad.destroy();
-		}
-		if (virtualPadCam != null) FlxG.cameras.remove(virtualPadCam, false);
-
-		super.destroy();
-	}
-	#end
 
 	override function update(elapsed:Float)
 	{

@@ -49,13 +49,6 @@ class Main extends Sprite
 {
 	public static var fpsVar:FPSCounter;
 
-	/**
-	 * [0, 0] means honor project.xml setting, but thats only for desktop targets.
-	 * 
-	 * If you change the numbers on project.xml, also change them here
-	 */
-	private static var size:Array<Int> = #if !mobile [0, 0] #else [1280, 720] #end;
-
 	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
@@ -167,7 +160,7 @@ class Main extends Sprite
 		final trueInitialState:InitialState = updateWarn ? () -> new states.OutdatedState(initialState) : initialState;
 		#end
 		FlxTransitionableState.skipNextTransIn = true;
-		addChild(new FlxGame(size[0], size[1], trueInitialState, 60, 60, true, FlxG.save.data.fullscreen));
+		addChild(new FlxGame(0, 0, trueInitialState, 60, 60, true, FlxG.save.data.fullscreen));
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
 		fpsVar = new FPSCounter(10, 3);
@@ -248,19 +241,13 @@ class Main extends Sprite
 		errMsg += "\nPlease report it to here if possible: https://github.com/BernardoGP4504/Funkin-Verade";
 		errMsg += "\r\n> Crash Handler written by: sqirra-rng";
 
-        #if desktop
 		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
 		File.saveContent(path, '${errMsg}\n');
-		#end
 
 		Sys.println(errMsg);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
-		#if (desktop || ios)
 		Application.current.window.alert(errMsg, "Error!");
-		#else
-		Tools.showAlertDialog("Error!", errMsg);
-		#end
 		#if DISCORD_ALLOWED DiscordClient.shutdown(); #end
 		Sys.exit(1);
 	}

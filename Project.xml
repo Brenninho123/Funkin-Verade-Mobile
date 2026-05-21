@@ -19,7 +19,7 @@
 	<define name="HSCRIPT_ALLOWED" 			unless="web" />
 	<define name="LUA_ALLOWED" 					unless="web" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
-	<define name="DISCORD_ALLOWED"  		if="desktop"/>
+	<define name="DISCORD_ALLOWED"  		if="cpp"/>
 	<define name="TRANSLATIONS_ALLOWED" unless="DEMO" />
 	<define name="VIDEOS_ALLOWED" 			if="windows || linux || android || mac" unless="32"/>
 
@@ -59,12 +59,7 @@
 	<assets path="assets/videos" 								if="VIDEOS_ALLOWED"/>
 	<assets path="assets/songs"/>
 	<assets path="assets/week_assets"   				rename="assets"/>
-	<assets path="assets/mobile/merge" 					rename="assets" if="mobile"/>
-	<section if="TRANSLATIONS_ALLOWED">
-		<assets path="assets/translations" 					rename="assets" unless="mobile"/>
-		<assets path="assets/mobile/translations" 	rename="assets" if="mobile"/>
-	</section>
-	<!-- <assets path="assets/mobile"								exclude="translations/**|merge/**" if="mobile"/> -->
+	<assets path="assets/translations" 					rename="assets" if="TRANSLATIONS_ALLOWED"/>
 
 	<!-- OpenAL config -->
 	<section if="desktop">
@@ -78,7 +73,6 @@
 	<haxelib name="flixel-addons"/>
 	<haxelib name="tjson" version="1.4.0"/>
 	<haxelib name="hxcpp-debug-server" if="debug desktop"/>
-	<haxelib name="extension-androidtools" if="android"/>
 
 	<!--Psych stuff needed-->
 	<haxelib name="linc_luajit" 	if="LUA_ALLOWED"/>
@@ -148,20 +142,5 @@
 	<!-- _________________________________ Other _______________________________ -->
 
 	<assets path="icon.png" if="linux || mac" />
-	<icon path="icon.png" 	unless="mobile"/>
-
-	<section if="mobile">
-		<template path="templates"/>
-		<icon path="icon-mobile.png" if="ios"/>
-	</section>
-	<config:android>
-		<application
-			android:icon="@mipmap/ic_launcher"
-			android:roundIcon="@mipmap/ic_launcher"/>
-	</config:android>
-
-	<certificate path="key.keystore" password="verade" alias="verade" alias-password="verade" if="android release" />
-	<config:android permission="android.permission.CAPTURE_AUDIO_OUTPUT" />
-
-	<config:android minimum-sdk-version="24" target-sdk-version="33"/> <!-- Tenho que atualizar as libs que uso pra conseguir compilar sdk-version que a playstore quer, aceita isso ai por enquanto -BerGP -->
+	<icon path="icon.png"/>
 </project>

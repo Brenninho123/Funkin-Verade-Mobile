@@ -4898,7 +4898,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			try
 			{
 				var path:String = Paths.getPath('characters/' + char + '.json', TEXT);
-				#if MODS_ALLOWED
+				#if sys
 				var unparsedJson = File.getContent(path);
 				#else
 				var unparsedJson = Assets.getText(path);

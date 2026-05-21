@@ -34,7 +34,7 @@ class LanguageSubState extends MusicBeatSubstate
 					if(!displayLanguages.exists(langFile))
 					{
 						var path:String = '$directory$file';
-						#if MODS_ALLOWED 
+						#if sys 
 						var txt:String = File.getContent(path);
 						#else
 						var txt:String = Assets.getText(path);
@@ -90,7 +90,6 @@ class LanguageSubState extends MusicBeatSubstate
 			grpLanguages.add(text);
 		}
 		changeSelected();
-		#if mobile addVpad(UP_DOWN, A_B); #end
 	}
 
 	var changedLanguage:Bool = false;

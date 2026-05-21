@@ -11,8 +11,6 @@ class FlashingState extends flixel.FlxState
 	final initialState:InitialState;
 	var texts:FlxTypedSpriteGroup<FlxText>;
 
-	#if mobile var virtualPad:VirtualPadHandler; #end
-
 	@:allow(Main)
 	function new(initialState:InitialState)
 	{
@@ -50,15 +48,10 @@ class FlashingState extends flixel.FlxState
 		keys.resize(0);
 
 		changeSelection(0);
-		#if mobile
-		virtualPad = new VirtualPadHandler(LEFT_RIGHT, A);
-		add(virtualPad);
-		#end
 	}
 
 	override function update(elapsed:Float)
 	{
-		#if mobile virtualPad.enabled = !blockInput; #end
 		if (blockInput)
 		{
 			super.update(elapsed);

@@ -20,7 +20,6 @@ class OptionsState extends MusicBeatState
 		[
 			{id: 'gameplay', defName: 'Jogabilidade', action: () -> openSubState(new GameplaySettingsSubState())},
 			{id: 'controls', defName: 'Controles', action: () -> openSubState(new ControlsSubState())},
-			#if mobile {id: 'mobile', defName: 'Controles de Celular', action: () -> openSubState(new VpadSettingsSubState())}, #end
 			#if TRANSLATIONS_ALLOWED {id: 'langs', defName: 'Language (Idioma)', action: () -> openSubState(new LanguageSubState())}, #end
 			{id: 'aud_delay', defName: 'Ajustar Delay de Áudio', action: () -> FlxG.switchState(() -> new NoteOffsetState())},
 			{id: 'graphics', defName: 'Gráficos', action: () -> openSubState(new GraphicsSettingsSubState())},
@@ -58,23 +57,13 @@ class OptionsState extends MusicBeatState
 		changeSelection(0);
 		ClientPrefs.saveSettings();
 		super.create();
-		#if mobile addVpad(UP_DOWN, A_B); #end
 	}
-
-	#if mobile
-	override function openSubState(SubState:flixel.FlxSubState)
-	{
-		if (virtualPad != null) virtualPad.exists = false; 
-		super.openSubState(SubState);
-	}
-	#end
 
 	override function closeSubState()
 	{
 		super.closeSubState();
 		ClientPrefs.saveSettings();
 		#if DISCORD_ALLOWED DiscordClient.changePresence("Options Menu"); #end
-		#if mobile if (virtualPad != null) FlxTimer.wait(0.25, () -> virtualPad.exists = true); #end
 	}
 
 	override function update(elapsed:Float)

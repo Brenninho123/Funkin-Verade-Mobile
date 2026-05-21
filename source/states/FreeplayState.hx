@@ -468,7 +468,7 @@ class FreeplayState extends MusicBeatState
 		try
 		{
 			var path:String = Paths.getPath('characters/$char.json', TEXT);
-			#if MODS_ALLOWED
+			#if sys
 			var character:Dynamic = Json.parse(File.getContent(path));
 			#else
 			var character:Dynamic = Json.parse(Assets.getText(path));

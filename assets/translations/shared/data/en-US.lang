@@ -16,7 +16,6 @@ dialogue_skip: "Press BACK to Skip"
 // Menu de opções
 options_gameplay: "Gameplay"
 options_controls: "Controls"
-options_mobile: "Mobile Controls"
 options_langs: "Language"
 options_aud_delay: "Adjust Audio Delay"
 options_graphics: "Graphics"
@@ -78,9 +77,6 @@ description_showFPS: "If unchecked, hides the FPS and Memory counter."
 setting_checkForUpdates: "Check for Updates"
 description_checkForUpdateS: "Turn this on to automatically check for updates every game start."
 description_discordRPC: "Unchecking this hides the Discord \"Playing\" box of the mod."
-
-setting_vpadAlpha: "Button Opacity:"
-description_vpadAlpha: "Controls how transparent the Virtual Pad controls should be.\nA value of 0% disables Virtual Pad, only allowing for keyboard or gamepad input."
 
 delay_beat_hit: "Beat Hit!"
 delay_current_offset: "Current offset: {1}MS"

@@ -25,11 +25,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	public var title:String;
 	public var rpcTitle:String;
-	#if mobile
-	public var padLayout:DirectPadLayout = FULL;
-	public var actLayout:ActionPadLayout = A_B;
-	public var addPadCam:Bool = false;
-	#end
 
 	public var bg:FlxSprite;
 	public function new()
@@ -104,15 +99,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		changeSelection();
 		reloadCheckboxes();
-	}
-
-	override function create()
-	{
-		#if mobile
-		addVpad(padLayout, actLayout);
-		if (addPadCam) addVpadCam();
-		#end
-		super.create();
 	}
 
 	public function addOption(option:Option) {

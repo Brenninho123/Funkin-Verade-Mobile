@@ -1577,14 +1577,10 @@ class FunkinLua {
 		try{
 			var isString:Bool = !Paths.fileExists(scriptName, TEXT);
 			var result:Dynamic = null;
-			#if !mobile
 			if(!isString)
 				result = LuaL.dofile(lua, scriptName);
 			else
 				result = LuaL.dostring(lua, scriptName);
-			#else
-			result = LuaL.dostring(lua, !isString ? Paths.getTextFromFile(scriptName) : scriptName);
-			#end
 
 			var resultStr:String = Lua.tostring(lua, result);
 			if(resultStr != null && result != 0) { 

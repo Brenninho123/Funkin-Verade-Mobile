@@ -59,7 +59,7 @@ class MenuCharacter extends FlxSprite
 				var charFile:MenuCharacterFile = null;
 				try
 				{
-					#if MODS_ALLOWED
+					#if sys
 					charFile = Json.parse(File.getContent(path));
 					#else
 					charFile = Json.parse(Assets.getText(path));

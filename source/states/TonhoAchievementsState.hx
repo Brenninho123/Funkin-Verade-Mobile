@@ -136,11 +136,6 @@ class TonhoAchievementsState extends MusicBeatState
 		changeSelection(0);
 		selectionSpr.x = (achieveText.x + (achieveText.width / 2)) - (selectionSpr.width / 2);
 		add(selectionSpr);
-
-		#if mobile
-		addVpad(FULL, B);
-		virtualPad.buttonB.y += 85;
-		#end
 	}
 
 	override function finishTransIn()

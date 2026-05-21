@@ -175,9 +175,7 @@ class ExtraFunctions
 				if(!absolute) lePath = Paths.getPath(path, TEXT, !ignoreModFolders);
 				if (Paths.fileExists(lePath, TEXT))
 				{
-					#if !mobile
 					FileSystem.deleteFile(lePath);
-					#end
 					return true;
 				}
 			} catch (e:Dynamic) {
@@ -191,12 +189,7 @@ class ExtraFunctions
 		Lua_helper.add_callback(lua, "directoryFileList", function(folder:String) {
 			var list:Array<String> = [];
 			if (Paths.fileExists(folder, null)) {
-				#if !mobile
 				for (folder in FileSystem.readDirectory(folder)) {
-				#else
-				for (folder in lime.utils.Assets.list()) {
-					if (!folder.startsWith(folder)) continue;
-				#end
 					if (!list.contains(folder)) {
 						list.push(folder);
 					}
