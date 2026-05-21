@@ -59,6 +59,7 @@ class MainMenuState extends MusicBeatState
 	var eggsLastGuesses:Array<String> = [];
 	var eggHunts:Array<Void->Void> = [];
 	var lastFoundEgg:String = "";
+	#if mobile var keyboardBtn:FlxSprite; #end
 	var deivHitbox:FlxObject;
 
 	@:noCompletion inline function __selectionDataFromNode(element:Xml):Array<String>
@@ -201,13 +202,28 @@ class MainMenuState extends MusicBeatState
 		psychVer.antialiasing = true;
 		add(psychVer);
 
-		controllerCursor = new GamepadCursor();
-		add(controllerCursor);
-
 		changeItem(0);
 		if (!ClientPrefs.data.lowQuality) beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 	-@BernardoGP4504
 
-		#if mobile addVpad(UP_DOWN, A_B); #end
+		#if mobile
+		if (ClientPrefs.data.vpadAlpha > 0)
+		{
+			keyboardBtn = new FlxSprite(12, 12, Paths.image('mainmenu/keyboard'));
+			keyboardBtn.scale.set(1.25, 1.25); keyboardBtn.updateHitbox();
+			keyboardBtn.active = false;
+			keyboardBtn.alpha = ClientPrefs.data.vpadAlpha;
+			keyboardBtn.antialiasing = ClientPrefs.data.antialiasing;
+			add(keyboardBtn);
+		}
+		#end
+
+		controllerCursor = new GamepadCursor();
+		add(controllerCursor);
+
+		#if mobile
+		addVpad(UP_DOWN, A_B);
+		addVpadCam();
+		#end
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float, data:MenuOpt):FlxSprite
@@ -319,6 +335,7 @@ class MainMenuState extends MusicBeatState
 			else FlxG.sound.play(Paths.sound('plushie'));
 		}
 
+		#if mobile if (keyboardBtn != null && (FlxG.mouse.overlaps(keyboardBtn) && FlxG.mouse.justPressed)) FlxG.stage.window.textInputEnabled = true; #end
 		super.update(elapsed);
 		FlxG.mouse.getGamePosition(lastMousePos);
 		FlxG.watch.addQuick("lastPressedEaster", eggsLastClues);
@@ -339,7 +356,8 @@ class MainMenuState extends MusicBeatState
 
 	function huntForEgg(egg:Void->Void, eggId:Int, clues:String)
 	{
-		if (FlxG.keys.firstJustPressed() == -1 || lastFoundEgg.length > 0) return;
+		final keyPress:FlxKey = #if !mobile FlxG.keys.firstJustPressed() #else FlxG.keys.firstJustReleased() #end;
+		if (keyPress == -1 || lastFoundEgg.length > 0) return;
 		var eachClue:Array<String> = clues.split("");
 		function resetProgress()
 		{
@@ -347,13 +365,14 @@ class MainMenuState extends MusicBeatState
 			eggsLastGuesses[eggId] = "";
 		}
 
-		if (FlxG.keys.firstJustPressed() == FlxKey.fromString(eachClue[eggsLastClues[eggId] + 1])) eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
+		if (keyPress == FlxKey.fromString(eachClue[eggsLastClues[eggId] + 1])) eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
 		else resetProgress();
 
 		if (eggsLastGuesses[eggId] == clues.toLowerCase() && lastFoundEgg.length == 0)
 		{
 			lastFoundEgg = clues.toLowerCase();
 			// Cleanup
+			#if mobile FlxG.stage.window.textInputEnabled = false; #end
 			resetProgress();
 			eachClue.resize(0);
 
@@ -492,6 +511,7 @@ private class EasterEggs
 	public static function broGotBaited()
 	{
 		state.selectedSomethin = true; // Desabilitar qualquer input que pode quebrar tudo
+		#if mobile state.virtualPad.exists = false; #end
 
 		var azedou:FlxSprite = new FlxSprite(0, 0, Paths.image('TROUXACAIUNOPAPO'));
 		azedou.setGraphicSize(FlxG.width * 1.4, FlxG.height); azedou.updateHitbox();
@@ -504,6 +524,7 @@ private class EasterEggs
 		FlxTimer.wait(20, () -> 
 		{
 			state.selectedSomethin = false;
+			#if mobile state.virtualPad.exists = true; #end
 			state.remove(azedou, true);
 			bestSong.stop();
 			FlxG.sound.music.resume();

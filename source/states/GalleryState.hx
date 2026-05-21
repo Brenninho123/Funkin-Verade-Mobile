@@ -1,5 +1,6 @@
 package states;
 
+#if mobile import flixel.input.FlxSwipe; #end
 import haxe.Json;
 
 private typedef ImageInfo =
@@ -28,6 +29,7 @@ class GalleryState extends MusicBeatState
 	var arrowLeft:FlxSprite; var arrowRight:FlxSprite;
 	final hArrowScales:Float = 0.6;
 	final vArrowScales:Float = 0.4;
+	#if mobile static inline final TREMBLE_MARGIN:Float = 15.72; #end // Pure guesswork and bs testing
 
 	public function new()
 	{
@@ -76,14 +78,13 @@ class GalleryState extends MusicBeatState
 
 		FlxG.sound.playMusic(Paths.music('galleryMenu'), alreadyIntrodid ? 0.7 : 0);
 		if (!alreadyIntrodid) FlxG.sound.music.fadeIn(4, 0, 0.7);
-		Conductor.bpm = 100;
+		Conductor.bpm = 118;
 		alreadyIntrodid = true;
 	}
 
 	override function create()
 	{
 		FlxG.mouse.visible = false;
-		#if DISCORD_ALLOWED DiscordClient.changePresence("Checking on peak", "Gallery Menu"); #end
 		playMenuSong();
 		backend.Achievements.unlock("sillyDoodles");
 		super.create();
@@ -181,19 +182,50 @@ class GalleryState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
+		var left:Bool = false;
+		var up:Bool = false;
+
+		#if mobile
+		var lastSwipe:FlxSwipe = FlxG.swipes.length > 0 ? FlxG.swipes[FlxG.swipes.length - 1] : null;
+		final swipeDegrees:Float = lastSwipe != null ? Math.abs(lastSwipe.degrees) : 0;
+		final swipeMult:Int = lastSwipe != null ? FlxMath.signOf(lastSwipe.degrees) : 1;
+
+		final straightAngle:Float = 90;
+		final narrowAngle:Float = 180;
+		var horizontalSwipe:Bool = lastSwipe?.distance > 0 && (
+			FlxMath.inBounds(swipeDegrees, -TREMBLE_MARGIN, TREMBLE_MARGIN)
+			|| FlxMath.inBounds(swipeDegrees, narrowAngle - TREMBLE_MARGIN, narrowAngle)
+		);
+		var verticalSwipe:Bool = lastSwipe?.distance > 0 && FlxMath.inBounds(swipeDegrees, straightAngle - TREMBLE_MARGIN, straightAngle + TREMBLE_MARGIN);
+
+		if ((left = (horizontalSwipe && swipeDegrees > (straightAngle + TREMBLE_MARGIN)) || controls.UI_LEFT_P) || (horizontalSwipe || controls.UI_RIGHT_P))
+		#else
+		if ((left = controls.UI_LEFT_P) || controls.UI_RIGHT_P)
+		#end
 		{
 			FlxG.sound.play(Paths.sound("scrollMenu"));
-			changeSelection(1 * (controls.UI_LEFT_P ? -1 : 1));
-			(controls.UI_LEFT_P ? arrowLeft : arrowRight).scale.add(0.35, 0.35);
+			changeSelection(left ? -1 : 1);
+			(left ? arrowLeft : arrowRight).scale.add(0.35, 0.35);
 		}
 
-		if (controls.UI_UP_P || controls.UI_DOWN_P)
+		#if mobile
+		if ((up = (verticalSwipe && swipeMult == -1) || controls.UI_UP_P) || (verticalSwipe || controls.UI_DOWN_P))
+		#else
+		if ((up = controls.UI_UP_P) || controls.UI_DOWN_P)
+		#end
 		{
 			FlxG.sound.play(Paths.sound("scrollMenu"));
-			changeCategory(1 * (controls.UI_UP_P ? -1 : 1));
-			(controls.UI_UP_P ? arrowUp : arrowDown).scale.add(0.15, 0.15);
+			changeCategory(up ? -1 : 1);
+			(up ? arrowUp : arrowDown).scale.add(0.15, 0.15);
 		}
+
+		/* #if mobile
+		if (lastSwipe != null) FlxG.watch.addQuick('swipe degree', lastSwipe.degrees);
+		FlxG.watch.addQuick('swipe was horizontal?', horizontalSwipe);
+		FlxG.watch.addQuick('horizontal swipe went left?', left);
+		FlxG.watch.addQuick('swipe was vertical?', verticalSwipe);
+		FlxG.watch.addQuick('vertical swipe went up?', up);
+		#end */
 
 		if (controls.BACK)
 		{
@@ -202,8 +234,8 @@ class GalleryState extends MusicBeatState
 		}
 
 		super.update(elapsed);
-
 		final decay:Float = Math.exp(-elapsed * 7);
+
 		if (arrowLeft?.visible) updateArrowScale(arrowLeft, hArrowScales, decay);
 		if (arrowRight?.visible) updateArrowScale(arrowRight, hArrowScales, decay);
 		if (arrowDown?.visible) updateArrowScale(arrowDown, vArrowScales, decay);
@@ -239,6 +271,8 @@ class GalleryState extends MusicBeatState
 		categoryTxt.text = categories[curCategory];
 		categoryTxt.y = arrowDown.y - categoryTxt.height;
 		arrowUp.y = (categoryTxt.y - arrowUp.height);
+
+		#if DISCORD_ALLOWED DiscordClient.changePresence('Art Gallery', 'Checking the ${categories[curCategory]} category', true); #end
 	}
 
 	override function destroy()

@@ -162,7 +162,7 @@ class Paths
 			if (parentfolder != null) customFile = '$parentfolder/$file';
 
 			var modded:String = modFolders(customFile);
-			if(FileSystem.exists(modded)) return modded;
+			if (Paths.fileExists(modded, null)) return modded;
 		}
 		#end
 
@@ -310,23 +310,28 @@ class Paths
 
 	public static function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?parentFolder:String = null)
 	{
+		inline function exists(key:String, ?type:AssetType):Bool { return FileSystem.exists(key) || OpenFlAssets.exists(key); }
+
 		#if MODS_ALLOWED
 		if (!ignoreMods)
 		{
 			var modKey:String = key;
 			if (parentFolder == 'songs') modKey = 'songs/$key';
 
+			final hasPrefix:Bool = modKey.startsWith('mods');
+			if (hasPrefix && exists(modKey)) return true;
+
 			for (mod in Mods.getGlobalMods())
-				if (FileSystem.exists(mods('$mod/$modKey')))
+				if (exists(mods('$mod/$modKey')))
 					return true;
 
-			if (FileSystem.exists(mods('${Mods.currentModDirectory}/$modKey')) || FileSystem.exists(mods(modKey)))
+			if (exists(mods('${Mods.currentModDirectory}/$modKey')) || exists(mods(modKey)))
 				return true;
 		}
 		#end
 
 		if (!key.startsWith("./") && !key.contains('assets/')) key = getPath(key, type, parentFolder, false);
-		return FileSystem.exists(key) || OpenFlAssets.exists(key);
+		return exists(key, type);
 	}
 
 	public static function getAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames

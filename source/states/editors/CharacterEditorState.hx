@@ -16,6 +16,9 @@ import objects.Bar;
 import states.editors.content.Prompt;
 import states.editors.content.PsychJsonPrinter;
 
+#if FLX_DEBUG @:bitmap("assets/images/debugger/cursorCross.png") #end
+private class CamCross extends openfl.display.BitmapData {}
+
 class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
 {
 	var character:Character;
@@ -104,7 +107,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 		addCharacter();
 
-		cameraFollowPointer = new FlxSprite(0, 0, flixel.system.debug.Icon.cross);
+		cameraFollowPointer = new FlxSprite(0, 0, new CamCross(12, 12));
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 
@@ -916,11 +919,6 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	var undoOffsets:Array<Float> = [];
 	override function update(elapsed:Float)
 	{
-		if (healthBar != null)
-		{
-			healthBar.rightBar.x = (healthBar.x - 20);
-			healthBar.leftBar.x = (healthBar.rightBar.x - healthBar.barWidth) - 5.5;
-		}
 		super.update(elapsed);
 
 		if (PsychUIInputText.focusOn != null)
@@ -1151,7 +1149,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		{
 			b.loadGraphic(Paths.image('healthBar_bar'));
 			b.antialiasing = true;
-			b.offset.set(34, -5);
+			b.offset.set(55, -5);
 		}
 		healthBar.barOffset.set(-2, -1);
 		healthBar.leftToRight = true;

@@ -748,21 +748,17 @@ class PlayState extends MusicBeatState
 		var luaFile:String = 'characters/$name.lua';
 		#if MODS_ALLOWED
 		var replacePath:String = Paths.modFolders(luaFile);
-		if(FileSystem.exists(replacePath))
+		if(Paths.fileExists(replacePath, TEXT))
 		{
 			luaFile = replacePath;
 			doPush = true;
 		}
 		else
+		#end
 		{
 			luaFile = Paths.getSharedPath(luaFile);
-			if(FileSystem.exists(luaFile))
-				doPush = true;
+			doPush = Paths.fileExists(luaFile, TEXT, true);
 		}
-		#else
-		luaFile = Paths.getSharedPath(luaFile);
-		if(Assets.exists(luaFile)) doPush = true;
-		#end
 
 		if(doPush)
 		{
@@ -784,7 +780,7 @@ class PlayState extends MusicBeatState
 		var scriptFile:String = 'characters/' + name + '.hx';
 		#if MODS_ALLOWED
 		var replacePath:String = Paths.modFolders(scriptFile);
-		if(FileSystem.exists(replacePath))
+		if (Paths.fileExists(replacePath, TEXT))
 		{
 			scriptFile = replacePath;
 			doPush = true;
@@ -793,8 +789,7 @@ class PlayState extends MusicBeatState
 		#end
 		{
 			scriptFile = Paths.getSharedPath(scriptFile);
-			if(FileSystem.exists(scriptFile))
-				doPush = true;
+			doPush = Paths.fileExists(scriptFile, TEXT, true);
 		}
 
 		if(doPush)
@@ -3163,14 +3158,12 @@ class PlayState extends MusicBeatState
 	{
 		#if MODS_ALLOWED
 		var luaToLoad:String = Paths.modFolders(luaFile);
-		if(!FileSystem.exists(luaToLoad))
+		if(!Paths.fileExists(luaToLoad, TEXT))
 			luaToLoad = Paths.getSharedPath(luaFile);
-
-		if(FileSystem.exists(luaToLoad))
-		#elseif sys
+		#else
 		var luaToLoad:String = Paths.getSharedPath(luaFile);
-		if(OpenFlAssets.exists(luaToLoad))
 		#end
+		if (Paths.fileExists(luaToLoad, TEXT, true))
 		{
 			for (script in luaArray)
 				if(script.scriptName == luaToLoad) return false;
@@ -3187,13 +3180,13 @@ class PlayState extends MusicBeatState
 	{
 		#if MODS_ALLOWED
 		var scriptToLoad:String = Paths.modFolders(scriptFile);
-		if(!FileSystem.exists(scriptToLoad))
+		if(!Paths.fileExists(scriptToLoad, TEXT))
 			scriptToLoad = Paths.getSharedPath(scriptFile);
 		#else
 		var scriptToLoad:String = Paths.getSharedPath(scriptFile);
 		#end
 
-		if(FileSystem.exists(scriptToLoad))
+		if(Paths.fileExists(scriptToLoad, TEXT, true))
 		{
 			if (Iris.instances.exists(scriptToLoad)) return false;
 
@@ -3419,7 +3412,7 @@ class PlayState extends MusicBeatState
 			// case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
 			case 'almostThere': (songMisses > 0 && songMisses < 3) && !usedPractice; // Dor Sem Palavras (DEMO)
 			case 'niceJob': accuracy == 0.69 && !usedPractice; // Nice
-			case 'totem': songMisses == 30 && !usedPractice;
+			case 'totem': songMisses >= 30 && !usedPractice;
 			default: false;
 		};
 	}
@@ -3478,14 +3471,14 @@ class PlayState extends MusicBeatState
 			var frag:String = folder + name + '.frag';
 			var vert:String = folder + name + '.vert';
 			var found:Bool = false;
-			if(FileSystem.exists(frag))
+			if (Paths.fileExists(frag, TEXT))
 			{
 				frag = File.getContent(frag);
 				found = true;
 			}
 			else frag = null;
 
-			if(FileSystem.exists(vert))
+			if (Paths.fileExists(vert, TEXT))
 			{
 				vert = File.getContent(vert);
 				found = true;

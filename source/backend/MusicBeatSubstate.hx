@@ -1,7 +1,5 @@
 package backend;
 
-#if mobile import mobile.VirtualPadHandler; #end
-
 class MusicBeatSubstate extends flixel.FlxSubState
 {
 	private var curSection:Int = 0;

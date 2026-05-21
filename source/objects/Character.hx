@@ -103,13 +103,9 @@ class Character extends FlxSprite
 		var characterPath:String = 'characters/$character.json';
 
 		var path:String = Paths.getPath(characterPath, TEXT);
-		#if (MODS_ALLOWED || sys)
-		if (!FileSystem.exists(path))
-		#else
-		if (!Assets.exists(path))
-		#end
+		if (!Paths.fileExists(path, TEXT))
 		{
-			path = Paths.getSharedPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+			path = Paths.getSharedPath('characters/$DEFAULT_CHARACTER.json'); //If a character couldn't be found, change him to BF just to prevent a crash
 			missingCharacter = true;
 			missingText = new FlxText(0, 0, 300, 'ERROR:\n$character.json', 16);
 			missingText.alignment = CENTER;
@@ -117,11 +113,7 @@ class Character extends FlxSprite
 
 		try
 		{
-			#if (MODS_ALLOWED || sys)
-			loadCharacterFile(Json.parse(File.getContent(path)));
-			#else
-			loadCharacterFile(Json.parse(Assets.getText(path)));
-			#end
+			loadCharacterFile(Json.parse( Paths.getTextFromFile(path) ));
 		}
 		catch(e:Dynamic)
 		{
@@ -139,8 +131,8 @@ class Character extends FlxSprite
 		isAnimateAtlas = false;
 
 		#if flxanimate
-		final animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT);
-		isAnimateAtlas = #if (MODS_ALLOWED || sys) FileSystem.exists(animToFind) || #end Assets.exists(animToFind);
+		final animToFind:String = Paths.getPath('images/${json.image}/Animation.json', TEXT);
+		isAnimateAtlas = Paths.fileExists(animToFind, TEXT);
 		#end
 
 		scale.set(1, 1);

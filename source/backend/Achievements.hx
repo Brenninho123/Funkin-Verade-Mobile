@@ -52,7 +52,7 @@ class Achievements {
 
 		createAchievement('sillyDoodles', {name: "Arte", description: "Confira a Galeria do mod.", icon: "art"});
 		createAchievement('persistence', {name: "Capa! Pera, Jogo Errado", description: "Morajo sai da alt.\n(Morra 50 vezes)", maxScore: 50, maxDecimals: 0});
-		createAchievement('totem', {name: "Imortalidade", description: "Erre 30 notas, mas zere uma música mesmo assim."});
+		createAchievement('totem', {name: "Imortalidade", description: "Erre 30 notas ou mais, mas zere uma música mesmo assim."});
 		createAchievement('walktrough', {name: "E isso.. foi Funkin' Em Verade.", description: "Zere o mod 100%", hidden: true});
 
 		//dont delete this thing below
@@ -228,9 +228,9 @@ class Achievements {
 	inline static function loadAchievementJson(path:String, addMods:Bool = true)
 	{
 		var retVal:Array<Dynamic> = null;
-		if(FileSystem.exists(path)) {
+		if (Paths.fileExists(path, TEXT)) {
 			try {
-				var rawJson:String = File.getContent(path).trim();
+				var rawJson:String = Paths.getTextFromFile(path).trim();
 				if(rawJson != null && rawJson.length > 0) retVal = tjson.TJSON.parse(rawJson); //Json.parse('{"achievements": $rawJson}').achievements;
 				
 				if(addMods && retVal != null)

@@ -82,7 +82,7 @@ class LoadingState extends MusicBeatState
 		if (Mods.currentModDirectory != null && Mods.currentModDirectory.trim().length > 0)
 		{
 			var scriptPath:String = 'mods/${Mods.currentModDirectory}/data/LoadingScreen.hx'; //mods/My-Mod/data/LoadingScreen.hx
-			if (FileSystem.exists(scriptPath))
+			if (Paths.fileExists(scriptPath, TEXT))
 			{
 				try
 				{
@@ -578,7 +578,7 @@ class LoadingState extends MusicBeatState
 		try
 		{
 			var path:String = Paths.getPath('characters/$char.json', TEXT);
-			#if MODS_ALLOWED
+			#if (MODS_ALLOWED || desktop)
 			var character:Dynamic = Json.parse(File.getContent(path));
 			#else
 			var character:Dynamic = Json.parse(Assets.getText(path));
@@ -588,7 +588,7 @@ class LoadingState extends MusicBeatState
 			img = img.trim();
 			#if flxanimate
 			final animToFind:String = Paths.getPath('images/$img/Animation.json', TEXT);
-			final isAnimateAtlas:Bool = #if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind);
+			final isAnimateAtlas:Bool = Paths.fileExists(animToFind, TEXT);
 
 			if (isAnimateAtlas)
 			{
@@ -634,7 +634,7 @@ class LoadingState extends MusicBeatState
 		{
 			if (Paths.fileExists(file, SOUND, !modsAllowed, path))
 			{
-				var sound:Sound = #if sys Sound.fromFile(file) #else OpenFlAssets.getSound(file, false) #end;
+				var sound:Sound = #if (MODS_ALLOWED || desktop) Sound.fromFile(file) #else OpenFlAssets.getSound(file, false) #end;
 				mutex.acquire();
 				Paths.currentTrackedSounds.set(file, sound);
 				mutex.release();
@@ -664,9 +664,9 @@ class LoadingState extends MusicBeatState
 			if (!Paths.currentTrackedAssets.exists(requestKey))
 			{
 				var file:String = Paths.getPath(requestKey, IMAGE);
-				if (#if sys FileSystem.exists(file) || #end OpenFlAssets.exists(file, IMAGE))
+				if (Paths.fileExists(file, IMAGE))
 				{
-					#if sys
+					#if (MODS_ALLOWED || desktop)
 					var bitmap:BitmapData = BitmapData.fromFile(file);
 					#else
 					var bitmap:BitmapData = OpenFlAssets.getBitmapData(file, false);
@@ -694,11 +694,27 @@ class LoadingState extends MusicBeatState
 	#if cpp
 	@:functionCode('
 		return std::thread::hardware_concurrency();
-    	')
-	@:noCompletion
-    	public static function getCPUThreadsCount():Int
-    	{
-        	return -1;
-    	}
-    	#end
+	')
+	@:noCompletion public static function getCPUThreadsCount():Int
+	{
+		return -1;
+	}
+	#elseif android
+	@:noCompletion public static function getCPUThreadsCount():Int
+	{
+		try 
+		{
+			final getRuntime:Dynamic = JNI.createStaticMethod('java/lang/Runtime', 'getRuntime', "()Ljava/lang/Runtime;");
+			final curRuntime:Dynamic = getRuntime();
+
+			final getAvailableProcessors:Dynamic = JNI.createMemberMethod('java/lang/Runtime', 'availableProcessors', "()I");
+			return getAvailableProcessors(curRuntime);
+		}
+		catch(_)
+		{
+			trace("Couldnt find max threads!!");
+			return -1;
+		}
+	}
+	#end
 }

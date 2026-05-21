@@ -12,16 +12,20 @@ class VirtualPad extends FlxSprite
 
 	public var onPress:Void->Void;
 	public var onRelease:Void->Void;
-	@:unreflective private var __curTouch(get, never):FlxTouch;
-	@:unreflective @:noCompletion private inline function get___curTouch()
+	public var multAlpha(default, set):Float = 1;
+
+	override function set_alpha(value:Float):Float { return super.set_alpha(value * multAlpha); }
+	@:noCompletion private function set_multAlpha(mult:Float)
 	{
-		if (FlxG.touches.list.length == 0) return null;
-		return FlxG.touches.list[FlxG.touches.list.length - 1];
+		multAlpha = mult;
+		set_alpha(alpha);
+		return multAlpha;
 	}
 
-	@:unreflective private var __curAnim:String = 'idle';
+	private var __curAnim:String = 'idle';
 	private var __id:String = 'unknown(?)';
 	private var __bind:Null<flixel.input.keyboard.FlxKey>;
+	@:unreflective private var __curTouch:Null<FlxTouch>;
 
 	override function toString():String
 	{
@@ -35,7 +39,7 @@ class VirtualPad extends FlxSprite
 	{
 		if (keyCode == null) return;
 
-		__bind = ClientPrefs.keyBinds.exists(keyCode) ? ClientPrefs.keyBinds[keyCode][0] : keyCode;
+		__bind = ClientPrefs.keyBinds.exists(keyCode) ? ClientPrefs.keyBinds[keyCode][0] : FlxKey.fromString(keyCode);
 		@:privateAccess if (__bind != NONE)
 		{
 			onPress = 	() -> FlxG.keys.updateKeyStates(__bind, true);
@@ -47,7 +51,7 @@ class VirtualPad extends FlxSprite
 	{
 		__initBind(keyCode);
 		super(x, y);
-		if (Paths.fileExists('images/buttons/$id.png', IMAGE, false, 'mobile'))
+		if (Paths.fileExists('images/buttons/$id.png', IMAGE, 'mobile'))
 		{
 			frames = Paths.getSparrowAtlas('buttons/$id', 'mobile');
 			__id = id;
@@ -56,6 +60,7 @@ class VirtualPad extends FlxSprite
 		{
 			frames = Paths.getSparrowAtlas('buttons/unknown', 'mobile');
 			__id = 'unknown($id)';
+			id = 'a'; // For the animations
 		}
 		
 		animation.addByPrefix('idle', '$id idle', 24, true);
@@ -65,16 +70,25 @@ class VirtualPad extends FlxSprite
 		antialiasing = ClientPrefs.data.antialiasing;
 		scrollFactor.set();
 
-		FlxG.watch.add(this, 'justPressed', '$__id justPressed');
-		FlxG.watch.add(this, 'pressed', '$__id pressed');
-		FlxG.watch.add(this, 'justReleased', '$__id justReleased');
+		scale.scale(130 / frameWidth);
+		updateHitbox();
 	}	
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		for (t in FlxG.touches.list)
+		{
+			if (t.overlaps(this, this.camera) && __curTouch == null)
+			{
+				__curTouch = t;
+				break;
+			}
+		}
+
 		if (!visible || __curTouch == null) return;
-		final overlaps:Bool = __curTouch.overlaps(this, this.camera);
+		var overlaps:Bool = __curTouch.overlaps(this, this.camera);
 
 		if (justPressed = __curTouch.justPressed && overlaps)
 		{

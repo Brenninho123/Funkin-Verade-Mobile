@@ -158,9 +158,9 @@ class Main extends Sprite
 		}
 		#end
 
-		#if FREEPLAY
+		#if (FREEPLAY && !DEMO)
 		final trueInitialState:InitialState = states.FreeplayState;
-		#elseif CHARTING
+		#elseif (CHARTING && EDITORS_ALLOWED)
 		final trueInitialState:InitialState = states.editors.ChartingState;
 		#else
 		final initialState:InitialState = FlxG.save.data.flashing != null ? states.TitleState : () -> new states.FlashingState(states.TitleState);

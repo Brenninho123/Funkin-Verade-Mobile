@@ -1252,22 +1252,14 @@ class FunkinLua {
 			var path:String;
 			var songPath:String = Paths.formatToSongPath(Song.loadedSongName);
 			#if TRANSLATIONS_ALLOWED
-			path = Paths.getPath('data/songs/$songPath/${dialogueFile}_${ClientPrefs.data.language}.json', TEXT);
-			#if MODS_ALLOWED
-			if(!FileSystem.exists(path))
-			#else
-			if(!Assets.exists(path, TEXT))
+			path = 'data/songs/$songPath/${dialogueFile}_${ClientPrefs.data.language}.json';
+			if (!Paths.fileExists(path, TEXT))
 			#end
-			#end
-				path = Paths.getPath('data/songs/$songPath/$dialogueFile.json', TEXT);
+				path = 'data/songs/$songPath/$dialogueFile.json';
 
 			luaTrace('startDialogue: Trying to load dialogue: ' + path);
 
-			#if MODS_ALLOWED
-			if(FileSystem.exists(path))
-			#else
-			if(Assets.exists(path, TEXT))
-			#end
+			if (Paths.fileExists(path, TEXT))
 			{
 				var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
 				if(shit.dialogue.length > 0)
@@ -1290,7 +1282,7 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "startVideo", function(videoFile:String, ?canSkip:Bool = true, ?forMidSong:Bool = false, ?shouldLoop:Bool = false, ?playOnLoad:Bool = true) {
 			#if VIDEOS_ALLOWED
-			if(FileSystem.exists(Paths.video(videoFile)))
+			if(Paths.fileExists(Paths.video(videoFile), null))
 			{
 				if(game.videoCutscene != null)
 				{
@@ -1583,12 +1575,16 @@ class FunkinLua {
 		}
 
 		try{
-			var isString:Bool = !FileSystem.exists(scriptName);
+			var isString:Bool = !Paths.fileExists(scriptName, TEXT);
 			var result:Dynamic = null;
+			#if !mobile
 			if(!isString)
 				result = LuaL.dofile(lua, scriptName);
 			else
 				result = LuaL.dostring(lua, scriptName);
+			#else
+			result = LuaL.dostring(lua, !isString ? Paths.getTextFromFile(scriptName) : scriptName);
+			#end
 
 			var resultStr:String = Lua.tostring(lua, result);
 			if(resultStr != null && result != 0) { 
@@ -1596,7 +1592,7 @@ class FunkinLua {
 				#if windows
 				lime.app.Application.current.window.alert(resultStr, 'Error on lua script!');
 				#elseif android
-				extension.androidtools.Tools.showAlertDialog('Error on lua script!', resultStr);
+				extension.androidtools.Tools.showAlertDialog('Error on lua script!', resultStr, {name: 'OK', func: null});
 				#else
 				luaTrace('$scriptName\n$resultStr', true, false, FlxColor.RED);
 				#end
@@ -1767,22 +1763,8 @@ class FunkinLua {
 	{
 		if(!scriptFile.endsWith(ext)) scriptFile += ext;
 		var path:String = Paths.getPath(scriptFile, TEXT);
-		#if MODS_ALLOWED
-		if(FileSystem.exists(path))
-		#else
-		if(Assets.exists(path, TEXT))
-		#end
-		{
-			return path;
-		}
-		#if MODS_ALLOWED
-		else if(FileSystem.exists(scriptFile))
-		#else
-		else if(Assets.exists(scriptFile, TEXT))
-		#end
-		{
-			return scriptFile;
-		}
+		if (Paths.fileExists(path, TEXT)) return path;
+		else if (Paths.fileExists(scriptFile, TEXT)) return scriptFile;
 		return null;
 	}
 
@@ -1841,19 +1823,19 @@ class FunkinLua {
 
 		for (folder in foldersToCheck)
 		{
-			if(FileSystem.exists(folder))
+			if(Paths.fileExists(folder, null))
 			{
 				var frag:String = folder + name + '.frag';
 				var vert:String = folder + name + '.vert';
 				var found:Bool = false;
-				if(FileSystem.exists(frag))
+				if (Paths.fileExists(frag, null))
 				{
 					frag = File.getContent(frag);
 					found = true;
 				}
 				else frag = null;
 
-				if(FileSystem.exists(vert))
+				if (Paths.fileExists(vert, null))
 				{
 					vert = File.getContent(vert);
 					found = true;

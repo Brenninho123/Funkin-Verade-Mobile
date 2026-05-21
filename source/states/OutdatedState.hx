@@ -12,6 +12,8 @@ class OutdatedState extends flixel.FlxState
 	final initialState:InitialState;
 	var texts:FlxTypedSpriteGroup<FlxText>;
 
+	#if mobile var virtualPad:VirtualPadHandler; #end
+
 	@:allow(Main)
 	function new(initialState:InitialState)
 	{
@@ -27,17 +29,20 @@ class OutdatedState extends flixel.FlxState
 		texts = new FlxTypedSpriteGroup<FlxText>();
 		add(texts);
 
-		var warnText:FlxText = new FlxText(0, 0, FlxG.width,
-			'Hey dude, you have an outdated version of the mod!\n
-			I\'d recommend you update to the latest to not miss out on any patches or bugfixes.\n
-			(Current: ${lime.app.Application.current.meta["version"]} | Latest: $updateVersion)\n
-			Do you want to update the mod?');
+		var warnText:FlxText = new FlxText(0, 0, FlxG.width, Language.getPhrase(
+			'update_warn', 
+			"Irmão, cê tem uma versão meio antiga do mod!\n
+			Se eu fosse você, recomendava atualizar pra não perder nadinha em..\n
+			(Versão Atual: {1} | Lançamento: {2})\n
+			Gostaria de atualizar o mod?", 
+			[lime.app.Application.current.meta["version"], updateVersion]
+		));
 		warnText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
 		warnText.screenCenter();
 		warnText.active = false;
 		texts.add(warnText);
 
-		var keys:Array<String> = ["Yes", "No"];
+		var keys:Array<String> = [Language.getPhrase('warn_y', "Sim"), Language.getPhrase('warn_n', "Não")];
 		for (i in 0...keys.length)
 		{
 			var button = new FlxText(0, (warnText.y + warnText.height) + 24, 0, keys[i]);
@@ -50,10 +55,15 @@ class OutdatedState extends flixel.FlxState
 		keys.resize(0);
 
 		changeSelection(0);
+		#if mobile
+		virtualPad = new VirtualPadHandler(LEFT_RIGHT, A);
+		add(virtualPad);
+		#end
 	}
 
 	override function update(elapsed:Float)
 	{
+		#if mobile virtualPad.enabled = !blockInput; #end
 		if (blockInput)
 		{
 			super.update(elapsed);

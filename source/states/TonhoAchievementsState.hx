@@ -1,5 +1,6 @@
 package states;
 
+import openfl.display.BitmapData;
 import objects.Bar;
 import flixel.group.FlxContainer.FlxTypedContainer;
 import openfl.geom.Point;
@@ -15,7 +16,9 @@ class TonhoAchievementsState extends MusicBeatState
 	static final COLUMNS_COUNT:Int = 4;
 	static final MAGIC_MARGIN:Int = 12;
 	var achieveSprites:FlxTypedContainer<FlxSprite>;
+	var achieveBmps:Array<BitmapData> = [];
 	var selectionShine:FlxSprite;
+	var selectionSpr:FlxSprite;
 	var spotlight:FlxSprite;
 
 	var achieveText:FlxText;
@@ -47,8 +50,8 @@ class TonhoAchievementsState extends MusicBeatState
 		for (i in 0...achieves.length) achieves[i] = ~/[0-9]+/.replace(achieves[i], "");
 
 		curSelected = FlxMath.wrap(curSelected, 0, achievesData.length - 1); // You never know
-		globalAchieveProgress = CoolUtil.floorDecimal(FlxMath.remapToRange(Achievements.achievementsUnlocked.length, 0, achievesData.length, 0, 100), 2);
-		fakeAchieveProgress = globalAchieveProgress;
+		@:privateAccess
+		globalAchieveProgress = FlxMath.remapToRange(Achievements.achievementsUnlocked.length, 0, Achievements._originalLength - 1, 0, 100);
 		super();
 	}
 
@@ -108,6 +111,10 @@ class TonhoAchievementsState extends MusicBeatState
 		achieveText.antialiasing = true;
 		add(achieveText);
 
+		selectionSpr = new FlxSprite();
+		selectionSpr.antialiasing = ClientPrefs.data.antialiasing;
+		selectionSpr.active = false;
+
 		achieveProgress = new Bar(0, FlxG.height - (MAGIC_MARGIN * 5), "timeBar");
 		achieveProgress.x = (FlxG.width - achieveProgress.width) - (MAGIC_MARGIN * 2);
 		add(achieveProgress);
@@ -127,12 +134,17 @@ class TonhoAchievementsState extends MusicBeatState
 		add(globalAchieveProgressTxt);
 
 		changeSelection(0);
-		#if mobile addVpad(FULL, B); #end
+		selectionSpr.x = (achieveText.x + (achieveText.width / 2)) - (selectionSpr.width / 2);
+		add(selectionSpr);
+
+		#if mobile
+		addVpad(FULL, B);
+		virtualPad.buttonB.y += 85;
+		#end
 	}
 
 	override function finishTransIn()
 	{
-		fakeAchieveProgress = 0;
 		super.finishTransIn();
 
 		if (spotlight == null) return;
@@ -144,7 +156,7 @@ class TonhoAchievementsState extends MusicBeatState
 		var icon:String = 'achievements/${achieve.icon}';
 		if (!Paths.fileExists('images/$icon.png', IMAGE) && !Paths.fileExists('images/${icon += '-pixel'}.png', IMAGE)) icon = "menu/unknownAchieve";
 
-		var achieveBmp:openfl.display.BitmapData = (Paths.image(icon, false).bitmap).clone(); // Paths.hx caches images forcefully, and we wouldnt want an effect applied double
+		var achieveBmp:BitmapData = (Paths.image(icon, false).bitmap).clone(); // Paths.hx caches images forcefully, and we wouldnt want an effect applied double
 		if (!Achievements.isUnlocked(achieveId))
 		{
 			achieveBmp.colorTransform(achieveBmp.rect, new openfl.geom.ColorTransform(0.45, 0.45, 0.45));
@@ -159,6 +171,7 @@ class TonhoAchievementsState extends MusicBeatState
 				((achieveBmp.height / 2) / Math.round(scaling)) - MAGIC_MARGIN
 			), null, null, true);
 		}
+		achieveBmps.push(achieveBmp);
 
 		var achieveSpr:FlxSprite = new FlxSprite(40, 54, achieveBmp);
 		achieveSpr.scale.set(0.7, 0.7); achieveSpr.updateHitbox();
@@ -171,11 +184,10 @@ class TonhoAchievementsState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (fakeAchieveProgress != globalAchieveProgress)
-		{
-			fakeAchieveProgress = CoolUtil.floorDecimal(FlxMath.lerp(fakeAchieveProgress, globalAchieveProgress, Math.exp(-elapsed * 10)), 2);
-			globalAchieveProgressTxt.text = '$fakeAchieveProgress%';
-		}
+		fakeAchieveProgress = FlxMath.lerp(fakeAchieveProgress, globalAchieveProgress, Math.exp(-elapsed * 2));
+		if (Math.abs(fakeAchieveProgress - globalAchieveProgress) <= 0.01) fakeAchieveProgress = globalAchieveProgress;
+
+		globalAchieveProgressTxt.text = '${CoolUtil.floorDecimal(fakeAchieveProgress, 2)}%';
 
 		if (blockInput)
 		{
@@ -232,6 +244,10 @@ class TonhoAchievementsState extends MusicBeatState
 		achieveText.text = '${achievesData[curSelected].name}\r\n${achievesData[curSelected].description}';
 		achieveText.y = (achieveProgress.y - achieveText.height) - 25;
 
+		selectionSpr.loadGraphic(achieveBmps[curSelected]);
+		selectionSpr.scale.set(0.78, 0.78); selectionSpr.updateHitbox();
+		selectionSpr.y = (achieveText.y - selectionSpr.height) - MAGIC_MARGIN;
+
 		if (achievesData[curSelected].maxScore != null)
 		{
 			final curVal:Float = (achievesData[curSelected].maxDecimals > 0) ? CoolUtil.floorDecimal(Achievements.getScore(achieves[curSelected]), achievesData[curSelected].maxDecimals) : Achievements.getScore(achieves[curSelected]);
@@ -249,6 +265,13 @@ class TonhoAchievementsState extends MusicBeatState
 
 	override function destroy()
 	{
+		for (b in achieveBmps)
+		{
+			b.dispose();
+			b = null;
+		}
+		achieveBmps.resize(0);
+
 		achievesData.resize(0);
 		achieves.resize(0);
 		super.destroy();

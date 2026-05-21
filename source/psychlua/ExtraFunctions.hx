@@ -149,16 +149,8 @@ class ExtraFunctions
 
 		// File management
 		Lua_helper.add_callback(lua, "checkFileExists", function(filename:String, ?absolute:Bool = false) {
-			#if MODS_ALLOWED
-			if(absolute) return FileSystem.exists(filename);
-
-			return FileSystem.exists(Paths.getPath(filename, TEXT));
-
-			#else
-			if(absolute) return Assets.exists(filename, TEXT);
-
-			return Assets.exists(Paths.getPath(filename, TEXT));
-			#end
+			if(absolute) return Paths.fileExists(filename, TEXT);
+			return Paths.fileExists(Paths.getPath(filename, TEXT), TEXT);
 		});
 		Lua_helper.add_callback(lua, "saveFile", function(path:String, content:String, ?absolute:Bool = false)
 		{
@@ -181,9 +173,11 @@ class ExtraFunctions
 			try {
 				var lePath:String = path;
 				if(!absolute) lePath = Paths.getPath(path, TEXT, !ignoreModFolders);
-				if(FileSystem.exists(lePath))
+				if (Paths.fileExists(lePath, TEXT))
 				{
+					#if !mobile
 					FileSystem.deleteFile(lePath);
+					#end
 					return true;
 				}
 			} catch (e:Dynamic) {
@@ -196,15 +190,18 @@ class ExtraFunctions
 		});
 		Lua_helper.add_callback(lua, "directoryFileList", function(folder:String) {
 			var list:Array<String> = [];
-			#if sys
-			if(FileSystem.exists(folder)) {
+			if (Paths.fileExists(folder, null)) {
+				#if !mobile
 				for (folder in FileSystem.readDirectory(folder)) {
+				#else
+				for (folder in lime.utils.Assets.list()) {
+					if (!folder.startsWith(folder)) continue;
+				#end
 					if (!list.contains(folder)) {
 						list.push(folder);
 					}
 				}
 			}
-			#end
 			return list;
 		});
 

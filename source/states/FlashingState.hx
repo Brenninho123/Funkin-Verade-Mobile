@@ -11,6 +11,8 @@ class FlashingState extends flixel.FlxState
 	final initialState:InitialState;
 	var texts:FlxTypedSpriteGroup<FlxText>;
 
+	#if mobile var virtualPad:VirtualPadHandler; #end
+
 	@:allow(Main)
 	function new(initialState:InitialState)
 	{
@@ -27,31 +29,36 @@ class FlashingState extends flixel.FlxState
 		add(texts);
 
 		var warnText:FlxText = new FlxText(0, 0, FlxG.width,
-			"Hey, watch out!\n
-			This Mod contains some flashing lights!\n
-			Do you wish to disable them?");
+			Language.getPhrase('flasing_warn', "Opa, cuidado aí!\n
+			Esse Mod contém luzes piscantes!\n
+			Deseja desativá-las?"));
 		warnText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
 		warnText.screenCenter();
 		warnText.active = false;
 		texts.add(warnText);
 
-		var keys:Array<String> = ["Yes", "No"];
+		var keys:Array<String> = [Language.getPhrase('warn_y', "Sim"), Language.getPhrase('warn_n', "Não")];
 		for (i in 0...keys.length)
 		{
 			var button = new FlxText(0, (warnText.y + warnText.height) + 24, 0, keys[i]);
 			button.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
 			button.screenCenter(X).x -= button.width;
-			button.x += button.width * i;
+			button.x += (button.width / 2) * i;
 			button.active = false;
 			texts.add(button);
 		}
 		keys.resize(0);
 
 		changeSelection(0);
+		#if mobile
+		virtualPad = new VirtualPadHandler(LEFT_RIGHT, A);
+		add(virtualPad);
+		#end
 	}
 
 	override function update(elapsed:Float)
 	{
+		#if mobile virtualPad.enabled = !blockInput; #end
 		if (blockInput)
 		{
 			super.update(elapsed);

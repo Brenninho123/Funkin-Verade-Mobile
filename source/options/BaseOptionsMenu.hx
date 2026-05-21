@@ -1,9 +1,5 @@
 package options;
 
-#if mobile
-import mobile.VirtualPadHandler.ActionPadLayout;
-import mobile.VirtualPadHandler.DirectPadLayout;
-#end
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
@@ -30,19 +26,15 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 	#if mobile
-	public var padLayout:DirectPadLayout;
-	public var actLayout:ActionPadLayout;
+	public var padLayout:DirectPadLayout = FULL;
+	public var actLayout:ActionPadLayout = A_B;
+	public var addPadCam:Bool = false;
 	#end
 
 	public var bg:FlxSprite;
 	public function new()
 	{
 		super();
-		#if mobile
-		padLayout ??= FULL;
-		actLayout ??= A_B;
-		#end
-
 		title ??= 'Options';
 		rpcTitle ??= 'Options Menu';
 		#if DISCORD_ALLOWED DiscordClient.changePresence(rpcTitle, null); #end
@@ -112,7 +104,15 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		changeSelection();
 		reloadCheckboxes();
-		#if mobile addVpad(padLayout, actLayout); #end
+	}
+
+	override function create()
+	{
+		#if mobile
+		addVpad(padLayout, actLayout);
+		if (addPadCam) addVpadCam();
+		#end
+		super.create();
 	}
 
 	public function addOption(option:Option) {

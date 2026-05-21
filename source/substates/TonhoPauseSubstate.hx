@@ -39,10 +39,10 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 	var textGrp:FlxTypedContainer<FlxText>;
 	var bgGrid:FlxBackdrop;
 	public static var music:FlxSound = new FlxSound();
-	public static var musicName(default, set):String = "";
+	public static var musicName(default, set):String;
 	@:noCompletion static inline function set_musicName(m)
 	{
-		if (musicName == m) return musicName;
+		if (musicName == m && music.exists) return musicName;
 
 		music.loadEmbedded(Paths.music('pause/$m'), true);
 		return musicName = m;

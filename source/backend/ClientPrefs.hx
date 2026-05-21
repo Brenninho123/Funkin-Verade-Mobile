@@ -76,6 +76,7 @@ import states.TitleState;
 	public var discordRPC:Bool = true;
 	public var loadingScreen:Bool = true;
 	public var language:String = 'pt-BR';
+	public var vpadAlpha:Float = 1;
 }
 
 class ClientPrefs {

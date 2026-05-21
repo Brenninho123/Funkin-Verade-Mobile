@@ -16,6 +16,7 @@ dialogue_skip: "Press BACK to Skip"
 // Menu de opções
 options_gameplay: "Gameplay"
 options_controls: "Controls"
+options_mobile: "Mobile Controls"
 options_langs: "Language"
 options_aud_delay: "Adjust Audio Delay"
 options_graphics: "Graphics"
@@ -78,6 +79,9 @@ setting_checkForUpdates: "Check for Updates"
 description_checkForUpdateS: "Turn this on to automatically check for updates every game start."
 description_discordRPC: "Unchecking this hides the Discord \"Playing\" box of the mod."
 
+setting_vpadAlpha: "Button Opacity:"
+description_vpadAlpha: "Controls how transparent the Virtual Pad controls should be.\nA value of 0% disables Virtual Pad, only allowing for keyboard or gamepad input."
+
 delay_beat_hit: "Beat Hit!"
 delay_current_offset: "Current offset: {1}MS"
 
@@ -137,3 +141,9 @@ keyname_volume_down: "Volume Down"
 keyname_debug_1: "Debug Key #1"
 keyname_debug_2: "Debug Key #2"
 Resetar_Keybinds: "Reset Keybinds"
+
+// Avisos
+flashing_warn: "Hey, watch out!\nThis Mod contains some flashing lights!\nDo you wish to disable them?"
+update_warn: "Hey dude, you have an outdated version of the mod!\nI'd recommend you update the mod to not miss out on anything.\n(Current: {1} | Latest: {2})\nDo you want to update the mod?"
+warn_y: "Yes"
+warn_n: "No"

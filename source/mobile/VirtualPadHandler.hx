@@ -42,8 +42,12 @@ class VirtualPadHandler extends flixel.FlxBasic
 		return super.set_active(Value);
 	}
 
-	public var enabled(default, set):Bool = true;
-	@:noCompletion private inline function set_enabled(e):Bool { return enabled = (active = e); }
+	/**
+	 * Just `FlxBasic.active`, but with a clearer name 
+	 */
+	public var enabled(get, set):Bool;
+	@:noCompletion private inline function get_enabled():Bool { return active; }
+	@:noCompletion private inline function set_enabled(e):Bool { return active = e; }
 
 	public var alpha(default, set):Float = 1;
 	@:noCompletion private inline function set_alpha(a):Float
@@ -68,7 +72,7 @@ class VirtualPadHandler extends flixel.FlxBasic
 		super();
 		VirtualPadHandler.dpadLayout = dpadLayout;
 		VirtualPadHandler.actionLayout = actionLayout;
-		// alpha = ClientPrefs.data.vpadAlpha;
+		alpha = ClientPrefs.data.vpadAlpha;
 
 		switch (dpadLayout)
 		{
@@ -155,7 +159,7 @@ class VirtualPadHandler extends flixel.FlxBasic
 	override function set_exists(Value:Bool):Bool
 	{
 		for (m in members) m.exists = Value;
-		return super.set_exists(Value);
+		return super.set_exists(enabled = Value);
 	}
 	override function set_visible(Value:Bool):Bool
 	{
@@ -197,8 +201,9 @@ class VirtualPadHandler extends flixel.FlxBasic
 	override function toString():String
 	{
 		return 'VirtualPad' + FlxStringUtil.getDebugString([
-			LabelValuePair.weak("layout", enabled),
-			LabelValuePair.weak("enabled", enabled)
+			LabelValuePair.weak("layout", layout),
+			LabelValuePair.weak("enabled", enabled && exists),
+			LabelValuePair.weak("visible", visible && exists),
 		]);
 	}
 }

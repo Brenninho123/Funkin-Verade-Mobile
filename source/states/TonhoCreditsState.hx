@@ -1,5 +1,6 @@
 package states;
 
+#if mobile import flixel.input.FlxSwipe; #end
 import objects.GamepadCursor;
 import objects.AttachedSprite;
 import flixel.group.FlxContainer.FlxTypedContainer;
@@ -113,6 +114,7 @@ class TonhoCreditsState extends MusicBeatState
 	var controllerCursor:GamepadCursor;
 	var lastMousePos:FlxPoint = new FlxPoint();
 	var curMousePos:FlxPoint = new FlxPoint();
+	#if mobile static inline final TREMBLE_MARGIN:Float = 18.5; #end // Pure guesswork and bs testing
 
 	static var alreadyIntrodid:Bool;
 	static final MAGIC_MARGIN:Int = 12;
@@ -330,7 +332,7 @@ class TonhoCreditsState extends MusicBeatState
 		camera.snapToTarget();
 
 		#if mobile
-		addVpad(UP_DOWN, B);
+		addVpad(NONE, B);
 		addVpadCam();
 		#end
 	}
@@ -349,10 +351,21 @@ class TonhoCreditsState extends MusicBeatState
 		// FlxG.watch.addQuick("controllerMode", controls.controllerMode);
 
 		controllerCursor.visible = controls.controllerMode;
-		#if !mobile FlxG.mouse.visible = !controls.controllerMode; #end
+		#if mobile
+		var lastSwipe:FlxSwipe = FlxG.swipes.length > 0 ? FlxG.swipes[FlxG.swipes.length - 1] : null;
+		final swipeDegrees:Float = lastSwipe != null ? Math.abs(lastSwipe.degrees) : 0;
+		final swipeMult:Int = lastSwipe != null ? FlxMath.signOf(lastSwipe.degrees) : 1;
+		final straightAngle:Float = 90;
+
+		var verticalSwipe:Bool = lastSwipe?.distance > 0 && FlxMath.inBounds(swipeDegrees, straightAngle - TREMBLE_MARGIN, straightAngle + TREMBLE_MARGIN);
+		var up_p:Bool = (verticalSwipe && swipeMult == -1) || FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
+		var down_p:Bool = verticalSwipe || FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
+		#else
+		FlxG.mouse.visible = !controls.controllerMode;
 
 		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
 		var down_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
+		#end
 		if (up_p || down_p)
 		{
 			FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -361,6 +374,12 @@ class TonhoCreditsState extends MusicBeatState
 			changeSelection(change);
 			(up_p ? arrowUp : arrowDown).offset.y = (up_p ? startUpOffs : startDownOffs) + ((arrowAnimDist * -change) * 2);
 		}
+
+		/* #if mobile
+		if (lastSwipe != null) FlxG.watch.addQuick('swipe degree', lastSwipe.degrees);
+		FlxG.watch.addQuick('swipe was vertical?', verticalSwipe);
+		FlxG.watch.addQuick('vertical swipe went up?', up_p);
+		#end */
 
 		if (controls.BACK)
 		{

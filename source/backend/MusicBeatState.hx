@@ -1,6 +1,5 @@
 package backend;
 
-#if mobile import mobile.VirtualPadHandler; #end
 import flixel.FlxSubState;
 import flixel.FlxState;
 import backend.PsychCamera;
@@ -41,6 +40,10 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 	override function create()
 	{
 		#if MODS_ALLOWED Mods.updatedOnState = false; #end
+		#if ACHIEVEMENTS_ALLOWED
+		@:privateAccess if (Achievements.achievementsUnlocked.length == (Achievements._originalLength - 1))
+			Achievements.unlock('walktrough');
+		#end
 
 		if (!_psychCameraInitialized) initPsychCamera();
 		super.create();
@@ -99,7 +102,7 @@ class MusicBeatState extends flixel.addons.transition.FlxTransitionableState
 			remove(virtualPad);
 			virtualPad.destroy();
 		}
-		if (virtualPadCam != null) FlxG.cameras.remove(virtualPadCam);
+		if (virtualPadCam != null) FlxG.cameras.remove(virtualPadCam, false);
 
 		super.destroy();
 	}
