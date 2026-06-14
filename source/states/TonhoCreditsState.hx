@@ -348,7 +348,6 @@ class TonhoCreditsState extends MusicBeatState
 
 		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
 		var down_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
-		#end
 		if (up_p || down_p)
 		{
 			FlxG.sound.play(Paths.sound('scrollMenu'));
