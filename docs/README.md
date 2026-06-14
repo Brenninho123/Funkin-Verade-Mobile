@@ -17,7 +17,7 @@ Together they go trough challenges against _airhead's team_ ('n other original c
 
 To play the mod, simply download it [here](https://github.com/BernardoGP4504/Funkin-Verade/releases) or via [our gamebanana](https://gamebanana.com/mods/644716).
 
-As for making mods, just follow the [build instructions](/docs/BUILDING_en.md).
+As for making mods, just follow the [build instructions](/docs/BUILDING.md).
 
 ## Credits
 
