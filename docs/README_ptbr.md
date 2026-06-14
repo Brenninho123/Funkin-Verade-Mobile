@@ -1,3 +1,8 @@
+<p align="center" style="font-size: 18px;">
+  [ <a href="/docs/README_en.md">English</a> | 
+  <b>Português</b> ]
+</p>
+
 # Funkin em Verade
 
 ![Funkin Verade Logo](/assets/shared/images/titlescreen/logo.png)
@@ -12,19 +17,16 @@ Juntos enfrentam desafios contra a _turma do cabeçudo_ (e outros personagens or
 
 Para jogar o mod, basta baixá-lo [aqui](https://github.com/BernardoGP4504/Funkin-Verade/releases) ou pelo [nosso gamebanana](https://gamebanana.com/mods/644716).
 
-Já para fazer mods, basta seguir as [instruções de build](/docs/BUILDING.md).
+Já para fazer mods, basta seguir as [instruções de build](/docs/BUILDING_ptbr.md).
 
 ## Créditos
 
-Um mod feito por
-![Avalanche Produções](/assets/shared/images/avalanche.png)
+<p align="center">Um mod feito por</p>
+
+![**Avalanche Produções**](/assets/shared/images/avalanche.png)
 
 | Obra | Criadores |
 | ---- | --------- |
 | Psych Engine | [ShadowMario e _contribuições_](https://github.com/ShadowMario/FNF-PsychEngine/tree/main?tab=readme-ov-file#credits) |
 | Friday Night Funkin' | [The Funkin' Crew Inc](https://funkin.me) |
 | Mundo Torajo | Bruno Gemin, Isabela Silva (Saberaa), e a _turma do porão_<br>![turma do porão](https://pbs.twimg.com/media/GdF-U0QXsAAMI-x?format=png&name=small) |
-
------
-> [!TIP]
-> For the non portuguese-speaking, paste this read in Google Translate.
