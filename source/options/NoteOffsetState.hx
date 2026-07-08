@@ -55,13 +55,13 @@ class NoteOffsetState extends MusicBeatState
 		// Characters
 		if (!stageData.hide_girlfriend)
 		{
-			gf = new Character(stageData.girlfriend[0], stageData.girlfriend[1], stageData._editorMeta?.gf ?? 'morana');
+			gf = new Character(stageData.girlfriend[0], stageData.girlfriend[1], stageData._editorMeta?.gf ?? 'gf');
 			gf.x += gf.positionArray[0]; gf.y += gf.positionArray[1];
 			gf.scrollFactor.set(0.95, 0.95);
 			add(gf);
 		}
 
-		boyfriend = new Character(stageData.boyfriend[0], stageData.boyfriend[1], stageData._editorMeta?.boyfriend ?? 'bf', true);
+		boyfriend = new Character(stageData.boyfriend[0], stageData.boyfriend[1], stageData._editorMeta?.boyfriend ?? Character.DEFAULT_CHARACTER, true);
 		boyfriend.x += boyfriend.positionArray[0]; boyfriend.y += boyfriend.positionArray[1];
 		add(boyfriend);
 

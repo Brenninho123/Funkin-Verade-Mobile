@@ -102,6 +102,7 @@ class MainMenuState extends MusicBeatState
 	override function create()
 	{
 		FlxG.mouse.visible = false;
+		Paths.clearUnusedMemory();
 		CoolUtil.playMenuSong();
 
 		if (optionShit.length == 0)
@@ -114,7 +115,7 @@ class MainMenuState extends MusicBeatState
 			{
 				return new ErrorState(
 					'No menu items were found!! Try making sure options are added correctly in "${datasPath}options.xml".\nPress ACCEPT to Reload | Press BACK to Leave this Menu',
-					() -> FlxG.switchState(() -> new MainMenuState()),
+					() -> FlxG.switchState(MainMenuState.new),
 					() -> FlxG.switchState(() -> new TitleState())
 				);
 			});
@@ -202,7 +203,7 @@ class MainMenuState extends MusicBeatState
 		add(psychVer);
 
 		changeItem(0);
-		if (!ClientPrefs.data.lowQuality) beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 	-@BernardoGP4504
+		beatHit(); // Em caso de vc entrar no menu sem a música tar na batida, pelo menos um bop vai ocorrer. De nada :3 	-@BernardoGP4504
 
 		controllerCursor = new GamepadCursor();
 		add(controllerCursor);
@@ -340,7 +341,7 @@ class MainMenuState extends MusicBeatState
 		final keyPress:FlxKey = FlxG.keys.firstJustPressed();
 		if (keyPress == -1 || lastFoundEgg.length > 0) return;
 		var eachClue:Array<String> = clues.split("");
-		function resetProgress()
+		inline function resetProgress()
 		{
 			eggsLastClues[eggId] = -1;
 			eggsLastGuesses[eggId] = "";
@@ -367,10 +368,24 @@ class MainMenuState extends MusicBeatState
 
 	override function destroy()
 	{
+		for (i in selectionShit.keys()) selectionShit[i].resize(0);
+		selectionShit.clear();
+
+		optionShit.resize(0);
+		menuColors.resize(0);
+		renderSprs.resize(0);
+		renderScales.resize(0);
+
 		// "Easter Hunt" cleanup
-		for (hunt in eggHunts) FlxG.signals.preUpdate.remove(hunt);
-		eggHunts.resize(0);
+		for (i in 0...eggHunts.length)
+		{
+			FlxG.signals.preUpdate.remove(eggHunts[i]);
+			eggHunts[i] = null;
+		}
+		for (i in easterEggs.keys()) easterEggs[i] = null;
+
 		easterEggs.clear();
+		eggHunts.resize(0);
 		eggsLastClues.resize(0);
 		eggsLastGuesses.resize(0);
 

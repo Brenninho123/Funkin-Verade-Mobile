@@ -10,72 +10,17 @@
 				["Camera Fade", "default,false", "0"]
 			]
 		],
-		[
-			120,
-			[
-				["Camera Fade", "default,true", "6"]
-			]
-		],
-		[
-			7680,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			7920,
-			[
-				["Set Camera Zoom Interval", "", ""]
-			]
-		],
-		[
-			30000,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			30720,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			34560,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			38400,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			38520,
-			[
-				["Title Card", "", ""]
-			]
-		],
-		[
-			43200,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			46080,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			60000,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
+		[120, [["Camera Fade", "default,true", "6"]]],
+		[7680, [["Camera Follow Pos", "", ""]]],
+		[7920, [["Set Camera Zoom Interval", "", ""]]],
+		[30000, [["Camera Follow Pos", "935", "900"]]],
+		[30720, [["Camera Follow Pos", "", ""]]],
+		[34560, [["Camera Follow Pos", "935", "900"]]],
+		[38400, [["Camera Follow Pos", "", ""]]],
+		[38520, [["Title Card", "", ""]]],
+		[43200, [["Camera Follow Pos", "935", "900"]]],
+		[46080, [["Camera Follow Pos", "", ""]]],
+		[60000, [["Camera Follow Pos", "935", "900"]]],
 		[
 			60950,
 			[
@@ -83,72 +28,17 @@
 				["Play Animation", "hey", "0"]
 			]
 		],
-		[
-			61440,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			72000,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			73680,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			74880,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			76800,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			79680,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			80640,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			88320,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			92160,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			106800,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			107400,
-			[
-				["Transitions", "stealAMic", "2"]
-			]
-		],
+		[61440, [["Camera Follow Pos", "", ""]]],
+		[72000, [["Camera Follow Pos", "935", "900"]]],
+		[73680, [["Camera Follow Pos", "", ""]]],
+		[74880, [["Camera Follow Pos", "935", "900"]]],
+		[76800, [["Camera Follow Pos", "", ""]]],
+		[79680, [["Camera Follow Pos", "935", "900"]]],
+		[80640, [["Camera Follow Pos", "", ""]]],
+		[88320, [["Camera Follow Pos", "935", "900"]]],
+		[92160, [["Camera Follow Pos", "", ""]]],
+		[106800, [["Camera Follow Pos", "935", "900"]]],
+		[107400, [["Transitions", "stealAMic", "2"]]],
 		[
 			109440,
 			[
@@ -156,78 +46,18 @@
 				["Change Character", "opponent", "mojaro"]
 			]
 		],
-		[
-			110523.333333333,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			115523.333333333,
-			[
-				["Play Animation", "tchola", "opponent"]
-			]
-		],
-		[
-			115856.666666667,
-			[
-				["Set Camera Zoom Interval", "2", ""]
-			]
-		],
-		[
-			120856.666666667,
-			[
-				["Set Camera Zoom Interval", "0", ""]
-			]
-		],
-		[
-			120940,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			121606.666666667,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			122190,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			122523.333333333,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			122856.666666667,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			123023.333333333,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			123190,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
-		[
-			123356.666666667,
-			[
-				["Add Camera Zoom", "", ""]
-			]
-		],
+		[110523.333333333, [["Camera Follow Pos", "", ""]]],
+		[115523.333333333, [["Play Animation", "tchola", "opponent"]]],
+		[115856.666666667, [["Set Camera Zoom Interval", "2", ""]]],
+		[120856.666666667, [["Set Camera Zoom Interval", "0", ""]]],
+		[120940, [["Add Camera Zoom", "", ""]]],
+		[121606.666666667, [["Add Camera Zoom", "", ""]]],
+		[122190, [["Add Camera Zoom", "", ""]]],
+		[122523.333333333, [["Add Camera Zoom", "", ""]]],
+		[122856.666666667, [["Add Camera Zoom", "", ""]]],
+		[123023.333333333, [["Add Camera Zoom", "", ""]]],
+		[123190, [["Add Camera Zoom", "", ""]]],
+		[123356.666666667, [["Add Camera Zoom", "", ""]]],
 		[
 			123523,
 			[
@@ -242,12 +72,7 @@
 				["Set Camera Zoom", "0.75", ""]
 			]
 		],
-		[
-			143523.333333333,
-			[
-				["Set Camera Zoom", "0.9", ""]
-			]
-		],
+		[143523.333333333, [["Set Camera Zoom", "0.9", ""]]],
 		[
 			144523.333333333,
 			[
@@ -262,24 +87,9 @@
 				["Set Camera Zoom", "", ""]
 			]
 		],
-		[
-			148690,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			150523.333333333,
-			[
-				["Camera Follow Pos", "", ""]
-			]
-		],
-		[
-			152940,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
+		[148690, [["Camera Follow Pos", "935", "900"]]],
+		[150523.333333333, [["Camera Follow Pos", "", ""]]],
+		[152940, [["Camera Follow Pos", "935", "900"]]],
 		[
 			154190,
 			[
@@ -294,12 +104,7 @@
 				["Transitions", "tojoJumpscare", ""]
 			]
 		],
-		[
-			155523.333333333,
-			[
-				["Set Camera Zoom", "1.05", ""]
-			]
-		],
+		[155523.333333333, [["Set Camera Zoom", "1.05", ""]]],
 		[
 			155690,
 			[
@@ -307,24 +112,9 @@
 				["Change Character", "opponent", "brofight"]
 			]
 		],
-		[
-			155773.333333333,
-			[
-				["Set Camera Zoom", "", ""]
-			]
-		],
-		[
-			160773.333333333,
-			[
-				["Play Animation", "tchola", "opponent"]
-			]
-		],
-		[
-			172856.666666667,
-			[
-				["Play Animation", "tchola", "opponent"]
-			]
-		],
+		[155773.333333333, [["Set Camera Zoom", "", ""]]],
+		[160773.333333333, [["Play Animation", "tchola", "opponent"]]],
+		[172856.666666667, [["Play Animation", "tchola", "opponent"]]],
 		[
 			177106.666666667,
 			[
@@ -332,23 +122,11 @@
 				["Change Character", "opponent", "argument-mojofight"]
 			]
 		],
-		[
-			186190,
-			[
-				["Lyrics", "Tchoooola,", "14d174,fa6b68"]
-			]
-		],
-		[
-			186856.666666667,
-			[
-				["Lyrics", "Tchoooola,O", "14d174,fa6b68"]
-			]
-		],
+		[186190, [["Lyrics", "Tchoooola,", "14d174,fa6b68"]]],
+		[186856.666666667, [["Lyrics", "Tchoooola,O", "14d174,fa6b68"]]],
 		[
 			187106.666666667,
-			[
-				["Lyrics", "Tchoooola,O QUE????????", "14d174,fa6b68"]
-			]
+			[["Lyrics", "Tchoooola,O QUE????????", "14d174,fa6b68"]]
 		],
 		[
 			187523.333333334,
@@ -365,18 +143,8 @@
 				["Change Character", "opponent", "brofight"]
 			]
 		],
-		[
-			216440.000000001,
-			[
-				["Camera Follow Pos", "935", "900"]
-			]
-		],
-		[
-			220190.000000001,
-			[
-				["Hey!", "bf", "2"]
-			]
-		]
+		[216440.000000001, [["Camera Follow Pos", "935", "900"]]],
+		[220190.000000001, [["Hey!", "bf", "2"]]]
 	],
 	"notes": [
 		{
@@ -875,9 +643,7 @@
 			"mustHitSection": true
 		},
 		{
-			"sectionNotes": [
-				[59520, 1, 540]
-			],
+			"sectionNotes": [[59520, 1, 540]],
 			"sectionBeats": 4,
 			"gfSection": false,
 			"altAnim": false,
@@ -2844,7 +2610,7 @@
 			"mustHitSection": true
 		}
 	],
-	"gfVersion": "morana",
+	"gfVersion": "gf",
 	"offset": 0,
 	"song": "irmaos-de-frutas",
 	"stage": "irmaos-fruta",

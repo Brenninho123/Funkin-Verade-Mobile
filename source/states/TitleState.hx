@@ -1,17 +1,9 @@
 package states;
 
 import flixel.util.FlxGradient;
-import backend.WeekData;
-
 import flixel.input.keyboard.FlxKey;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.graphics.frames.FlxFrame;
 import flixel.group.FlxGroup;
-import flixel.input.gamepad.FlxGamepad;
-
-import openfl.Assets;
 import openfl.display.BitmapData;
-import states.StoryMenuState;
 import states.MainMenuState;
 
 class TitleState extends MusicBeatState

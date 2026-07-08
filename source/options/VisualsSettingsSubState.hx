@@ -25,7 +25,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			var note:StrumNote = new StrumNote(370 + (560 / Note.colArray.length) * i, -200, i, 0);
 			notes.add(note);
 			
-			var splash:NoteSplash = new NoteSplash(0, 0, NoteSplash.defaultNoteSplash + NoteSplash.getSplashSkinPostfix());
+			var splash:NoteSplash = new NoteSplash();
 			splash.inEditor = true;
 			splash.babyArrow = note;
 			splash.ID = i;

@@ -44,7 +44,7 @@ class StageData {
 			stageUI: "normal",
 
 			boyfriend: [770, 100],
-			girlfriend: [400, 130],
+			girlfriend: [400, 70],
 			opponent: [100, 100],
 			hide_girlfriend: false,
 
@@ -55,7 +55,7 @@ class StageData {
 
 			_editorMeta: {
 				gf: "gf",
-				dad: "dad",
+				dad: "tonho",
 				boyfriend: "bf"
 			}
 		};

@@ -65,7 +65,7 @@ class NoteSplash extends FlxSprite
 
 		if(splash == null)
 		{
-			splash = defaultNoteSplash + getSplashSkinPostfix();
+			splash = defaultNoteSplash;
 			if (PlayState.SONG != null && PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) splash = PlayState.SONG.splashSkin;
 		}
 
@@ -73,13 +73,8 @@ class NoteSplash extends FlxSprite
 		frames = Paths.getSparrowAtlas(texture);
 		if (frames == null)
 		{
-			texture = defaultNoteSplash + getSplashSkinPostfix();
+			texture = defaultNoteSplash;
 			frames = Paths.getSparrowAtlas(texture);
-			if (frames == null)
-			{
-				texture = defaultNoteSplash;
-				frames = Paths.getSparrowAtlas(texture);
-			}
 		}
 
 		var path:String = 'images/$texture';
@@ -197,7 +192,7 @@ class NoteSplash extends FlxSprite
 
 		if (!inEditor)
 		{
-			var loadedTexture:String = defaultNoteSplash + getSplashSkinPostfix();
+			var loadedTexture:String = defaultNoteSplash;
 			if (note != null && note.noteSplashData.texture != null) loadedTexture = note.noteSplashData.texture;
 			else if (PlayState.SONG != null && PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) loadedTexture = PlayState.SONG.splashSkin;
 
@@ -287,10 +282,10 @@ class NoteSplash extends FlxSprite
 			offset.y += offsets[1];
 		}
 
-		animation.finishCallback = function(name:String) {
+		animation.onFinish.add((_) -> {
 			kill();
 			spawned = false;
-		}
+		});
 
 		alpha = ClientPrefs.data.splashAlpha;
 		if (note != null) alpha = note.noteSplashData.a;
@@ -357,14 +352,6 @@ class NoteSplash extends FlxSprite
 				y = babyArrow.y - Note.swagWidth;
 		}
 		super.update(elapsed);
-	}
-
-	public static function getSplashSkinPostfix()
-	{
-		var skin:String = '';
-		if (ClientPrefs.data.splashSkin != ClientPrefs.defaultData.splashSkin)
-			skin = '-' + ClientPrefs.data.splashSkin.trim().toLowerCase().replace(' ', '-');
-		return skin;
 	}
 
 	public static function createConfig():NoteSplashConfig
