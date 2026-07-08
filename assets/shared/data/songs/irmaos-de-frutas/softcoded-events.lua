@@ -27,7 +27,7 @@ function onStepHit()
 		cameraSetTarget('dad')
 	end
 
-	if curStep == 1336 and not flashingLights then
+	if curStep == 1336 and flashingLights then
 		cameraFlash('hud', 'white', 0.62, true)
 	end
 	
@@ -97,7 +97,7 @@ triggerEvent('Set Camera Zoom','0.6','2')
 end
 
 if curStep== 320 or curStep== 768 then
-setProperty('flash.alpha', 0.8 / (not flashingLights and 1 or 2))
+setProperty('flash.alpha', 0.8 / (flashingLights and 1 or 2))
 doTweenAlpha('flTw','flash',0.01,2,'linear')
 end
 
