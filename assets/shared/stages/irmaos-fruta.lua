@@ -1,10 +1,3 @@
-local function precacheFolderImages(folder, allowGPU)
-	allowGPU = allowGPU or true
-	for _, f in pairs(directoryFileList( callMethodFromClass("backend.Paths", 'getPath', {folder}) )) do
-		if string.find(f, ".png", 1, true) then precacheImage(string.gsub(folder, "images/", "")..string.gsub(f, ".png", ""), allowGPU) end
-	end
-end
-
 function onCreate()
 	makeLuaSprite('Fundo1', "Fundo1", -520, 0)
 	setGraphicSize('Fundo1', (getProperty('Fundo1.width') + 1124) * 1.2, (getProperty('Fundo1.height') + 700) * 1.2)
@@ -23,12 +16,7 @@ function onCreate()
 	addLuaSprite('Fundo1', false)
 	addLuaSprite('Fundo2', true)
 	addLuaSprite('Fundo3', true)
-	if songName ~= 'irmaos-de-frutas' then
-		close()
-		return
-	end
-	
-	precacheFolderImages("images/tojoBG/")
+	if songName ~= 'irmaos-de-frutas' then close() end
 end
 
 local delayedEvent = "" -- Just incase of other events needing delayed callbacks
