@@ -57,15 +57,13 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 		[
 			{id: "resume", defName: "Resumir", action: () -> getTFOut(close)},
 			{id: "restart", defName: "Reiniciar", action: FlxG.resetState},
-			{id: "options", defName: "Opções", action: function()
-			{
-				OptionsState.onPlayState = true;
-				FlxG.switchState(() -> new OptionsState());
-			}},
+			{id: "options", defName: "Opções", action: () -> FlxG.switchState(OptionsState.new)},
 			{id: "back", defName: "Sair", action: function()
 			{
 				music.stop();
 				if (extraOptions.length > 0) extraOptions.resize(0);
+
+				OptionsState.onPlayState = false;
 				#if DEMO
 				FlxG.switchState(() -> new states.MainMenuState());
 				#else

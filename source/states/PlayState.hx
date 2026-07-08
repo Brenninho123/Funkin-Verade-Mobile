@@ -283,6 +283,7 @@ class PlayState extends MusicBeatState
 			Language.reloadPhrases();
 		}
 		nextReloadAll = false;
+		OptionsState.onPlayState = true;
 
 		startCallback = startCountdown;
 		endCallback = endSong;
@@ -3082,7 +3083,6 @@ class PlayState extends MusicBeatState
 		#if FLX_PITCH FlxG.sound.music.pitch = 1; #end
 		FlxG.animationTimeScale = 1;
 		TonhoPauseSubstate.textMembers.resize(0);
-		OptionsState.onPlayState = false;
 
 		Note.globalRgbShaders = [];
 		backend.NoteTypesConfig.clearNoteTypesData();
