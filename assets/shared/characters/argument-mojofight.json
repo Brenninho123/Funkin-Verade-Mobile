@@ -48,7 +48,7 @@
 	"healthicon": "morajo-grr",
 	"healthfruit": "apple",
 	"fruit_colors": {
-		"colors": [255, 105, 104],
+		"color": [255, 105, 104],
 		"accent": [3, 248, 243]
 	},
 	"flip_x": false,
