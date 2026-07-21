@@ -170,7 +170,20 @@ class Main extends Sprite
 		fpsVar.visible = ClientPrefs.data.showFPS;
 
 		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
-		// FlxG.signals.preGameReset.add(Paths.clearStoredMemory); // "Cannot render destroyed graphic" fix
+		FlxG.signals.preGameReset.add(() -> 
+		{
+			final tracked:Array<String> = Paths.localTrackedAssets.copy();
+			for (i in tracked)
+			{
+				if (Paths.dumpExclusions.contains(i) || !Paths.currentTrackedAssets.exists(i)) continue;
+				final g:flixel.graphics.FlxGraphic = Paths.currentTrackedAssets[i];
+
+				Paths.currentTrackedAssets.remove(i);
+				Paths.localTrackedAssets.remove(i);
+				FlxG.bitmap.remove(g);
+			}
+			tracked.resize(0);
+		}); // "Cannot render destroyed graphic" fix
 		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour
 
 		#if (linux || mac) // fix the app icon not showing up on the Linux Panel / Mac Dock

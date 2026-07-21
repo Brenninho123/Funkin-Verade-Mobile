@@ -36,6 +36,7 @@ private enum abstract EasterEgg(String) from String to String
 	public static final ABEL:String = "abel";	
 	public static final AZEDO:String = "azedaria";
 	public static final JABUTICABA:String = "jabuticaba";
+	public static final ALGORITHOMUS:String = "algorithomus";
 
 	public static final repeatable:haxe.ds.ReadOnlyArray<EasterEgg> = [ABEL];
 }
@@ -135,6 +136,7 @@ class MainMenuState extends MusicBeatState
 		easterEggs = 
 		[
 			EasterEgg.ABEL => EasterEggHandler.spawnAbels,
+			EasterEgg.ALGORITHOMUS => EasterEggHandler.agmRef,
 			EasterEgg.AZEDO => EasterEggHandler.broGotBaited,
 			EasterEgg.JABUTICABA => EasterEggHandler.jabuticabaSequence
 		];
@@ -498,6 +500,9 @@ private class EasterEggHandler
 	static var white:FlxSprite;
 	static var jabuticaba:FlxSprite;
 
+	static inline final voluntariaPath:String = 'characters/voluntaria';
+	static var voluntariaPathRAW:String = Paths.getSharedPath('images/');
+
 	public static function precacheStuff()
 	{
 		Paths.cacheBitmap('images/credits/abel.png');
@@ -507,6 +512,16 @@ private class EasterEggHandler
 
 		Paths.cacheBitmap('images/JABUTICABA.png');
 		Paths.returnSound('music/invincible', true, false);
+
+		if (!voluntariaPathRAW.contains(voluntariaPath)) voluntariaPathRAW += voluntariaPath;
+		Paths.cacheBitmap('images/$voluntariaPath/agm/agm.png');
+		for (f in FileSystem.readDirectory(voluntariaPathRAW))
+		{
+			if (!f.endsWith('.png')) continue;
+			Paths.cacheBitmap('images/$voluntariaPath/$f');
+		}
+
+		Paths.returnSound('sounds/VOLUNTARIA RS', true, false);
 	}
 
 	public static function spawnAbels()
@@ -577,6 +592,46 @@ private class EasterEggHandler
 			jabuticaba.visible = true;
 			canSkipJabuticaba = true;
 		});
+	}
+
+	public static function agmRef()
+	{
+		currentEggs.resize(0);
+		currentEggs.push(EasterEgg.ALGORITHOMUS);
+
+		final screenSize:Float = FlxG.width * 1.2;
+		state.selectedSomethin = true;
+		FlxG.sound.music.stop();
+
+		var agmBG:FlxSprite = new FlxSprite(0, 0, Paths.image('$voluntariaPath/agm/agm'));
+		agmBG.setGraphicSize(screenSize); agmBG.updateHitbox();
+		agmBG.origin.y = 0;
+		agmBG.screenCenter(X).y -= agmBG.height + 10;
+		agmBG.x += 15;
+		agmBG.active = false;
+		agmBG.antialiasing = true;
+		state.add(agmBG);
+
+		var agm:flxanimate.FlxAnimate = new flxanimate.FlxAnimate(670, 640);
+		agm.loadAtlas(voluntariaPathRAW);
+		agm.anim.addBySymbol('agm', "Símbolo 1", 24, false);
+		agm.setGraphicSize(screenSize); agm.updateHitbox();
+		agm.antialiasing = ClientPrefs.data.antialiasing;
+		state.add(agm);
+
+		FlxTween.tween(agmBG, {"scale.y": 5.5}, 7.45);
+		agm.anim.play('agm');
+
+		agm.anim.onFrame.add((f) -> 
+		{
+			if (f != 85) return;
+			final strongLaugh:Bool = FlxG.random.bool();
+
+			var laugh:FlxSound = FlxG.sound.play(Paths.sound('VOLUNTARIA RS'));
+			if (strongLaugh) laugh.time = 4000;
+			else laugh.endTime = 2000;
+		});
+		agm.anim.onComplete.addOnce(FlxG.resetGame);
 	}
 
 	static function skipJabuticaba()
