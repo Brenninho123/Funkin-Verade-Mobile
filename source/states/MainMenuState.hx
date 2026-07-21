@@ -640,8 +640,8 @@ private class EasterEggHandler
 		canSkipJabuticaba = false;
 		state.selectedSomethin = false;
 
-		state.remove(white, true); white.destroy();
-		state.remove(jabuticaba, true); jabuticaba.destroy();
+		state.remove(white); white.destroy();
+		state.remove(jabuticaba); jabuticaba.destroy();
 		CoolUtil.playMenuSongForce(1);
 	}
 
