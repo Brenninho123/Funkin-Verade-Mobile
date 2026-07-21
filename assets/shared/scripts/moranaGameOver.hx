@@ -3,12 +3,16 @@ import substates.GameOverSubstate;
 var moranaSnap:FlxAnimate;
 var bf:Character;
 
-function create() Paths.cacheBitmap('images/characters/morganaWAKEUP/spritemap1.png');
+function create() {
+	Paths.cacheBitmap('images/characters/morganaWAKEUP/spritemap1.png');
+	Paths.returnSound('sounds/WAKE_TF_UP', null, true, false);
+	Paths.returnSound('sounds/wakeCall', null, true, false);
+}
 
 function onGameOverStart() {
 	bf = GameOverSubstate.instance.boyfriend;
 
-	moranaSnap = new FlxAnimate(bf.x - 440, bf.y + 40);
+	moranaSnap = new FlxAnimate(bf.x - 350, bf.y + 20);
 	Paths.loadAnimateAtlas(moranaSnap, 'characters/morganaWAKEUP');
 	moranaSnap.anim.addBySymbol('snap', 'Símbolo 1', 24, false);
 	moranaSnap.visible = false;
