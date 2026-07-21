@@ -80,6 +80,7 @@ description_discordRPC: "Unchecking this hides the Discord \"Playing\" box of th
 
 delay_beat_hit: "Beat Hit!"
 delay_current_offset: "Current offset: {1}MS"
+delay_shiftTip: "Hold SHIFT or {1} to offset 3x faster!"
 
 pause_resume: "Resume"
 pause_restart: "Restart"
@@ -103,6 +104,7 @@ musicplayer_paused: "PLAYING: {1} (PAUSED)"
 
 controls_rebinding: "Rebinding {1}"
 controls_rebinding2: "Hold ESC to Cancel\nHold Backspace to Delete"
+controls_switchMode: "{1} to change"
 keygroup_SETAS: "NOTES"
 key_note_left: "Left"
 key_note_down: "Down"

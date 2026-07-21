@@ -31,6 +31,15 @@ private typedef MenuOpt =
 	render:RenderData
 }
 
+private enum abstract EasterEgg(String) from String to String
+{
+	public static final ABEL:String = "abel";	
+	public static final AZEDO:String = "azedaria";
+	public static final JABUTICABA:String = "jabuticaba";
+
+	public static final repeatable:haxe.ds.ReadOnlyArray<EasterEgg> = [ABEL];
+}
+
 class MainMenuState extends MusicBeatState
 {
 	var optionShit:Array<String> = [];
@@ -54,11 +63,10 @@ class MainMenuState extends MusicBeatState
 	final bopInterval:Int = 2;
 	final lerpSpeed:Float = 6;
 
-	var easterEggs:Map<String, Void->Void> = [];
+	var easterEggs:Map<EasterEgg, Void->Void> = [];
 	var eggsLastClues:Array<Int> = [];
 	var eggsLastGuesses:Array<String> = [];
 	var eggHunts:Array<Void->Void> = [];
-	var lastFoundEgg:String = "";
 	var deivHitbox:FlxObject;
 
 	@:noCompletion inline function __selectionDataFromNode(element:Xml):Array<String>
@@ -123,14 +131,16 @@ class MainMenuState extends MusicBeatState
 		}
 
 		// Easter eggs são assinalados aqui pq não se pode acessar funções locais no declarar de variáveis
-		EasterEggs.state = this;
-		EasterEggs.precacheStuff();
+		EasterEggHandler.state = this;
 		easterEggs = 
 		[
-			"abel" => EasterEggs.spawnAbels/* ,
-			"algorithomus" => FlxG.resetGame */,
-			"azedaria" => EasterEggs.broGotBaited
+			EasterEgg.ABEL => EasterEggHandler.spawnAbels,
+			EasterEgg.AZEDO => EasterEggHandler.broGotBaited,
+			EasterEgg.JABUTICABA => EasterEggHandler.jabuticabaSequence
 		];
+
+		EasterEggHandler.precacheStuff();
+		for (i in 1...4) FlxG.sound.cache(Paths.getSharedPath('sounds/typing/$i.ogg'));
 
 		var eggId:Int = 0;
 		for (clues=>egg in easterEggs)
@@ -143,7 +153,7 @@ class MainMenuState extends MusicBeatState
 			FlxG.signals.postUpdate.add(huntTask);
 			++eggId;
 		}
-		FlxG.signals.postUpdate.add(EasterEggs.onUpdate);
+		FlxG.signals.postUpdate.add(EasterEggHandler.onUpdate);
 
 		super.create();
 		#if DISCORD_ALLOWED DiscordClient.changePresence("Choosing a Menu", "Menu Selection", true); #end
@@ -280,7 +290,7 @@ class MainMenuState extends MusicBeatState
 
 		controllerCursor.visible = deivHitbox.visible && controls.controllerMode;
 		FlxG.mouse.visible = deivHitbox.visible && !controls.controllerMode;
-		var deivMouseCheck:Bool = !controls.controllerMode ? (FlxG.mouse.overlaps(deivHitbox) && FlxG.mouse.justPressed) : (controllerCursor.overlaps(deivHitbox) && controls.ACCEPT);
+		final deivMouseCheck:Bool = !controls.controllerMode ? (FlxG.mouse.visible && FlxG.mouse.overlaps(deivHitbox) && FlxG.mouse.justPressed) : (controllerCursor.visible && controllerCursor.overlaps(deivHitbox) && controls.ACCEPT);
 
 		var up_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_up']) || FlxG.gamepads.anyJustPressed(DPAD_UP);
 		var down_p:Bool = FlxG.keys.anyJustPressed(controls.keyboardBinds['ui_down']) || FlxG.gamepads.anyJustPressed(DPAD_DOWN);
@@ -312,7 +322,7 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-		if ((deivHitbox != null && renderSprs[2].visible) && deivMouseCheck)
+		if (deivHitbox != null && deivMouseCheck)
 		{
 			if (!Achievements.achievementsUnlocked.contains('deivCameo')) Achievements.unlock('deivCameo');
 			else FlxG.sound.play(Paths.sound('plushie'));
@@ -339,7 +349,9 @@ class MainMenuState extends MusicBeatState
 	function huntForEgg(egg:Void->Void, eggId:Int, clues:String)
 	{
 		final keyPress:FlxKey = FlxG.keys.firstJustPressed();
-		if (keyPress == -1 || lastFoundEgg.length > 0) return;
+		final canUseMoreEggs:Bool = EasterEggHandler.currentEggs.length == 0 || EasterEggHandler.currentEggs.length == EasterEgg.repeatable.length;
+		if (keyPress == -1 || !canUseMoreEggs) return;
+
 		var eachClue:Array<String> = clues.split("");
 		inline function resetProgress()
 		{
@@ -347,20 +359,22 @@ class MainMenuState extends MusicBeatState
 			eggsLastGuesses[eggId] = "";
 		}
 
-		if (keyPress == FlxKey.fromString(eachClue[eggsLastClues[eggId] + 1])) eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
+		if (keyPress == FlxKey.fromString(eachClue[eggsLastClues[eggId] + 1]))
+		{
+			eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
+			FlxG.sound.play(Paths.soundRandom('typing/', 1, 3), 0.5);
+		}
 		else resetProgress();
 
-		if (eggsLastGuesses[eggId] == clues.toLowerCase() && lastFoundEgg.length == 0)
+		if (eggsLastGuesses[eggId] == clues.toLowerCase() && canUseMoreEggs)
 		{
-			lastFoundEgg = clues.toLowerCase();
 			// Cleanup
 			resetProgress();
 			eachClue.resize(0);
 
-			FlxG.sound.play(Paths.sound('confirmMenu'), 0.5);
+			FlxG.sound.play(Paths.sound('secret'));
 			egg();
 
-			lastFoundEgg = "";
 			for (c in eggsLastClues) c = -1;
 			for (g in eggsLastGuesses) g = "";
 		}
@@ -389,8 +403,8 @@ class MainMenuState extends MusicBeatState
 		eggsLastClues.resize(0);
 		eggsLastGuesses.resize(0);
 
-		FlxG.signals.postUpdate.remove(EasterEggs.onUpdate);
-		EasterEggs.onDestroy();
+		FlxG.signals.postUpdate.remove(EasterEggHandler.onUpdate);
+		EasterEggHandler.onDestroy();
 
 		lastMousePos.put();
 		curMousePos.put();
@@ -471,24 +485,34 @@ class MainMenuState extends MusicBeatState
 }
 
 @:access(states.MainMenuState)
-private class EasterEggs
+private class EasterEggHandler
 {
 	public static var state:MainMenuState;
+	public static var currentEggs(default, null):Array<EasterEgg> = [];
+
 	static var abels:Array<FlxSprite> = [];
-	static var abelVelocities:Array<Array<Float>> = [];
+	static final abelFallVel:FlxPoint = FlxPoint.get(0, 280);
+	static final abelJumpVel:FlxPoint = FlxPoint.get(28 -0.24);
+
+	static var canSkipJabuticaba:Bool;
+	static var white:FlxSprite;
+	static var jabuticaba:FlxSprite;
 
 	public static function precacheStuff()
 	{
 		Paths.cacheBitmap('images/credits/abel.png');
 
 		Paths.image('TROUXACAIUNOPAPO');
-		Paths.returnSound('music/secret', null, true, false);
+		Paths.returnSound('music/secret', true, false);
+
+		Paths.cacheBitmap('images/JABUTICABA.png');
+		Paths.returnSound('music/invincible', true, false);
 	}
 
 	public static function spawnAbels()
 	{
+		if (!currentEggs.contains(EasterEgg.ABEL)) currentEggs.push(EasterEgg.ABEL);
 		#if ACHIEVEMENTS_ALLOWED Achievements.unlock("abel.webp"); #end
-		abelVelocities.push([0, 280, 28, -0.24]); // Pares de X, Y tlgd
 
 		var abel:FlxSprite = new FlxSprite(0, 0, Paths.image('credits/abel'));
 		abel.scale.set(0.1, 0.1); abel.updateHitbox();
@@ -498,18 +522,21 @@ private class EasterEggs
 		abel.setPosition(posX, posY);
 		abels.push(abel);
 
-		abel.velocity.set(abelVelocities[abels.indexOf(abel)][0], abelVelocities[abels.indexOf(abel)][1]);
+		abel.velocity.set(abelFallVel.x, abelFallVel.y);
 		abel.drag.set(0, 15);
 		state.add(abel);
+		abelFallVel.put();
 	}
 
 	public static function broGotBaited()
 	{
+		currentEggs.push(EasterEgg.AZEDO);
 		state.selectedSomethin = true; // Desabilitar qualquer input que pode quebrar tudo
 
 		var azedou:FlxSprite = new FlxSprite(0, 0, Paths.image('TROUXACAIUNOPAPO'));
 		azedou.setGraphicSize(FlxG.width * 1.4, FlxG.height); azedou.updateHitbox();
 		azedou.screenCenter();
+		azedou.active = false;
 		state.add(azedou);
 
 		var bestSong:FlxSound = FlxG.sound.play(Paths.music('secret'), 0.85);
@@ -518,16 +545,54 @@ private class EasterEggs
 		FlxTimer.wait(20, () -> 
 		{
 			state.selectedSomethin = false;
-			state.remove(azedou, true);
-			bestSong.stop();
-			FlxG.sound.music.resume();
+			currentEggs.pop();
+
+			state.remove(azedou, true); azedou.destroy();
+			bestSong.stop(); FlxG.sound.music.resume();
 		});
+	}
+
+	public static function jabuticabaSequence()
+	{
+		currentEggs.push(EasterEgg.JABUTICABA);
+		state.selectedSomethin = true;
+
+		white = new FlxSprite().makeGraphic(1, 1, ClientPrefs.data.flashing ? FlxColor.WHITE : FlxColor.GRAY);
+		white.setGraphicSize(FlxG.width * 1.1, FlxG.height * 1.1); white.updateHitbox();
+		white.screenCenter();
+		white.active = false;
+		state.add(white);
+
+		jabuticaba = new FlxSprite(0, 0, Paths.image('JABUTICABA'));
+		jabuticaba.scale.set(1.22, 1.22); jabuticaba.updateHitbox();
+		jabuticaba.screenCenter();
+		jabuticaba.visible = false;
+		jabuticaba.active = false;
+		state.add(jabuticaba);
+
+		FlxG.sound.playMusic(Paths.music('invincible'), false);
+		FlxG.sound.music.onComplete = skipJabuticaba;
+		FlxTimer.wait(11, () -> 
+		{
+			jabuticaba.visible = true;
+			canSkipJabuticaba = true;
+		});
+	}
+
+	static function skipJabuticaba()
+	{
+		currentEggs.pop();
+		canSkipJabuticaba = false;
+		state.selectedSomethin = false;
+
+		state.remove(white, true); white.destroy();
+		state.remove(jabuticaba, true); jabuticaba.destroy();
+		CoolUtil.playMenuSongForce(1);
 	}
 
 	public static function onUpdate()
 	{
-		if (abels.length > 0)
-		{
+		if (currentEggs.contains(EasterEgg.ABEL))
 			for (i=>abel in abels)
 			{
 				var bounds:flixel.math.FlxRect = FlxG.camera.getViewMarginRect();
@@ -539,19 +604,22 @@ private class EasterEggs
 				if (abelHeight >= bounds.bottom)
 				{
 					FlxTween.tween(abel, {y: abel.y - 12}, 0.23, {ease: FlxEase.backOut, type: PINGPONG});
-					abel.velocity.set(abelVelocities[i][2], abelVelocities[i][3]);
+					abel.velocity.set(abelJumpVel.x, abelJumpVel.y);
 				}
 
 				if (abelWidth >= bounds.right)
 				{
-					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut, onStart: (_) -> abelVelocities[i][2] *= -1});
+					FlxTween.tween(abel, {x: abel.x - 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut, onStart: (_) -> abelJumpVel.x *= -1});
 				}
 				if (abel.x <= bounds.left)
 				{
-					FlxTween.tween(abel, {x: abel.x + 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut, onStart: (_) -> abelVelocities[i][2] *= -1});
+					FlxTween.tween(abel, {x: abel.x + 12, "scale.x": -abel.scale.x}, 0.23, {ease: FlxEase.backOut, onStart: (_) -> abelJumpVel.x *= -1});
 				}
 			}
-		}
+
+		if (!currentEggs.contains(EasterEgg.JABUTICABA)) return;
+		if (canSkipJabuticaba && FlxG.keys.justPressed.ANY)
+			skipJabuticaba();
 	}
 
 	public static function onDestroy()
@@ -562,6 +630,9 @@ private class EasterEggs
 			abel.destroy();
 		}
 		abels.resize(0);
-		abelVelocities.resize(0);
+		abelFallVel.put();
+		abelJumpVel.put();
+
+		currentEggs.resize(0);
 	}
 }

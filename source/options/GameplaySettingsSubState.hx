@@ -1,23 +1,43 @@
 package options;
 
+import objects.StrumNote;
+
 class GameplaySettingsSubState extends BaseOptionsMenu
 {
+	var DOWNSCROLL_Y:Float;
+	var notes:FlxTypedGroup<StrumNote>;
+	var showNotes:Bool = true;
+
 	public function new()
 	{
 		title = Language.getPhrase('gameplay_menu', 'Configurações de Gameplay');
 		rpcTitle = 'Gameplay Settings Menu'; //for Discord Rich Presence
+		DOWNSCROLL_Y = (FlxG.height - 150);
+
+		notes = new FlxTypedGroup<StrumNote>(4);
+		for (i in 0...notes.maxSize)
+		{
+			var note:StrumNote = new StrumNote(
+				ClientPrefs.data.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 
+				ClientPrefs.data.downScroll ? DOWNSCROLL_Y : PlayState.STRUM_Y, 
+			i, 1);
+			note.playerPosition();
+			notes.add(note);
+		}
 
 		//I'd suggest using "Downscroll" as an example for making your own option since it is the simplest here
 		var option:Option = new Option('Downscroll', //Name
 			"Se marcado, faz as notas irem pra baixo invés de irem pra cima, simples assim.", //Description
 			'downScroll', //Save data variable name
 			BOOL); //Variable type
+		option.onChange = onScrollChange;
 		addOption(option);
 
 		var option:Option = new Option('Middlescroll',
 			"Se marcado, suas notas ficam centralizadas na tela.",
 			'middleScroll',
 			BOOL);
+		option.onChange = onScrollChange;
 		addOption(option);
 
 		var option:Option = new Option('Mostrar Notas do Oponente',
@@ -91,6 +111,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		}
 
 		super();
+		insert(members.indexOf(descBox), notes);
 	}
 
 	inline function onChangeHitsoundVolume()
@@ -98,4 +119,36 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 
 	inline function onChangeAutoPause()
 		FlxG.autoPause = ClientPrefs.data.autoPause;
+
+	override function changeSelection(change:Int = 0)
+	{
+		super.changeSelection(change);
+		if (showNotes == (showNotes = curOption.variable.endsWith('Scroll'))) return;
+
+		final targetAlpha:Float = !showNotes ? 0.0001 : 1;
+		for (n in notes.members)
+		{
+			FlxTween.cancelTweensOf(n, ['alpha']);
+			FlxTween.tween(n, {alpha: targetAlpha}, 0.5, {ease: FlxEase.cubeOut});
+		}
+	}
+
+	function onScrollChange()
+	{
+		var targetPos:Float = 0;
+		final changeY:Bool = curOption.variable.startsWith('down');
+
+		if (changeY)
+			targetPos = curOption.getValue() ? DOWNSCROLL_Y : PlayState.STRUM_Y;
+		else
+			targetPos = curOption.getValue() ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X;
+
+		for (i=>n in notes.members)
+		{
+			final xAdd:Float = (objects.Note.swagWidth * i) + 50 + (FlxG.width / 2);
+
+			FlxTween.cancelTweensOf(n, ['x', 'y']);
+			FlxTween.tween(n, {x: !changeY ? (targetPos + xAdd) : n.x, y: changeY ? targetPos : n.y}, 1, {ease: FlxEase.cubeOut});
+		}
+	}
 }

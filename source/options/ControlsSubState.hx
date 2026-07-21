@@ -58,9 +58,10 @@ class ControlsSubState extends MusicBeatSubstate
 
 	var gamepadColor:FlxColor = 0xfffd7194;
 	var keyboardColor:FlxColor = 0xff7192fd;
-	var onKeyboardMode:Bool = true;
+	var onKeyboardMode:Bool = !controls.controllerMode;
 	
 	var controllerSpr:FlxSprite;
+	var typeChangeTxt:Alphabet;
 	
 	public function new()
 	{
@@ -75,7 +76,7 @@ class ControlsSubState extends MusicBeatSubstate
 		options.push([true, defaultKey]);
 
 		bg = new FlxSprite(0, 0, Paths.image('menuBG'));
-		bg.color = keyboardColor;
+		bg.color = onKeyboardMode ? keyboardColor : gamepadColor;
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.screenCenter();
 		add(bg);
@@ -98,14 +99,21 @@ class ControlsSubState extends MusicBeatSubstate
 		controllerSpr.antialiasing = ClientPrefs.data.antialiasing;
 		controllerSpr.animation.add('keyboard', [0], 1, false);
 		controllerSpr.animation.add('gamepad', [1], 1, false);
+		controllerSpr.animation.play(onKeyboardMode ? 'keyboard' : 'gamepad');
 		add(controllerSpr);
 
-		var text:Alphabet = new Alphabet(60, 90, 'CTRL', false);
-		text.alignment = CENTERED;
-		text.setScale(0.4);
-		add(text);
+		typeChangeTxt = new Alphabet((controllerSpr.x + controllerSpr.width) + 10, controllerSpr.y + 3, getTypeHint(), false);
+		typeChangeTxt.alignment = LEFT;
+		typeChangeTxt.setScale(0.4);
+		add(typeChangeTxt);
 
 		createTexts();
+	}
+
+	inline function getTypeHint():String
+	{
+		final changeKeybinds:String = onKeyboardMode ? 'CTRL' : '${InputFormatter.getGamepadName(LEFT_SHOULDER)}/${InputFormatter.getGamepadName(RIGHT_SHOULDER)}';
+		return Language.getPhrase('controls_switchMode', '{1} para mudar', [changeKeybinds]);
 	}
 
 	var lastID:Int = 0;
@@ -504,6 +512,8 @@ class ControlsSubState extends MusicBeatSubstate
 		curSelected = 0;
 		curAlt = false;
 		controllerSpr.animation.play(onKeyboardMode ? 'keyboard' : 'gamepad');
+
+		typeChangeTxt.text = getTypeHint();
 		createTexts();
 	}
 

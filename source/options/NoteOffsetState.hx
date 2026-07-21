@@ -88,7 +88,19 @@ class NoteOffsetState extends MusicBeatState
 		timeTxt.screenCenter(X).y = (timeBar.y + (timeBar.height / 2)) - (timeTxt.height / 2);
 		timeTxt.antialiasing = true;
 		timeTxt.scrollFactor.set();
+		timeTxt.active = false;
 		add(timeTxt);
+
+		final tipTxt:String = Language.getPhrase('delay_shiftTip', 'Segure SHIFT ou {1} para mexer no atraso 3x mais rápido!', [backend.InputFormatter.getGamepadName(LEFT_SHOULDER)]);
+		final tip:FlxText = new FlxText(0, 12, 0, '$tipTxt\n');
+		tip.setFormat(timeTxt.font, 24, FlxColor.WHITE, RIGHT);
+		tip.setBorderStyle(OUTLINE_FAST, FlxColor.BLACK, 2);
+		tip.x = (FlxG.width - tip.width) - 12;
+		tip.camera = camHUD;
+		tip.antialiasing = true;
+		tip.scrollFactor.set();
+		tip.active = false;
+		add(tip);
 
 		updateNoteDelay();
 		super.create();
