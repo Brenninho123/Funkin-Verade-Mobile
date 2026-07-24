@@ -173,5 +173,15 @@ class CoolUtil
 		Conductor.bpm = 102;
 	}
 
-	public static inline function pointsAreEqual(point1:FlxPoint, point2:FlxPoint) { return (point1.x == point2.x && point1.y == point2.y); }
+	public static inline function pointsAreEqual(point1:FlxPoint, point2:FlxPoint):Bool { return (point1.x == point2.x && point1.y == point2.y); }
+
+	/**
+	 * FlxSound uses a list for playing sounds (in order to have multiple). 
+	 * But since there's no way to access the latest sound for doing anything, you gotta use some fat code.
+	 * 
+	 * Hence why I made this shorthand, enjoy.
+	 * @author BerGP
+	 * @return Bool
+	 */
+	public static inline function isSoundPlaying():Bool { return FlxG.sound.list.getLast((s) -> s.exists == true)?.playing; }
 }

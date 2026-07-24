@@ -108,6 +108,12 @@ class MainMenuState extends MusicBeatState
 		super();
 	}
 
+	override function finishTransIn()
+	{
+		super.finishTransIn();
+		MusicBeatState.customTransClass = "states.transitions.AppleZoomTransition"; // Reset to Default so game restart doesn't break
+	}
+
 	override function create()
 	{
 		FlxG.mouse.visible = false;
@@ -141,8 +147,10 @@ class MainMenuState extends MusicBeatState
 			EasterEgg.JABUTICABA => EasterEggHandler.jabuticabaSequence
 		];
 
-		EasterEggHandler.precacheStuff();
+		EasterEggHandler.init();
 		for (i in 1...4) FlxG.sound.cache(Paths.getSharedPath('sounds/typing/$i.ogg'));
+		FlxG.sound.cache(Paths.getSharedPath('sounds/typing/wrong.ogg'));
+		FlxG.sound.cache(Paths.getSharedPath('sounds/secret.ogg'));
 
 		var eggId:Int = 0;
 		for (clues=>egg in easterEggs)
@@ -355,7 +363,7 @@ class MainMenuState extends MusicBeatState
 		if (keyPress == -1 || !canUseMoreEggs) return;
 
 		var eachClue:Array<String> = clues.split("");
-		inline function resetProgress()
+		function resetProgress()
 		{
 			eggsLastClues[eggId] = -1;
 			eggsLastGuesses[eggId] = "";
@@ -366,7 +374,14 @@ class MainMenuState extends MusicBeatState
 			eggsLastGuesses[eggId] += eachClue[++eggsLastClues[eggId]];
 			FlxG.sound.play(Paths.soundRandom('typing/', 1, 3), 0.5);
 		}
-		else resetProgress();
+		else if (~/^[a-z]$/i.match( FlxKey.fromString(keyPress) ))
+		{
+			final youreLikelyWrong:Bool = eggsLastGuesses.indexOf("", eggId) != eggId && Lambda.count(eggsLastGuesses, (g) -> g.length == 0) < eggsLastGuesses.length;
+
+			// Sound check incase the "likely wrong" prediction failed (aka eggs including this starting with a shared letter and another letter is typed)
+			if (youreLikelyWrong && !CoolUtil.isSoundPlaying()) FlxG.sound.play(Paths.sound('typing/wrong'), 0.75);
+			resetProgress();
+		}
 
 		if (eggsLastGuesses[eggId] == clues.toLowerCase() && canUseMoreEggs)
 		{
@@ -374,11 +389,10 @@ class MainMenuState extends MusicBeatState
 			resetProgress();
 			eachClue.resize(0);
 
-			FlxG.sound.play(Paths.sound('secret'));
 			egg();
-
-			for (c in eggsLastClues) c = -1;
-			for (g in eggsLastGuesses) g = "";
+			FlxG.sound.play(Paths.sound('secret'));
+			for (c in 0...eggsLastClues.length) eggsLastClues[c] = -1;
+			for (g in 0...eggsLastGuesses.length) eggsLastGuesses[g] = "";
 		}
 	}
 
@@ -395,7 +409,7 @@ class MainMenuState extends MusicBeatState
 		// "Easter Hunt" cleanup
 		for (i in 0...eggHunts.length)
 		{
-			FlxG.signals.preUpdate.remove(eggHunts[i]);
+			FlxG.signals.postUpdate.remove(eggHunts[i]);
 			eggHunts[i] = null;
 		}
 		for (i in easterEggs.keys()) easterEggs[i] = null;
@@ -493,18 +507,24 @@ private class EasterEggHandler
 	public static var currentEggs(default, null):Array<EasterEgg> = [];
 
 	static var abels:Array<FlxSprite> = [];
-	static final abelFallVel:FlxPoint = FlxPoint.get(0, 280);
-	static final abelJumpVel:FlxPoint = FlxPoint.get(28 -0.24);
+	static var abelFallVel(default, null):FlxPoint;
+	static var abelJumpVel(default, null):FlxPoint;
 
 	static var canSkipJabuticaba:Bool;
 	static var white:FlxSprite;
 	static var jabuticaba:FlxSprite;
+	static var jabuticabaSnd:FlxSound;
 
 	static inline final voluntariaPath:String = 'characters/voluntaria';
 	static var voluntariaPathRAW:String = Paths.getSharedPath('images/');
 
-	public static function precacheStuff()
+	/**
+	 * Does precaching and initializes stuff if needed.
+	 */
+	public static function init()
 	{
+		abelFallVel = FlxPoint.get(0, 280);
+		abelJumpVel = FlxPoint.get(28 -0.24);
 		Paths.cacheBitmap('images/credits/abel.png');
 
 		Paths.image('TROUXACAIUNOPAPO');
@@ -540,7 +560,6 @@ private class EasterEggHandler
 		abel.velocity.set(abelFallVel.x, abelFallVel.y);
 		abel.drag.set(0, 15);
 		state.add(abel);
-		abelFallVel.put();
 	}
 
 	public static function broGotBaited()
@@ -589,6 +608,7 @@ private class EasterEggHandler
 		FlxG.sound.music.onComplete = skipJabuticaba;
 		FlxTimer.wait(11, () -> 
 		{
+			jabuticabaSnd = FlxG.sound.play(Paths.sound('lindo'), false, false);
 			jabuticaba.visible = true;
 			canSkipJabuticaba = true;
 		});
@@ -674,7 +694,23 @@ private class EasterEggHandler
 
 		if (!currentEggs.contains(EasterEgg.JABUTICABA)) return;
 		if (canSkipJabuticaba && FlxG.keys.justPressed.ANY)
-			skipJabuticaba();
+		{
+			if (!jabuticabaSnd?.playing)
+			{
+				if (jabuticabaSnd == null)
+				{
+					jabuticabaSnd = FlxG.sound.play(Paths.sound('lindo'), skipJabuticaba);
+					jabuticabaSnd.endTime = 1849;
+				}
+				else
+				{
+					jabuticabaSnd.onComplete = skipJabuticaba;
+					jabuticabaSnd.play(true, 0, 1849);
+				}
+			}
+			else
+				skipJabuticaba();
+		}
 	}
 
 	public static function onDestroy()
