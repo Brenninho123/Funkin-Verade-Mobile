@@ -1,5 +1,5 @@
 name: Bug report
-description: Report bugs with the engine here
+description: Report bugs with the mod here
 labels: [bug]
 body:
   - type: textarea
@@ -18,26 +18,14 @@ body:
       required: false
 
   - type: dropdown
-    id: modding
-    attributes:
-      label: "Are you modding a build from source or with Lua?"
-      options:
-        - Lua
-        - Source
-    validations:
-      required: true
-
-  - type: dropdown
     id: btarget
     attributes:
-      label: "What is your build target?"
+      label: "Where are you playing/modding from?"
       options:
         - "Windows"
         - "Linux"
         - "Mac"
-        - "HTML5"
-        - "Flash/Air-based target"
-        - "Neko, HashLink, or other build system"
+        - "Other (specify in description)"
     validations:
       required: true
 
