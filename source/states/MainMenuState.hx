@@ -148,9 +148,9 @@ class MainMenuState extends MusicBeatState
 		];
 
 		EasterEggHandler.init();
-		for (i in 1...4) FlxG.sound.cache(Paths.getSharedPath('sounds/typing/$i.ogg'));
-		FlxG.sound.cache(Paths.getSharedPath('sounds/typing/wrong.ogg'));
-		FlxG.sound.cache(Paths.getSharedPath('sounds/secret.ogg'));
+		for (i in 1...4) Paths.returnSound('sounds/typing/$i', true, false);
+		Paths.returnSound('sounds/typing/wrong', true, false);
+		Paths.returnSound('sounds/secret', true, false);
 
 		var eggId:Int = 0;
 		for (clues=>egg in easterEggs)
@@ -542,6 +542,7 @@ private class EasterEggHandler
 		}
 
 		Paths.returnSound('sounds/VOLUNTARIA RS', true, false);
+		Paths.returnSound('music/ohShit', true, false);
 	}
 
 	public static function spawnAbels()
@@ -621,7 +622,7 @@ private class EasterEggHandler
 
 		final screenSize:Float = FlxG.width * 1.2;
 		state.selectedSomethin = true;
-		FlxG.sound.music.stop();
+		FlxG.sound.playMusic(Paths.music('ohShit'), false);
 
 		var agmBG:FlxSprite = new FlxSprite(0, 0, Paths.image('$voluntariaPath/agm/agm'));
 		agmBG.setGraphicSize(screenSize); agmBG.updateHitbox();
@@ -647,7 +648,7 @@ private class EasterEggHandler
 			if (f != 85) return;
 			final strongLaugh:Bool = FlxG.random.bool();
 
-			var laugh:FlxSound = FlxG.sound.play(Paths.sound('VOLUNTARIA RS'));
+			var laugh:FlxSound = FlxG.sound.play(Paths.sound('VOLUNTARIA RS'), false, false);
 			if (strongLaugh) laugh.time = 4000;
 			else laugh.endTime = 2000;
 		});
