@@ -3091,6 +3091,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
+		OptionsState.onPlayState = false;
 
 		FlxG.camera.filters = null;
 		stopTheMusic();

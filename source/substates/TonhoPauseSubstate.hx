@@ -63,7 +63,6 @@ class TonhoPauseSubstate extends MusicBeatSubstate
 				music.stop();
 				if (extraOptions.length > 0) extraOptions.resize(0);
 
-				OptionsState.onPlayState = false;
 				#if DEMO
 				FlxG.switchState(() -> new states.MainMenuState());
 				#else
