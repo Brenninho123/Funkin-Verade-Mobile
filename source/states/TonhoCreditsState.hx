@@ -33,7 +33,7 @@ private enum abstract SocialMediaType(String) from String to String
 	public static final REDDIT:String = "Reddit";
 	public static final TTK:String = "TikTok";
 	public static final CARRD:String = "Carrd";
-	public static final OTHER:String = "???";
+	public static final OTHER:String = "Link";
 }
 
 private enum abstract PaintingCharacter(String) from String to String
@@ -78,10 +78,10 @@ private class SocialMedia
 		return switch (social)
 		{
 			case SocialMediaType.TWITTER: 'x.com/${_data.link}';
-			case SocialMediaType.DISCORD: 'discord.com/users/${_data.link}';
+			case SocialMediaType.DISCORD: 'discord://-/users/${_data.link}'; // Abre no app do Discord, se possível
 			case SocialMediaType.YT: 'youtube.com/@${_data.link}';
 			case SocialMediaType.NG: '${_data.link}.newgrounds.com';
-			case SocialMediaType.BSKY: 'bsky.app/profile/did:plc:${_data.link}';
+			case SocialMediaType.BSKY: 'bsky.app/profile/${_data.link}';
 			case SocialMediaType.REDDIT: 'reddit.com/user/${_data.link}';
 			case SocialMediaType.TTK: 'tiktok.com/@${_data.link}';
 			case SocialMediaType.CARRD: '${_data.link}.carrd.co';
@@ -90,7 +90,7 @@ private class SocialMedia
 	}
 
 	public inline function getAccName():String { return _data.display ?? '@${_data.link}'; }
-	public inline function toString():String { return social; }
+	public inline function toString():String { return 'Social Media: $social(${_data.link})'; }
 }
 
 class TonhoCreditsState extends MusicBeatState
@@ -107,7 +107,9 @@ class TonhoCreditsState extends MusicBeatState
 		"default" => [0xFFADADAD, 0xFF3F3F3F]
 	];
 	var socialDatas:Array<Array<SocialMedia>> = [];
+	var prevSocials:Array<SocialMediaType> = []; // Used for avoiding less calls to `FlxSprite.loadGraphic`
 	static var curSelected:Int;
+	static var firstChange:Bool = true;
 
 	var blockInput:Bool;
 	var controllerCursor:GamepadCursor;
@@ -115,7 +117,7 @@ class TonhoCreditsState extends MusicBeatState
 	var curMousePos:FlxPoint = new FlxPoint();
 
 	static var alreadyIntrodid:Bool;
-	static final MAGIC_MARGIN:Int = 12;
+	static inline final MAGIC_MARGIN:Int = 12;
 	var portraitGroup:FlxTypedContainer<FlxSprite>;
 	var camFollow:flixel.FlxObject;
 	var gradColor:shaders.RGBPalette;
@@ -132,6 +134,7 @@ class TonhoCreditsState extends MusicBeatState
 	var separator:FlxSprite;
 	var social1Ico:AttachedSprite; var social1:FlxText;
 	var social2Ico:AttachedSprite; var social2:FlxText;
+	static inline final SOCIAL_ICON_SCALE:Float = 0.5;
 
 	var quoteBG:FlxSprite;
 	var quoteOffs:Float; // Tamanho da setinha lá do balão
@@ -143,6 +146,7 @@ class TonhoCreditsState extends MusicBeatState
 		creds = haxe.Json.parse(Paths.getTextFromFile('data/menus/credits.json'));
 		curSelected = FlxMath.wrap(curSelected, 0, creds.length - 1);
 
+		firstChange = true;
 		super();
 	}
 
@@ -274,7 +278,7 @@ class TonhoCreditsState extends MusicBeatState
 		social1.scrollFactor.set();
 
 		social1Ico = new AttachedSprite('credits/socials/Discord'); // Just to have image size for position calc
-		social1Ico.scale.set(0.5, 0.5); social1Ico.updateHitbox();
+		social1Ico.scale.set(SOCIAL_ICON_SCALE, SOCIAL_ICON_SCALE); social1Ico.updateHitbox();
 		social1Ico.sprTracker = social1;
 		social1Ico.xAdd = social1Ico.width;
 		social1Ico.yAdd = -social1Ico.height;
@@ -393,25 +397,33 @@ class TonhoCreditsState extends MusicBeatState
 
 	function changeSelection(change:Int)
 	{
-		if (socialDatas[curSelected] != null)
+		if (socialDatas[curSelected] != null) // Reset
 		{
 			if (socialDatas[curSelected][0].social == SocialMediaType.OTHER)
 			{
-				social1Ico.scale.set(0.5, 0.5);
+				social1Ico.scale.set(SOCIAL_ICON_SCALE, SOCIAL_ICON_SCALE);
 				social1Ico.updateHitbox();
 			}
-
 			if (socialDatas[curSelected][1]?.social == SocialMediaType.OTHER)
 			{
-				social2Ico.scale.set(0.5, 0.5);
+				social2Ico.scale.set(SOCIAL_ICON_SCALE, SOCIAL_ICON_SCALE);
 				social2Ico.updateHitbox();
 			}
+			
+			if (!firstChange)
+			{
+				prevSocials[0] = socialDatas[curSelected][0].social;
+				prevSocials[1] = socialDatas[curSelected][1]?.social;
+			}
 		}
+		else
+			prevSocials = prevSocials.map((s) -> s = null);
 
 		curSelected = FlxMath.wrap(curSelected + change, 0, creds.length - 1);
 		changeGradient(colors[creds[curSelected].frameChar ?? "default"]);
 		camFollow.y = portraitGroup.members[curSelected].y + (portraitGroup.members[curSelected].height / 2);
 		descTxt.text = '[${creds[curSelected].role}]\n${creds[curSelected].doings}';
+		firstChange = false;
 
 		quoteBG.visible = creds[curSelected].quote != null;
 		lilQuoteIMG.visible = Paths.fileExists('images/${creds[curSelected].quote}', IMAGE);
@@ -433,18 +445,20 @@ class TonhoCreditsState extends MusicBeatState
 
 		separator.visible = social1.visible = social2.visible = socialDatas[curSelected] != null;
 		if (!social1.visible) return;
-		updateSocialInfo(socialDatas[curSelected][0], social1, social1Ico);
+		updateSocialInfo(socialDatas[curSelected][0], prevSocials[0], social1, social1Ico);
 
 		social2.visible = socialDatas[curSelected].length >= 2;
 		if (!social2.visible) return;
-		updateSocialInfo(socialDatas[curSelected][1], social2, social2Ico);
+		updateSocialInfo(socialDatas[curSelected][1], prevSocials[1], social2, social2Ico);
 	}
 
 	override function destroy()
 	{
+		for (c in colors) c.resize(0);
 		colors.clear();
 		creds.resize(0);
 		socialDatas.resize(0);
+		prevSocials.resize(0);
 
 		lastMousePos.put();
 		curMousePos.put();
@@ -459,14 +473,21 @@ class TonhoCreditsState extends MusicBeatState
 		gradColor.b = colors[1];
 	}
 
-	inline function updateSocialInfo(socialData:SocialMedia, text:FlxText, icon:FlxSprite)
+	inline function updateSocialInfo(socialData:SocialMedia, prevSocial:SocialMediaType, text:FlxText, icon:FlxSprite)
 	{
 		text.text = socialData.getAccName();
 		text.y = (infoBG.y + infoBG.height) - (text.height + MAGIC_MARGIN);
+		if (socialData.social == prevSocial)
+		{
+			icon.updateHitbox();
+			return;
+		}
 
 		final unknownSocial:Bool = socialData.social == SocialMediaType.OTHER;
-		icon.loadGraphic(!unknownSocial ? Paths.image('credits/socials/${socialData.social}') : Paths.image('achievements/menu/unknownAchieve'));
-		if (unknownSocial) icon.setGraphicSize(150 / 2);
+		final socialIcon:String = !unknownSocial ? 'credits/socials/${socialData.social}' : 'achievements/menu/unknownAchieve';
+
+		icon.loadGraphic(Paths.image(socialIcon));
+		if (unknownSocial) icon.setGraphicSize(150 * SOCIAL_ICON_SCALE); // 150 é o tamanho de todos os ícone de social
 		icon.updateHitbox();
 	}
 }

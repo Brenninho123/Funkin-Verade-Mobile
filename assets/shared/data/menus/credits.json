@@ -102,8 +102,8 @@
 			{ "link": "Blazyhok", "social": "twitter" },
 			{
 				"display": "Blazy",
-				"link": "Blazyhok",
-				"social": "yt"
+				"link": "blazy.hok",
+				"social": "tiktok"
 			}
 		],
 		"quote": "Eu sou o Blazy, também conhecido como BlazyHOK no TikTok, basicamente eu desenho umas coisas aí :P"
@@ -121,7 +121,11 @@
 		"frameChar": "azedo",
 		"socials": [
 			{ "link": "BruhOliverLol", "social": "yt" },
-			{ "link": "BruhOliverLol", "social": "twitter" }
+			{
+				"display": "Oliver's Amazing Site",
+				"link": "oliverspace.neocities.org",
+				"social": "site"
+			}
 		],
 		"quote": "oliversays.png"
 	},
@@ -141,13 +145,7 @@
 		"role": "Compositor",
 		"doings": "Fez a música de Game Over.",
 		"frameChar": "azedo",
-		"socials": [
-			{
-				"display": "Spray Kks",
-				"link": "spray_kks",
-				"social": "yt"
-			}
-		],
+		"socials": [{ "link": "spray_kks", "social": "yt" }],
 		"quote": "Bom dia — disse Spray\nde Madrugada"
 	},
 	{
@@ -171,11 +169,11 @@
 		"socials": [
 			{
 				"display": "Luana owo",
-				"link": "Linawuzkk",
+				"link": "Luanadofnf",
 				"social": "yt"
 			},
 			{
-				"display": "Lua.",
+				"display": "Sayori",
 				"link": "Luanadofnf",
 				"social": "twitter"
 			}
@@ -189,12 +187,35 @@
 		"frameChar": "zulmi",
 		"socials": [
 			{
-				"display": "M4RK",
+				"display": "TheM4RK_",
 				"link": "THE_MarkBitCrusher",
 				"social": "yt"
+			},
+			{
+				"display": "TheM4RK_",
+				"link": "_TheMarkByte",
+				"social": "twitter"
 			}
 		],
 		"quote": "Socorro, tô aprisionado no porão do Deiv e agora ele tá me fazendo trabalhar"
+	},
+	{
+		"name": "ldrtord",
+		"role": "Tester",
+		"doings": "Gravou e irá gravar vídeos de gameplay do mod.",
+		"frameChar": "pessy",
+		"socials": [
+			{
+				"link": "ldrtord",
+				"social": "yt"
+			},
+			{
+				"display": "@ldrtord",
+				"link": "866713442940354591",
+				"social": "dc"
+			}
+		],
+		"quote": "larper.png"
 	},
 	{
 		"name": "hutaroz",
@@ -275,7 +296,11 @@
 				"link": "PipocaAventuras",
 				"social": "yt"
 			},
-			{ "link": "eobennation", "social": "twitter" }
+			{
+				"display": "bennation",
+				"link": "eobennation",
+				"social": "twitter"
+			}
 		],
 		"quote": "Oi eu sou o Goku sou um super sayajin"
 	},
@@ -285,7 +310,11 @@
 		"doings": "Fez a música de menu principal, artes do menu de pause, artes de opção pro menu principal, e editou o trailer do mod.",
 		"frameChar": "zulmi",
 		"socials": [
-			{ "link": "June2011_XD", "social": "twitter" },
+			{
+				"display": "★JULIANNE!★",
+				"link": "June2011_XD",
+				"social": "twitter"
+			},
 			{
 				"display": "June!",
 				"link": "485126932015349762",
@@ -299,7 +328,13 @@
 		"role": "Artista",
 		"doings": "Fez o banner do youtube do mod e a arte do casal no menu principal.",
 		"frameChar": "azedo",
-		"socials": [{ "link": "Shy_Devy", "social": "twitter" }]
+		"socials": [
+			{
+				"display": "uLiam",
+				"link": "Shy_Devy",
+				"social": "twitter"
+			}
+		]
 	},
 	{
 		"name": "bergp4504",
@@ -332,7 +367,7 @@
 		"frameChar": "pessy",
 		"socials": [
 			{
-				"display": "AeFelipe",
+				"display": "Ae",
 				"link": "861659008938541116",
 				"social": "dc"
 			}
@@ -360,13 +395,8 @@
 		"frameChar": "torajo",
 		"socials": [
 			{
-				"display": "GL",
-				"link": "1270491646148083823",
-				"social": "dc"
-			},
-			{
 				"display": "GL560",
-				"link": "6j6lariayjx4lcuhfb4qd3cn",
+				"link": "gl560.bsky.social",
 				"social": "bsky"
 			}
 		],
@@ -406,10 +436,14 @@
 		"socials": [
 			{
 				"display": "Sofia",
-				"link": "S0fiaOfficiial",
+				"link": "S0fiaa1_01",
 				"social": "yt"
 			},
-			{ "link": "S0fiaa1_", "social": "twitter" }
+			{
+				"display": "S0fia",
+				"link": "S0fiaa1_",
+				"social": "twitter"
+			}
 		]
 	},
 	{
@@ -464,22 +498,27 @@
 		"frameChar": "zulmi",
 		"socials": [
 			{
-				"display": "BlueBoy",
-				"link": "BlueBoyArkan",
+				"display": "Zio BlueBoy",
+				"link": "ZioBlueBoy",
 				"social": "yt"
+			},
+			{
+				"display": "BlueBoy",
+				"link": "1049708962158751744",
+				"social": "dc"
 			}
 		],
 		"quote": "Entre raios e trovões, um campeão nascerá!"
 	},
 	{
-		"name": "lilimaky",
+		"name": "moonny_trickster",
 		"role": "Voice Actor",
 		"doings": "Da vida pra Morana!",
 		"frameChar": "morajo",
 		"socials": [
 			{
-				"display": "LihCandy-Dubs",
-				"link": "Lihdubs",
+				"display": "Moonny-Trickster",
+				"link": "Moonnydubs",
 				"social": "yt"
 			}
 		],
@@ -509,6 +548,18 @@
 		"role": "HOMENAGEM",
 		"doings": "Em homenagem ao cara que criou este incrível Mundo de Frutas! Você é nossa inspiração e por isso fizemos todo esse mod pelo seu trabalho incrível e do porão também",
 		"frameChar": "torajo",
+		"socials": [
+			{
+				"display": "Bruno Gemin",
+				"link": "bruno_gemin",
+				"social": "yt"
+			},
+			{
+				"display": "Mundo Torajo",
+				"link": "Torajo",
+				"social": "yt"
+			}
+		],
 		"quote": "Sou muito seu fã!\n~Deiv"
 	},
 	{
@@ -516,6 +567,14 @@
 		"role": "HOMENAGEM",
 		"doings": "Uma homenagem a artista mais FOFA e querida do porão, que também foi baita inspiração pros artistas do mod! Que fez o design desses personagens carismáticos e amáveis do MDT.\r\nLogo da sabeega feita pela Sabeera",
 		"frameChar": "zulmi",
+		"socials": [
+			{ "link": "Saberaa", "social": "yt" },
+			{
+				"display": "Saberaa",
+				"link": "Saberaa_art",
+				"social": "twitter"
+			}
+		],
 		"quote": "Nirco i sabeega\n~Nirco"
 	}
 ]
