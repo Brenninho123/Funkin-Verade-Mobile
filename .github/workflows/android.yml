@@ -42,12 +42,10 @@ jobs:
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
 
-      - name: Configure Lime Android paths
+      - name: Setup Lime for Android
         run: |
-          haxelib run lime config ANDROID_SDK "$ANDROID_HOME" -g
-          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/25.2.9519653" -g
-          haxelib run lime config JAVA_HOME "$JAVA_HOME" -g
-          cat ~/.lime/config.xml
+          haxelib run lime setup android -- --ANDROID_SDK "$ANDROID_HOME" --ANDROID_NDK_DIR "$ANDROID_HOME/ndk/25.2.9519653" --JAVA_HOME "$JAVA_HOME"
+          haxelib run lime config ANDROID_SETUP true
 
       - name: Set up debug keystore
         run: |
