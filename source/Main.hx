@@ -26,10 +26,9 @@ import lime.graphics.Image;
 #end
 
 #if desktop
-import backend.ALSoftConfig; // Just to make sure DCE doesn't remove this, since it's not directly referenced anywhere else.
+import backend.ALSoftConfig;
 #end
 
-//crash handler stuff
 #if CRASH_HANDLER
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
@@ -38,13 +37,11 @@ import haxe.io.Path;
 
 import backend.Highscore;
 
-// NATIVE API STUFF, YOU CAN IGNORE THIS AND SCROLL //
 #if (linux && !debug)
 @:cppInclude('./external/gamemode_client.h')
 @:cppFileCode('#define GAMEMODE_AUTO')
 #end
 
-// // // // // // // // //
 class Main extends Sprite
 {
 	public static var fpsVar:FPSCounter;
@@ -130,23 +127,20 @@ class Main extends Sprite
 		#if CHECK_FOR_UPDATES
 		if (ClientPrefs.data.checkForUpdates)
 		{
-			trace('[UPDATE CHECK] Checking...');
 			final version:String = lime.app.Application.current.meta['version'];
 
 			var http:haxe.Http = new haxe.Http("https://raw.githubusercontent.com/BernardoGP4504/Funkin-Verade/main/gitVersion.txt");
-			http.onData = (data:String) -> 
+			http.onData = (data:String) ->
 			{
 				final onlineVersion:String = data.split('\n')[0].trim();
-				trace('[UPDATE CHECK] Online: $onlineVersion | Local: $version');
 
 				if (onlineVersion != version)
 				{
-					trace('[UPDATE CHECK] Version dismatch!! Please update if there\'s a newer version.');
 					states.OutdatedState.updateVersion = onlineVersion;
 					updateWarn = true;
 				}
 			};
-			http.onError = (error) -> trace('[UPDATE CHECK] Error: $error');
+			http.onError = (error) -> {};
 			http.request();
 		}
 		#end
@@ -169,8 +163,8 @@ class Main extends Sprite
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		fpsVar.visible = ClientPrefs.data.showFPS;
 
-		FlxG.signals.gameResized.add((_, _) -> resizeFix()); // shader coords fix
-		FlxG.signals.preGameReset.add(() -> 
+		FlxG.signals.gameResized.add((_, _) -> resizeFix());
+		FlxG.signals.preGameReset.add(() ->
 		{
 			final tracked:Array<String> = Paths.localTrackedAssets.copy();
 			for (i in tracked)
@@ -183,10 +177,10 @@ class Main extends Sprite
 				FlxG.bitmap.remove(g);
 			}
 			tracked.resize(0);
-		}); // "Cannot render destroyed graphic" fix
-		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0); // Use FlxG.debugger.visibilityChanged.removeAll() if you don't want this offset behaviour
+		});
+		FlxG.debugger.visibilityChanged.add(() -> fpsVar.offsetY = FlxG.debugger.visible ? 20 : 0);
 
-		#if (linux || mac) // fix the app icon not showing up on the Linux Panel / Mac Dock
+		#if (linux || mac)
 		var icon = Image.fromFile("icon.png");
 		Lib.current.stage.window.setIcon(icon);
 		#end
@@ -199,6 +193,8 @@ class Main extends Sprite
 		FlxG.game.focusLostFramerate = 60;
 		FlxG.keys.preventDefaultKeys = [TAB];
 		#if android FlxG.android.preventDefaultKeys = [BACK]; #end
+		#if (android || ios) lime.system.System.allowScreenTimeout = false; #end
+		#if mobile FlxG.mouse.visible = false; #end
 		FlxG.cameras.bgColor = FlxColor.BLACK;
 
 		FlxTransitionableState.defaultTransIn = new flixel.addons.transition.TransitionData(FADE, FlxColor.BLACK, 0.5, FlxPoint.weak(0, -1));
@@ -228,8 +224,6 @@ class Main extends Sprite
 		sprite.__cacheBitmapData = null;
 	}
 
-	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
-	// very cool person for real they don't get enough credit for their work
 	#if CRASH_HANDLER
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
@@ -246,19 +240,15 @@ class Main extends Sprite
 			switch (stackItem)
 			{
 				case FilePos(_, file, line, column): errMsg += '$file (line $line at $column)\n';
-				default: Sys.println(stackItem);
+				default:
 			}
 		}
 
 		errMsg += '\nAn uncaught error occured: ${e.error}!';
 		errMsg += "\nPlease report it to here if possible: https://github.com/BernardoGP4504/Funkin-Verade";
-		errMsg += "\r\n> Crash Handler written by: sqirra-rng";
 
 		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
 		File.saveContent(path, '${errMsg}\n');
-
-		Sys.println(errMsg);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
 
 		Application.current.window.alert(errMsg, "Error!");
 		#if DISCORD_ALLOWED DiscordClient.shutdown(); #end
