@@ -44,9 +44,10 @@ jobs:
 
       - name: Configure Lime Android paths
         run: |
-          haxelib run lime config ANDROID_SDK "$ANDROID_HOME"
-          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/25.2.9519653"
-          haxelib run lime config JAVA_HOME "$JAVA_HOME"
+          haxelib run lime config ANDROID_SDK "$ANDROID_HOME" -g
+          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/25.2.9519653" -g
+          haxelib run lime config JAVA_HOME "$JAVA_HOME" -g
+          cat ~/.lime/config.xml
 
       - name: Set up debug keystore
         run: |
