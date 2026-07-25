@@ -71,6 +71,10 @@ jobs:
         env:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
           ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
+          ANDROID_KEYSTORE_PATH: android/debug.keystore
+          ANDROID_KEYSTORE_PASSWORD: android
+          ANDROID_KEY_ALIAS: androiddebugkey
+          ANDROID_KEY_ALIAS_PASSWORD: android
         run: haxelib run lime build android -DDEMO -Ddebug
 
       - name: Publish Artifact
