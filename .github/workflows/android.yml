@@ -53,7 +53,7 @@ jobs:
                   <define name="ANDROID_NDK_ROOT" value="$ANDROID_HOME/ndk/25.2.9519653" />
                   <define name="JAVA_HOME" value="$JAVA_HOME" />
                   <define name="ANDROID_SETUP" value="true" />
-              </define>
+              </section>
           </config>
           EOF
           cat ~/.lime/config.xml
