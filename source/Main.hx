@@ -146,7 +146,7 @@ class Main extends Sprite
 					updateWarn = true;
 				}
 			};
-			http.onError = (error) -> trace('error: $error');
+			http.onError = (error) -> trace('[UPDATE CHECK] Error: $error');
 			http.request();
 		}
 		#end
