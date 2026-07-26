@@ -75,7 +75,7 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: android
           ANDROID_KEY_ALIAS: androiddebugkey
           ANDROID_KEY_ALIAS_PASSWORD: android
-        run: haxelib run lime build android -DDEMO -Ddebug
+        run: haxelib run lime build android -DDEMO -Ddebug --verbose
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
