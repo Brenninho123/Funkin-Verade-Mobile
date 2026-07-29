@@ -31,6 +31,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Cache optimized PNGs
+        uses: actions/cache@v4
+        with:
+          path: .png-opt-cache
+          key: ${{ runner.os }}-pngopt-${{ hashFiles('assets/**/*.png') }}
+          restore-keys: |
+            ${{ runner.os }}-pngopt-
+
       - uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.7
@@ -49,8 +57,30 @@ jobs:
 
       - name: Optimize PNG
         run: |
-          sudo apt-get install -y optipng --quiet
-          find assets -type f -iname "*.png" -exec optipng -quiet -o2 {} \;
+          sudo apt-get install -y optipng pngquant parallel --quiet
+          mkdir -p .png-opt-cache
+
+          find assets -type f -iname "*.png" -print0 > /tmp/pnglist.txt
+
+          process_png() {
+            file="$1"
+            hash=$(sha1sum "$file" | cut -d' ' -f1)
+            cached=".png-opt-cache/$hash.png"
+
+            if [ -f "$cached" ]; then
+              cp "$cached" "$file"
+            else
+              pngquant --force --skip-if-larger --strip --speed 1 --quality=65-90 --output "$file.tmp" "$file" 2>/dev/null && mv "$file.tmp" "$file" || rm -f "$file.tmp"
+              optipng -quiet -o4 -strip all "$file"
+              cp "$file" "$cached"
+            fi
+          }
+          export -f process_png
+
+          cat /tmp/pnglist.txt | xargs -0 -P $(nproc) -I {} bash -c 'process_png "$@"' _ {}
+
+          echo "Total PNGs processed: $(wc -l < /tmp/pnglist.txt)"
+          echo "Cache entries: $(ls .png-opt-cache | wc -l)"
 
       - name: Install Haxelib
         run: |
