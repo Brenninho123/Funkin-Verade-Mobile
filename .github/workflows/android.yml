@@ -62,19 +62,10 @@ jobs:
           EOF
           cat ~/.lime/config.xml
 
-      - name: Set up debug keystore
-        run: |
-          mkdir -p android
-          keytool -genkeypair -v -keystore android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-
       - name: Compile
         env:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
           ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
-          ANDROID_KEYSTORE_PATH: android/debug.keystore
-          ANDROID_KEYSTORE_PASSWORD: android
-          ANDROID_KEY_ALIAS: androiddebugkey
-          ANDROID_KEY_ALIAS_PASSWORD: android
         run: haxelib run lime build android -DDEMO -Ddebug --verbose
 
       - name: Publish Artifact
