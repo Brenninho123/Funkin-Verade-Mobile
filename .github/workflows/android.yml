@@ -6,6 +6,10 @@ on:
 
   workflow_dispatch:
 
+env:
+  DEBIAN_FRONTEND: noninteractive
+  NEEDRESTART_MODE: a
+
 jobs:
   Android:
     runs-on: ubuntu-latest
