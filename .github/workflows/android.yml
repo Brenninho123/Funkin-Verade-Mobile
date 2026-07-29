@@ -13,6 +13,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.7
 
+      - name: Cache Haxelib
+        uses: actions/cache@v4
+        with:
+          path: ~/haxelib
+          key: ${{ runner.os }}-haxelib-${{ hashFiles('**/Project.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-haxelib-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.7
@@ -27,12 +45,16 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android NDK
-        run: sdkmanager --install "ndk;25.2.9519653"
+        run: sdkmanager --install "ndk;25.2.9519653" --quiet
+
+      - name: Optimize PNG
+        run: |
+          sudo apt-get install -y optipng --quiet
+          find assets -type f -iname "*.png" -exec optipng -quiet -o2 {} \;
 
       - name: Install Haxelib
         run: |
-          sudo apt-get install libvlc-dev
-          sudo apt-get install libvlccore-dev
+          sudo apt-get install -y libvlc-dev libvlccore-dev --quiet
           haxelib setup ~/haxelib
           haxelib install extension-androidtools > /dev/null --quiet
           chmod +x ./setup/unix.sh
@@ -40,7 +62,7 @@ jobs:
 
       - name: Install patched hxcpp
         run: |
-          curl --output ../hxcpp.zip --location https://github.com/HaxeFoundation/hxcpp/releases/download/v4.3.45/hxcpp-4.3.45.zip
+          curl --silent --output ../hxcpp.zip --location https://github.com/HaxeFoundation/hxcpp/releases/download/v4.3.45/hxcpp-4.3.45.zip
           haxelib install ../hxcpp.zip --quiet
 
       - name: Skip SScript setup mode
@@ -60,13 +82,14 @@ jobs:
               </section>
           </config>
           EOF
-          cat ~/.lime/config.xml
 
       - name: Compile
         env:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
           ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
-        run: haxelib run lime build android -DDEMO -Ddebug --verbose
+          ORG_GRADLE_PROJECT_org.gradle.parallel: "true"
+          ORG_GRADLE_PROJECT_org.gradle.caching: "true"
+        run: haxelib run lime build android -DDEMO -Ddebug --quiet
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
