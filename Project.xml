@@ -88,9 +88,6 @@
 	<config:android architectures="armv7 arm64" if="android"/>
 	<config:android permissions="android.permission.INTERNET android.permission.VIBRATE android.permission.WRITE_EXTERNAL_STORAGE android.permission.READ_EXTERNAL_STORAGE" if="android"/>
 
-	<certificate path="android/debug.keystore" password="android" alias="androiddebugkey" alias-password="android" if="android debug"/>
-	<certificate path="${ANDROID_KEYSTORE_PATH}" password="${ANDROID_KEYSTORE_PASSWORD}" alias="${ANDROID_KEY_ALIAS}" alias-password="${ANDROID_KEY_ALIAS_PASSWORD}" if="android release"/>
-
 	<config:ios device="universal" deployment="12.0" binary-embed="true" if="ios"/>
 
 	<icon path="icon.png" if="android || ios"/>
