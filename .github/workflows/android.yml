@@ -228,8 +228,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Discord webhook
-        if: ${{ secrets.DISCORD_WEBHOOK != '' }}
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        if: env.DISCORD_WEBHOOK != ''
         run: |
           curl --silent --fail -H "Content-Type: application/json" -d '{
             "content": "Android build failed on `${{ github.ref_name }}` (${{ github.sha }}) — <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>"
-          }' "${{ secrets.DISCORD_WEBHOOK }}"
+          }' "$DISCORD_WEBHOOK"
