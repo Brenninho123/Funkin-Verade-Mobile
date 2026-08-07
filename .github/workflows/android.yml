@@ -1,18 +1,58 @@
-name: Android DEMO Build
+name: Android Build
 
 on:
   pull_request:
     branches: [ main ]
-
+  push:
+    branches: [ main ]
   workflow_dispatch:
+    inputs:
+      demo:
+        description: Include DEMO define
+        type: boolean
+        default: true
+
+concurrency:
+  group: android-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   DEBIAN_FRONTEND: noninteractive
   NEEDRESTART_MODE: a
+  HAXE_VERSION: 4.3.7
+  NDK_VERSION: 25.2.9519653
+  HXCPP_VERSION: 4.3.45
 
 jobs:
-  Android:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      demo: ${{ steps.set.outputs.demo }}
+      version: ${{ steps.set.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4.1.7
+        with:
+          fetch-depth: 0
+
+      - id: set
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "demo=${{ inputs.demo }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "demo=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          version=$(git describe --tags --always --dirty 2>/dev/null || echo "0.0.0-${GITHUB_SHA::7}")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  android:
+    name: Android (debug)
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4.1.7
@@ -43,9 +83,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pngopt-
 
+      - name: Cache Android NDK
+        uses: actions/cache@v4
+        id: ndk-cache
+        with:
+          path: ${{ env.ANDROID_HOME }}/ndk/${{ env.NDK_VERSION }}
+          key: ${{ runner.os }}-ndk-${{ env.NDK_VERSION }}
+
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.7
+          haxe-version: ${{ env.HAXE_VERSION }}
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -57,7 +104,8 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android NDK
-        run: sdkmanager --install "ndk;25.2.9519653"
+        if: steps.ndk-cache.outputs.cache-hit != 'true'
+        run: sdkmanager --install "ndk;${{ env.NDK_VERSION }}"
 
       - name: Optimize PNG
         run: |
@@ -96,7 +144,7 @@ jobs:
 
       - name: Install patched hxcpp
         run: |
-          curl --silent --output ../hxcpp.zip --location https://github.com/HaxeFoundation/hxcpp/releases/download/v4.3.45/hxcpp-4.3.45.zip
+          curl --silent --output ../hxcpp.zip --location https://github.com/HaxeFoundation/hxcpp/releases/download/v${{ env.HXCPP_VERSION }}/hxcpp-${{ env.HXCPP_VERSION }}.zip
           haxelib install ../hxcpp.zip --quiet
 
       - name: Skip SScript setup mode
@@ -110,7 +158,7 @@ jobs:
           <config>
               <section id="defines">
                   <define name="ANDROID_SDK" value="$ANDROID_HOME" />
-                  <define name="ANDROID_NDK_ROOT" value="$ANDROID_HOME/ndk/25.2.9519653" />
+                  <define name="ANDROID_NDK_ROOT" value="$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" />
                   <define name="JAVA_HOME" value="$JAVA_HOME" />
                   <define name="ANDROID_SETUP" value="true" />
               </section>
@@ -120,13 +168,68 @@ jobs:
       - name: Compile
         env:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/${{ env.NDK_VERSION }}
           ORG_GRADLE_PROJECT_org.gradle.parallel: "true"
           ORG_GRADLE_PROJECT_org.gradle.caching: "true"
-        run: haxelib run lime build android -DDEMO -Ddebug --quiet
+        run: |
+          FLAGS="-Ddebug"
+          if [ "${{ needs.prepare.outputs.demo }}" = "true" ]; then
+            FLAGS="$FLAGS -DDEMO"
+          fi
+          haxelib run lime build android $FLAGS --quiet
+
+      - name: Locate and checksum APK
+        id: artifact
+        run: |
+          APK_DIR="export/debug/android/bin/app/build/outputs/apk/debug"
+          APK_PATH=$(find "$APK_DIR" -maxdepth 1 -iname "*.apk" | head -n1)
+
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::No APK found under $APK_DIR"
+            exit 1
+          fi
+
+          NAME="app-${{ needs.prepare.outputs.version }}-debug.apk"
+          cp "$APK_PATH" "$NAME"
+          sha256sum "$NAME" > "$NAME.sha256"
+
+          echo "apk_name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "apk_size=$(du -h "$NAME" | cut -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Build summary
+        run: |
+          {
+            echo "### Android Build Summary"
+            echo ""
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| Version | ${{ needs.prepare.outputs.version }} |"
+            echo "| Demo | ${{ needs.prepare.outputs.demo }} |"
+            echo "| APK | ${{ steps.artifact.outputs.apk_name }} |"
+            echo "| Size | ${{ steps.artifact.outputs.apk_size }} |"
+            echo "| Haxe | ${{ env.HAXE_VERSION }} |"
+            echo "| NDK | ${{ env.NDK_VERSION }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
-          name: androidBuild
-          path: export/debug/android/bin/app/build/outputs/apk
+          name: android-debug-${{ needs.prepare.outputs.version }}
+          path: |
+            ${{ steps.artifact.outputs.apk_name }}
+            ${{ steps.artifact.outputs.apk_name }}.sha256
+          retention-days: 14
+          if-no-files-found: error
+
+  notify:
+    name: Notify on failure
+    needs: [ prepare, android ]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord webhook
+        if: ${{ secrets.DISCORD_WEBHOOK != '' }}
+        run: |
+          curl --silent --fail -H "Content-Type: application/json" -d '{
+            "content": "Android build failed on `${{ github.ref_name }}` (${{ github.sha }}) — <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>"
+          }' "${{ secrets.DISCORD_WEBHOOK }}"
