@@ -236,3 +236,9 @@ if state == 'nil' then
 triggerEvent('Camera Follow Pos','','')
 end
 end
+
+function onEndSong()
+	setProperty('camGame.visible', false)
+	setProperty('camHUD.visible', false)
+	close()
+end
