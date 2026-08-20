@@ -84,13 +84,13 @@ class TitleState extends MusicBeatState
 		blueyBop.animation.addByIndices('danceLeft', 'blfi', leftBopAnim, "", 24, false);
 		blueyBop.animation.addByIndices('danceRight', 'blfi', rightBopAnim, "", 24, false);
 		blueyBop.scale.set(0.5, 0.5); blueyBop.updateHitbox();
-		chars.push(blueyBop);
 
 		var mornaaBop:FlxSprite = new FlxSprite((blueyBop.x + blueyBop.width) - 75, blueyBop.y - 25);
 		mornaaBop.frames = Paths.getSparrowAtlas('titlescreen/chars/mona');
 		mornaaBop.animation.addByPrefix('idle', 'mona', 24, false);
 		mornaaBop.scale.set(0.53, 0.53); mornaaBop.updateHitbox();
 		chars.push(mornaaBop);
+		chars.push(blueyBop);
 		
 		var tonhoBop:FlxSprite = new FlxSprite(20, 100);
 		tonhoBop.frames = Paths.getSparrowAtlas('titlescreen/chars/tojo');
