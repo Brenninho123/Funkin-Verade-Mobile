@@ -147,7 +147,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		{
 			final xAdd:Float = (objects.Note.swagWidth * i) + 50 + (FlxG.width / 2);
 
-			FlxTween.cancelTweensOf(n, ['x', 'y']);
+			FlxTween.completeTweensOf(n, ['x', 'y']);
 			FlxTween.tween(n, {x: !changeY ? (targetPos + xAdd) : n.x, y: changeY ? targetPos : n.y}, 1, {ease: FlxEase.cubeOut});
 		}
 	}
