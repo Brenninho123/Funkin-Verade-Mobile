@@ -2377,7 +2377,22 @@ class PlayState extends MusicBeatState
 
 		#if ACHIEVEMENTS_ALLOWED
 		final weekComplete:String = '${WeekData.getWeekFileName()}_complete';
-		checkForAchievement([weekComplete, '${weekComplete}FC', '${weekComplete}Pain', '${weekComplete}Sucks', 'appleBrothers', 'mojaroGameplay',/*  'OSUPlayer',  */'almostThere', 'BFLevel', 'niceJob', 'totem']);
+		checkForAchievement([
+			weekComplete,
+			#if !DEMO
+			'${weekComplete}FC',
+			'${weekComplete}Pain',
+			'${weekComplete}Sucks',
+			#else
+			'appleBrothers',
+			'mojaroGameplay',
+			'OSUPlayer',
+			'almostThere',
+			'BFLevel',
+			#end
+			'niceJob',
+			'totem'
+		]);
 		#end
 
 		var ret:Dynamic = callOnScripts('onEndSong', null, true);
@@ -3398,38 +3413,25 @@ class PlayState extends MusicBeatState
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
-	@:noCompletion @:unreflective private function __shouldUnlockAchieve(achieve:String):Bool
+	@:noCompletion private function __weekAchievementCheck(achieveName:String):Bool
 	{
 		final usedPractice:Bool = ClientPrefs.getGameplaySetting('practice') || ClientPrefs.getGameplaySetting('botplay');
-		final accuracy:Float = CoolUtil.floorDecimal(ratingPercent, 2);
+		final beatWeek:Bool = (isStoryMode && storyPlaylist.length <= 1) && !usedPractice;
 
-		if (achieve.startsWith('${WeekData.getWeekFileName()}_complete')) // Relacionados a Week
+		#if !DEMO
+		final completeSuffix:String = achieveName.substring(achieveName.indexOf('complete'));
+		return switch (completeSuffix.replace('complete', "").toLowerCase())
 		{
-			final beatWeek:Bool = (isStoryMode && storyPlaylist.length <= 1) && !usedPractice;
-			final completeSuffix:String = achieve.substring(achieve.indexOf('complete'));
-
-			return switch (completeSuffix.replace('complete', "").toLowerCase())
-			{
-				case 'fc': beatWeek && (campaignMisses + songMisses == 0); // Campeão Perfeito
-				case 'pain':
-					final missHistory:Float = campaignMisses + songMisses;
-					beatWeek && (missHistory > 0 && missHistory < 3); // Dor Sem Palavras
-				case 'sucks': beatWeek && ratingPercent <= 0.15; // Beira da Morte
-				default: beatWeek; // Campeão
-			};
-		}
-
-		return switch (achieve)
-		{
-			case 'appleBrothers': Highscore.getScore(Song.loadedSongName, storyDifficulty) > 0 && !usedPractice; // Campeão (DEMO)
-			case 'mojaroGameplay': accuracy <= 0.15 && !usedPractice; // Beira da Morte (DEMO)
-			case 'BFLevel': songMisses == 0 && !usedPractice; // Campeão Perfeito (DEMO)
-			// case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO)
-			case 'almostThere': (songMisses > 0 && songMisses < 3) && !usedPractice; // Dor Sem Palavras (DEMO)
-			case 'niceJob': accuracy == 0.69 && !usedPractice; // Nice
-			case 'totem': songMisses >= 30 && !usedPractice;
-			default: false;
+			case 'fc': beatWeek && (campaignMisses + songMisses == 0); // Campeão Perfeito
+			case 'pain':
+				final missHistory:Float = campaignMisses + songMisses;
+				beatWeek && (missHistory > 0 && missHistory < 3); // Dor Sem Palavras
+			case 'sucks': beatWeek && ratingPercent <= 0.15; // Beira da Morte
+			default: beatWeek; // Campeão
 		};
+		#else
+		return beatWeek;
+		#end
 	}
 
 	private function checkForAchievement(achievesToCheck:Array<String>)
@@ -3439,11 +3441,34 @@ class PlayState extends MusicBeatState
 		for (name in achievesToCheck)
 		{
 			if (!Achievements.exists(name)) continue;
+			if (name.startsWith('${WeekData.getWeekFileName()}_comp')) // Relacionados a Week
+			{
+				if (__weekAchievementCheck(name)) Achievements.unlock(name);
+				continue;
+			}
 
-			final unlock:Bool = __shouldUnlockAchieve(name);
-			if (unlock) Achievements.unlock(name);
+			final usedPractice:Bool = ClientPrefs.getGameplaySetting('practice') || ClientPrefs.getGameplaySetting('botplay');
+			final accuracy:Float = CoolUtil.floorDecimal(ratingPercent, 2);
+			final unlock:Bool = switch (name)
+			{
+				#if DEMO
+				case 'appleBrothers':
+					final firstSongWon:Bool = Lambda.count(Highscore.weekScores) == 0 || Lambda.count(Highscore.weekScores, (s) -> s != 0) == 0;
+					trace(firstSongWon);
+					(Highscore.getScore(Song.loadedSongName, storyDifficulty) == 0 && firstSongWon) && !usedPractice; // Campeão (DEMO)
+				case 'mojaroGameplay': (accuracy <= 0.15 && totalPlayed > 0) && !usedPractice; // Beira da Morte (DEMO)
+				case 'BFLevel': songMisses == 0 && !usedPractice; // Campeão Perfeito (DEMO)
+				// case 'OSUPlayer': accuracy >= 1 && !usedPractice; // Campeão Perfeito (DEMO) / Antigo
+				case 'almostThere': (songMisses > 0 && songMisses < 3) && !usedPractice; // Dor Sem Palavras (DEMO)
+				#end
+				case 'niceJob': accuracy == 0.69 && !usedPractice; // Nice
+				case 'totem': songMisses >= 30 && !usedPractice; // Imortalidade
+				default: false;
+			};
+
+			if (!unlock) continue;
+			Achievements.unlock(name);
 		}
-
 		achievesToCheck.resize(0);
 	}
 	#end
