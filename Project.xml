@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Funkin' em Verade" file="TonhoFunkin" package="com.avalanche.veradefunkin" packageName="com.avalanche.veradefunkin" main="Main" version="1.0.0-demo" company="Avalanche_Prods" />
+	<app title="Funkin' em Verade" file="TonhoFunkin" package="com.avalanche.veradefunkin" packageName="com.avalanche.veradefunkin" main="Main" version="1.0.1-demo" company="Avalanche_Prods" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
