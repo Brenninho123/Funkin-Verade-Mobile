@@ -336,6 +336,13 @@ class TonhoCreditsState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		for (i=>p in portraitGroup.members)
+		{
+			final distanceFromCam:Float = Math.abs((p.y + p.height) - camFollow.y);
+			p.visible = distanceFromCam > 323 && distanceFromCam < 340;
+			// FlxG.watch.addQuick('portrait $i vis check:', distanceFromCam);
+		}
+
 		if (blockInput)
 		{
 			super.update(elapsed);

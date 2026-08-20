@@ -36,7 +36,9 @@ private enum abstract EasterEgg(String) from String to String
 	public static final ABEL:String = "abel";	
 	public static final AZEDO:String = "azedaria";
 	public static final JABUTICABA:String = "jabuticaba";
+	#if flxanimate
 	public static final ALGORITHOMUS:String = "algorithomus";
+	#end
 
 	public static final repeatable:haxe.ds.ReadOnlyArray<EasterEgg> = [ABEL];
 }
@@ -142,7 +144,9 @@ class MainMenuState extends MusicBeatState
 		easterEggs = 
 		[
 			EasterEgg.ABEL => EasterEggHandler.spawnAbels,
+			#if flxanimate
 			EasterEgg.ALGORITHOMUS => EasterEggHandler.agmRef,
+			#end
 			EasterEgg.AZEDO => EasterEggHandler.broGotBaited,
 			EasterEgg.JABUTICABA => EasterEggHandler.jabuticabaSequence
 		];
@@ -615,6 +619,7 @@ private class EasterEggHandler
 		});
 	}
 
+	#if flxanimate
 	public static function agmRef()
 	{
 		currentEggs.resize(0);
@@ -654,6 +659,7 @@ private class EasterEggHandler
 		});
 		agm.anim.onComplete.addOnce(FlxG.resetGame);
 	}
+	#end
 
 	static function skipJabuticaba()
 	{
